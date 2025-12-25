@@ -38,7 +38,7 @@ export default function Header() {
           <div className="gradient-bg rounded-lg p-2">
             <Wallet className="h-6 w-6 text-white" />
           </div>
-          <span className="text-xl font-bold gradient-text">Recharge Hub</span>
+          <span className="text-xl font-bold gradient-text">MediaMoney</span>
         </Link>
 
         {/* Desktop Navigation */}

@@ -1,10 +1,9 @@
-# Recharge Services Website Requirements Document
+# MediaMoney Recharge Services Website Requirements Document
 
 ## 1. Website Overview
 
 ### 1.1 Website Name
-Recharge Hub
-
+MediaMoney\n
 ### 1.2 Website Description
 A comprehensive online platform for digital recharge services, offering game top-ups, app subscriptions, streaming service subscriptions (Netflix, Shahid, etc.), and gift cards. Users can recharge through player IDs and manage transactions via personal wallets.
 
@@ -12,12 +11,10 @@ A comprehensive online platform for digital recharge services, offering game top
 play4cards.com
 
 ### 1.4 Reference Images
-- Screenshot2025-12-25195356.png: Category layout reference
+- Screenshot2025-12-25 195356.png: Category layout reference
 - Screenshot 2025-12-25 195350.png: Service card design reference
 - Screenshot 2025-12-25 195327.png: Main category structure reference
-
-## 2. Core Features
-
+\n## 2. Core Features\n
 ### 2.1 Service Categories Structure
 - **Unified Service Grouping**: All services with the same name are grouped into one category, allowing customers to choose from available options within that category\n- **Category Main Image**: Each category displays a unified main image representing all services within that category
 - **Game Recharge**\n  - 50+ game categories (e.g., Action Games, RPG Games, Battle Royale, etc.)
@@ -37,19 +34,32 @@ play4cards.com
   - Some categories include subcategories (e.g., denominations, regions)
 
 ### 2.2 User System
-- User registration and login\n- Personal wallet system
-- Balance top-up functionality
+- User registration and login
+- Personal wallet system\n- Balance top-up functionality
 - Order history tracking
 - Security settings\n- **Wallet-only purchase requirement: All purchases must be made using wallet balance**
 
 ### 2.3 Transaction Features
-- Automatic order fulfillment from stock inventory
-- Real-time stock management
-- Multi-currency support
+- **Automatic order fulfillment from stock inventory**: When customers purchase gift cards, Netflix codes, Shahid codes, or PUBG codes, orders are fulfilled directly from stock and delivered immediately
+- Real-time stock management\n- Multi-currency support
 - **Wallet-based payment processing only**
 
-### 2.4 Notification System
-- **Order Status Notifications**:\n  - Order completion alerts
+### 2.4 Stock Management System
+- **Stock Manager Role**: Dedicated role for managing inventory of gift cards and digital codes
+- **Direct Order Fulfillment**: Customers receive orders immediately upon purchase from available stock
+- **Stock Categories**: Gift cards, Netflix codes, Shahid codes, PUBG codes, and other digital products
+- **Real-time Inventory Tracking**: Automatic stock level updates after each purchase
+- **Stock Alerts**: Notifications when stock levels are low
+- **Stock Manager Permissions**:
+  - Add new stock items
+  - Update stock quantities
+  - View stock history
+  - Manage stock categories
+  - Set stock alerts and thresholds
+
+### 2.5 Notification System
+- **Order Status Notifications**:
+  - Order completion alerts
   - Order cancellation notifications
 - **Wallet Notifications**:
   - Balance added to wallet confirmation
@@ -65,39 +75,82 @@ play4cards.com
   - Push notifications
   - Email notifications (optional)
 
-### 2.5 Support System
+### 2.6 Support System
 - Ticket support for customer inquiries
-\n### 2.6 API System
-- GET and POST API endpoints for integration
-\n### 2.7 Interface Features
-- **Advertisement Banner**: Moving banner at the top of screen displaying promotional photos and ads
-- Dark mode and light mode toggle
+\n### 2.7 API System
+\n#### 2.7.1 Customer API
+- API endpoints for customer integration
+- Customer API key management
+- Order placement and tracking via API
+- Balance inquiry functionality
+\n#### 2.7.2 Admin API v2
+- **API Key Management**:
+  - Create and edit API keys
+  - Set API key name and notes
+  - Enable/disable API key status
+  - Configure granular access permissions per key
+\n- **Orders Permissions**:
+  - Edit link\n  - Resend order\n  - Get order list
+  - View provider charge\n  - View External ID
+  - View provider response
+  - View provider URL instead of alias
+  - Change status
+  - Cancel and refund\n  - Set partial\n  - Pull orders
+  - Update orders
+\n- **Cancel Permissions**:
+  - Request cancel
+  - Pull cancel tasks
+  - Reject cancel
+\n- **Refill Permissions**:
+  - Pull refill tasks
+  - Change refill status
+
+- **Payments Permissions**:
+  - Add payment\n  - Get payment list
+  - View user details
+\n- **Users Permissions**:
+  - Add user
+  - Get user list
+  - View email
+  - View balance
+  - View spent
+  - View user details
+\n- **Tickets Permissions**:
+  - Get ticket list
+  - Get ticket\n  - Reply to a ticket
+  - Add ticket
+\n### 2.8 Interface Features
+- **Advertisement Banner**: Reduced height moving banner at the top of screen displaying promotional photos and ads
+- **Search Field**: Positioned below the advertisement banner\n- Dark mode and light mode toggle
 - Multi-language support
-- Slide bar navigation\n- Navigation bar\n- Header section\n- Attractive animations\n
-### 2.8 Admin Management System
+- Slide bar navigation\n- Navigation bar\n- Header section
+- Attractive animations\n\n### 2.9 Admin Management System
 - **Admin Login Page**: Dedicated secure login page exclusively for administrators
 - **Full Site Management**: Complete control over all website aspects
 - **Content Management**: Edit any content, categories, services, and pages
 - **Order Management**: View, process, update, and manage all customer orders
 - **User Management**: Manage user accounts, permissions, wallet balances, and activity\n- **Service Management**: Add, edit, delete services and categories; update pricing and availability
-- **Stock Inventory Control**: Manage gift card stock, track inventory levels, add new stock
+- **Stock Inventory Control**: Manage gift card stock, track inventory levels, add new stock for gift cards, Netflix codes, Shahid codes, PUBG codes, and other digital products
+- **Stock Manager Assignment**: Assign and manage stock manager roles and permissions
 - **Payment Verification**: Review and approve/reject balance top-up requests with payment proofs
 - **Category & Image Management**: Upload and assign main images for each category; organize service groupings
 - **Notification Management**: Send announcements, alerts, and updates to users
 - **Advertisement Management**: Upload and manage promotional photos for top banner; control banner rotation and display
 - **Analytics Dashboard**: View site statistics, revenue reports, popular services, and user activity
-- **API Management**: Configure API settings and monitor API usage
+- **API Management**: Configure Admin API v2 settings, create and edit API keys, set granular permissions, and monitor API usage
+- **Customer API Management**: Configure customer API settings and monitor usage
 - **Support Ticket Management**: View and respond to customer support tickets
 - **Settings Control**: Configure site settings, payment methods, currencies, and languages
 
 ## 3. Website Pages
 
 ### 3.1 Customer-Facing Pages
-1. **Home** - Main landing page with service categories and top advertisement banner
+1. **Home** - Main landing page with reduced-height advertisement banner at top, search field below banner, and service categories
 2. **Wallet** - User wallet management and balance display
 3. **Add Balance** - Wallet recharge page with multiple payment methods
 4. **My Orders** - Order history and status tracking
-5. **Security** - Account security settings\n6. **API** - API documentation and access\n7. **About Us** - Company information and contact details
+5. **Security** - Account security settings\n6. **API** - Customer API documentation and access
+7. **About Us** - Company information and contact details
 8. **Service Category Pages** - Dedicated pages for each main service type (Games, Apps, Streaming, Gift Cards) with category/subcategory navigation and unified category images
 \n### 3.2 Admin-Only Pages
 1. **Admin Login** - Secure authentication page for administrators only
@@ -105,10 +158,12 @@ play4cards.com
 3. **Order Management** - Interface for managing all customer orders
 4. **User Management** - Interface for managing user accounts and permissions
 5. **Service Management** - Interface for managing services, categories, and pricing
-6. **Stock Management** - Interface for inventory control\n7. **Payment Verification** - Interface for reviewing balance top-up requests
-8. **Category Management** - Interface for organizing services and uploading category main images
-9. **Advertisement Management** - Interface for uploading and managing top banner promotional content
-10. **Support Management** - Interface for handling customer tickets\n11. **Site Settings** - Interface for configuring all site parameters
+6. **Stock Management** - Interface for inventory control of gift cards, Netflix codes, Shahid codes, PUBG codes, and digital products
+7. **Stock Manager Management** - Interface for assigning and managing stock manager roles\n8. **Payment Verification** - Interface for reviewing balance top-up requests
+9. **Category Management** - Interface for organizing services and uploading category main images
+10. **Advertisement Management** - Interface for uploading and managing top banner promotional content
+11. **Support Management** - Interface for handling customer tickets\n12. **Admin API v2 Management** - Interface for creating, editing, and managing API keys with granular permission settings
+13. **Customer API Management** - Interface for managing customer API settings\n14. **Site Settings** - Interface for configuring all site parameters
 
 ## 4. Add Balance Payment System
 
@@ -124,8 +179,7 @@ play4cards.com
 For each balance top-up request, customers must:
 1. Select preferred payment method from available options
 2. Upload payment proof photo\n3. Enter transaction details\n4. Provide transaction ID\n5. Submit for verification
-
-### 4.3 Payment Verification
+\n### 4.3 Payment Verification
 - Admin review of submitted payment proofs through admin panel
 - Balance credited after verification
 - Notification sent upon approval or rejection
@@ -137,14 +191,17 @@ For each balance top-up request, customers must:
 - Category and subcategory management system with image storage
 - Payment proof storage and verification workflow
 - Admin authentication and authorization system
-- Role-based access control for admin functions
+- Role-based access control for admin functions and stock managers
 - Notification queue and delivery system
-
+- Stock inventory database for gift cards, Netflix codes, Shahid codes, PUBG codes, and digital products
+- Automatic order fulfillment system from stock\n
 ### 5.2 Stock Inventory System
-- Automated gift card delivery from stock upon purchase
+- Automated gift card and digital code delivery from stock upon purchase
 - Real-time inventory tracking and management
 - Stock management across categories and subcategories
-- Admin interface for stock updates and monitoring
+- Admin and stock manager interface for stock updates and monitoring
+- Direct order fulfillment for customers
+- Low stock alerts and notifications
 \n### 5.3 Category Management
 - Hierarchical category structure (Category → Subcategory → Service)
 - Unified service grouping by name within categories
@@ -165,22 +222,33 @@ For each balance top-up request, customers must:
 - Automatic rotation mechanism for multiple ads
 - Click tracking and analytics
 - Admin control for banner scheduling and display order
+- Reduced banner height for better user experience
 
-## 6. Design Style\n
+### 5.7 API System Architecture
+- **Admin API v2**: RESTful API with granular permission control per API key
+- **Customer API**: RESTful API for customer integrations
+- API key generation and management
+- Rate limiting and security controls
+- API usage monitoring and analytics
+\n## 6. Design Style\n
 ### 6.1 Visual Design
-- **Top Advertisement Banner**: Horizontal moving banner displaying promotional photos with smooth scrolling animation
+- **Top Advertisement Banner**: Reduced-height horizontal moving banner displaying promotional photos with smooth scrolling animation
+- **Search Field**: Positioned directly below the advertisement banner for easy access
 - Card-based layout for categories with unified main images representing each service group
 - Vibrant blue and purple gradient accents on clean backgrounds
 - Smooth animations for category navigation and transitions
 - Professional admin panel interface with clear data visualization
-\n### 6.2 Interactive Elements
+
+### 6.2 Interactive Elements
 - **Advertisement Banner**: Auto-scrolling promotional photos with pause-on-hover functionality
+- **Search Field**: Instant search with autocomplete suggestions
 - Expandable category menus with service option selection
 - Hover effects on service cards\n- Animated payment method selection interface
 - Image upload preview for payment proofs
 - **Real-time notification badges** with slide-in animation for new alerts
 - Drag-and-drop functionality in admin panel for category management and banner uploads
 - Real-time data updates in admin dashboard
+- Stock level indicators with color-coded alerts
 
 ### 6.3 Theme Options
 - Light mode: White background with soft shadows and colorful category cards with main images

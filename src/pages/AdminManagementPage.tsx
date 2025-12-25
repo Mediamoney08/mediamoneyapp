@@ -8,6 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import BannerManagement from '@/components/admin/BannerManagement';
+import StockManagement from '@/components/admin/StockManagement';
+import ApiKeyManagement from '@/components/admin/ApiKeyManagement';
 import { 
   getAllCategoriesAdmin, 
   createCategory, 
@@ -47,7 +49,9 @@ import {
   DollarSign,
   CheckCircle,
   XCircle,
-  Clock
+  Clock,
+  Key,
+  Database
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -452,7 +456,7 @@ export default function AdminManagementPage() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-7 mb-8">
+        <TabsList className="grid w-full grid-cols-9 mb-8">
           <TabsTrigger value="categories">
             <Package className="w-4 h-4 mr-2" />
             Categories
@@ -460,6 +464,10 @@ export default function AdminManagementPage() {
           <TabsTrigger value="products">
             <ShoppingCart className="w-4 h-4 mr-2" />
             Products
+          </TabsTrigger>
+          <TabsTrigger value="stock">
+            <Database className="w-4 h-4 mr-2" />
+            Stock
           </TabsTrigger>
           <TabsTrigger value="users">
             <Users className="w-4 h-4 mr-2" />
@@ -480,6 +488,10 @@ export default function AdminManagementPage() {
           <TabsTrigger value="banners">
             <Settings className="w-4 h-4 mr-2" />
             Banners
+          </TabsTrigger>
+          <TabsTrigger value="api-keys">
+            <Key className="w-4 h-4 mr-2" />
+            API Keys
           </TabsTrigger>
         </TabsList>
 
@@ -782,6 +794,16 @@ export default function AdminManagementPage() {
         {/* Banners Tab */}
         <TabsContent value="banners">
           <BannerManagement />
+        </TabsContent>
+
+        {/* Stock Management Tab */}
+        <TabsContent value="stock">
+          <StockManagement />
+        </TabsContent>
+
+        {/* API Keys Tab */}
+        <TabsContent value="api-keys">
+          <ApiKeyManagement />
         </TabsContent>
       </Tabs>
     </div>

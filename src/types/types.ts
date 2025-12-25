@@ -204,3 +204,93 @@ export interface PaymentVerificationResponse {
   customerName?: string;
   orderUpdated?: boolean;
 }
+
+// Stock Management Types
+export type StockStatus = 'available' | 'reserved' | 'sold';
+
+export interface StockItem {
+  id: string;
+  product_id: string;
+  code: string;
+  status: StockStatus;
+  reserved_by: string | null;
+  reserved_at: string | null;
+  sold_to: string | null;
+  sold_at: string | null;
+  order_id: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface StockUpload {
+  id: string;
+  product_id: string;
+  uploaded_by: string;
+  total_items: number;
+  successful_items: number;
+  failed_items: number;
+  notes: string | null;
+  created_at: string;
+}
+
+// API Key Management Types
+export type ApiKeyVersion = 'v1' | 'v2';
+export type ApiKeyStatus = 'active' | 'inactive';
+
+export interface ApiPermissions {
+  orders?: {
+    edit_link?: boolean;
+    resend_order?: boolean;
+    get_order_list?: boolean;
+    view_provider_charge?: boolean;
+    view_external_id?: boolean;
+    view_provider_response?: boolean;
+    view_provider_url?: boolean;
+    change_status?: boolean;
+    cancel_and_refund?: boolean;
+    set_partial?: boolean;
+    pull_orders?: boolean;
+    update_orders?: boolean;
+    request_cancel?: boolean;
+    pull_cancel_tasks?: boolean;
+    reject_cancel?: boolean;
+  };
+  refill?: {
+    pull_refill_tasks?: boolean;
+    change_refill_status?: boolean;
+  };
+  payments?: {
+    add_payment?: boolean;
+    get_payment_list?: boolean;
+    view_user_details?: boolean;
+  };
+  users?: {
+    add_user?: boolean;
+    get_user_list?: boolean;
+    view_email?: boolean;
+    view_balance?: boolean;
+    view_spent?: boolean;
+    view_user_details?: boolean;
+  };
+  tickets?: {
+    get_ticket_list?: boolean;
+    get_ticket?: boolean;
+    reply_to_ticket?: boolean;
+    add_ticket?: boolean;
+  };
+}
+
+export interface ApiKey {
+  id: string;
+  key: string;
+  name: string;
+  note: string | null;
+  version: ApiKeyVersion;
+  status: ApiKeyStatus;
+  permissions: ApiPermissions;
+  created_by: string | null;
+  last_used_at: string | null;
+  created_at: string;
+  updated_at: string;
+}

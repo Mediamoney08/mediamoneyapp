@@ -4,9 +4,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getOrders, verifyPayment } from '@/db/api';
-import type { Order } from '@/types/types';
-import { Package, RefreshCw } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { getOrders, verifyPayment, getOrderStockCodes } from '@/db/api';
+import type { Order, StockItem } from '@/types/types';
+import { Package, RefreshCw, Key, Copy, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const statusColors = {
@@ -29,6 +30,9 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [verifying, setVerifying] = useState<string | null>(null);
+  const [stockCodes, setStockCodes] = useState<Record<string, StockItem[]>>({});
+  const [loadingCodes, setLoadingCodes] = useState<string | null>(null);
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -46,6 +50,43 @@ export default function OrdersPage() {
       console.error('Failed to load orders:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadStockCodes = async (orderId: string) => {
+    if (!user || stockCodes[orderId]) return;
+    
+    try {
+      setLoadingCodes(orderId);
+      const codes = await getOrderStockCodes(orderId, user.id);
+      setStockCodes(prev => ({ ...prev, [orderId]: codes }));
+    } catch (error) {
+      console.error('Failed to load stock codes:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to load codes',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoadingCodes(null);
+    }
+  };
+
+  const copyCode = async (code: string, itemId: string) => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopiedCode(itemId);
+      toast({
+        title: 'Copied!',
+        description: 'Code copied to clipboard',
+      });
+      setTimeout(() => setCopiedCode(null), 2000);
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to copy code',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -177,13 +218,78 @@ export default function OrdersPage() {
                   )}
 
                   {order.status === 'completed' && order.completed_at && (
-                    <div className="text-sm text-muted-foreground">
-                      Completed on {new Date(order.completed_at).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })}
-                    </div>
+                    <>
+                      <div className="text-sm text-muted-foreground">
+                        Completed on {new Date(order.completed_at).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })}
+                      </div>
+                      
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => loadStockCodes(order.id)}
+                            className="mt-2"
+                          >
+                            <Key className="mr-2 h-4 w-4" />
+                            View Codes
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                          <DialogHeader>
+                            <DialogTitle>Order Codes</DialogTitle>
+                            <DialogDescription>
+                              Your purchased codes for order #{order.id.slice(0, 8)}
+                            </DialogDescription>
+                          </DialogHeader>
+                          
+                          {loadingCodes === order.id ? (
+                            <div className="space-y-2">
+                              <Skeleton className="h-20 w-full bg-muted" />
+                              <Skeleton className="h-20 w-full bg-muted" />
+                            </div>
+                          ) : stockCodes[order.id]?.length > 0 ? (
+                            <div className="space-y-3 max-h-96 overflow-y-auto">
+                              {stockCodes[order.id].map((item) => (
+                                <Card key={item.id}>
+                                  <CardContent className="p-4">
+                                    <div className="flex items-start justify-between gap-4">
+                                      <div className="flex-1">
+                                        <div className="font-mono text-sm bg-muted p-3 rounded break-all">
+                                          {item.code}
+                                        </div>
+                                        <div className="text-xs text-muted-foreground mt-2">
+                                          Product ID: {item.product_id}
+                                        </div>
+                                      </div>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => copyCode(item.code, item.id)}
+                                      >
+                                        {copiedCode === item.id ? (
+                                          <Check className="h-4 w-4 text-green-500" />
+                                        ) : (
+                                          <Copy className="h-4 w-4" />
+                                        )}
+                                      </Button>
+                                    </div>
+                                  </CardContent>
+                                </Card>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="text-center py-8 text-muted-foreground">
+                              No codes available for this order
+                            </div>
+                          )}
+                        </DialogContent>
+                      </Dialog>
+                    </>
                   )}
                 </CardContent>
               </Card>

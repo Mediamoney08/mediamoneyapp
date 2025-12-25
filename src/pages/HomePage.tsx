@@ -108,32 +108,33 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 px-4">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 animate-gradient"></div>
+      <section className="relative overflow-hidden py-8 px-4">
+        <div className="absolute inset-0 from-primary/10 via-secondary/10 to-accent/10 animate-gradient border-solid border-[rgb(229,231,235)] bg-[#f9f9f9ff] bg-none border-[0px] border-[#f1f1f1ff]"></div>
         <div className="container relative mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fadeInUp">
-            <span className="gradient-text">Recharge Hub</span>
+          <h1 className="text-3xl md:text-5xl font-bold mb-3 animate-fadeInUp">
+            <span className="gradient-text">MediaMoney</span>
           </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
+          <p className="text-lg text-muted-foreground mb-4 max-w-2xl mx-auto animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
             Your one-stop destination for game top-ups, streaming subscriptions, and digital gift cards
           </p>
-          
-          {/* Search Bar */}
-          <div className="max-w-2xl mx-auto animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
-              <Input
-                type="text"
-                placeholder="Search for games, services, or gift cards..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-12 text-lg"
-              />
-            </div>
+        </div>
+      </section>
+      
+      {/* Search Bar Section */}
+      <section className="container mx-auto px-4 pb-6">
+        <div className="max-w-2xl mx-auto">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+            <Input
+              type="text"
+              placeholder="Search for games, services, or gift cards..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 h-12 text-lg rounded-[4px]"
+            />
           </div>
         </div>
       </section>
-
       {/* Service Type Tabs */}
       <section className="container mx-auto px-4 py-8">
         <Tabs value={selectedService} onValueChange={(value) => handleServiceChange(value as ServiceCategory)}>
@@ -158,7 +159,7 @@ export default function HomePage() {
                 </div>
               ) : selectedCategory ? (
                 // Show products for selected category
-                <div>
+                (<div>
                   <div className="flex items-center gap-4 mb-6">
                     <Button variant="outline" onClick={handleBackToCategories}>
                       <ArrowLeft className="w-4 h-4 mr-2" />
@@ -171,7 +172,6 @@ export default function HomePage() {
                       )}
                     </div>
                   </div>
-
                   {filteredProducts.length === 0 ? (
                     <Card>
                       <CardContent className="py-12 text-center">
@@ -231,10 +231,10 @@ export default function HomePage() {
                       ))}
                     </div>
                   )}
-                </div>
+                </div>)
               ) : (
                 // Show categories grid
-                <div>
+                (<div>
                   <div className="flex items-center justify-between mb-6">
                     <h2 className="text-2xl font-bold">
                       {SERVICE_LABELS[service]}
@@ -243,7 +243,6 @@ export default function HomePage() {
                       {filteredCategories.length} {filteredCategories.length === 1 ? 'category' : 'categories'}
                     </Badge>
                   </div>
-
                   {filteredCategories.length === 0 ? (
                     <Card>
                       <CardContent className="py-12 text-center">
@@ -285,13 +284,12 @@ export default function HomePage() {
                       ))}
                     </div>
                   )}
-                </div>
+                </div>)
               )}
             </TabsContent>
           ))}
         </Tabs>
       </section>
-
       {/* Features Section */}
       <section className="container mx-auto px-4 py-16">
         <div className="grid gap-8 md:grid-cols-3">

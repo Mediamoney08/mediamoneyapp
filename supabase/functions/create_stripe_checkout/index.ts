@@ -91,6 +91,33 @@ async function createCheckoutSession(
 ) {
   const { formattedItems, totalAmount } = processOrderItems(items);
 
+  // Check stock availability for each product
+  const stockChecks = await Promise.all(
+    formattedItems.map(async (item) => {
+      const { count } = await supabase
+        .from("stock_items")
+        .select("*", { count: "exact", head: true })
+        .eq("product_id", item.product_id)
+        .eq("status", "available");
+      
+      return {
+        product_id: item.product_id,
+        name: item.name,
+        required: item.quantity,
+        available: count || 0,
+      };
+    })
+  );
+
+  // Check if all products have sufficient stock
+  const insufficientStock = stockChecks.filter(check => check.available < check.required);
+  if (insufficientStock.length > 0) {
+    const stockMessages = insufficientStock.map(
+      item => `${item.name}: need ${item.required}, available ${item.available}`
+    ).join("; ");
+    throw new Error(`Insufficient stock: ${stockMessages}`);
+  }
+
   const { data: order, error } = await supabase
     .from("orders")
     .insert({
@@ -105,6 +132,55 @@ async function createCheckoutSession(
     .single();
 
   if (error) throw new Error(`Failed to create order: ${error.message}`);
+
+  // Reserve stock items for this order
+  const reservedStockIds: string[] = [];
+  try {
+    for (const item of formattedItems) {
+      for (let i = 0; i < item.quantity; i++) {
+        // Get first available stock item
+        const { data: availableStock } = await supabase
+          .from("stock_items")
+          .select("id")
+          .eq("product_id", item.product_id)
+          .eq("status", "available")
+          .limit(1)
+          .single();
+
+        if (availableStock) {
+          // Reserve it
+          await supabase
+            .from("stock_items")
+            .update({
+              status: "reserved",
+              reserved_by: userId,
+              reserved_at: new Date().toISOString(),
+              order_id: order.id,
+            })
+            .eq("id", availableStock.id);
+          
+          reservedStockIds.push(availableStock.id);
+        }
+      }
+    }
+  } catch (stockError) {
+    // If stock reservation fails, delete the order and release any reserved stock
+    await supabase.from("orders").delete().eq("id", order.id);
+    
+    if (reservedStockIds.length > 0) {
+      await supabase
+        .from("stock_items")
+        .update({
+          status: "available",
+          reserved_by: null,
+          reserved_at: null,
+          order_id: null,
+        })
+        .in("id", reservedStockIds);
+    }
+    
+    throw new Error(`Failed to reserve stock: ${stockError.message}`);
+  }
 
   const session = await stripe.checkout.sessions.create({
     line_items: items.map(item => ({

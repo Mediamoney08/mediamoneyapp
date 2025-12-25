@@ -16,6 +16,13 @@ import type {
   Subcategory,
   PaymentMethod,
   PaymentProof,
+  StockItem,
+  StockStatus,
+  StockUpload,
+  ApiKey,
+  ApiKeyVersion,
+  ApiKeyStatus,
+  ApiPermissions,
 } from '@/types/types';
 
 // Profile APIs
@@ -919,4 +926,313 @@ export const toggleBannerStatus = async (id: string, isActive: boolean): Promise
     .eq('id', id);
 
   if (error) throw error;
+};
+
+// ==================== Stock Management Functions ====================
+
+export const uploadStockItems = async (
+  productId: string,
+  codes: string[],
+  uploadedBy: string,
+  notes?: string
+): Promise<{ success: number; failed: number; uploadId: string }> => {
+  // Create upload record
+  const { data: upload, error: uploadError } = await supabase
+    .from('stock_uploads')
+    .insert({
+      product_id: productId,
+      uploaded_by: uploadedBy,
+      total_items: codes.length,
+      notes: notes || null,
+    })
+    .select()
+    .single();
+
+  if (uploadError) throw uploadError;
+
+  let successCount = 0;
+  let failedCount = 0;
+
+  // Insert stock items
+  for (const code of codes) {
+    try {
+      const { error } = await supabase
+        .from('stock_items')
+        .insert({
+          product_id: productId,
+          code: code.trim(),
+          status: 'available',
+        });
+
+      if (error) {
+        failedCount++;
+      } else {
+        successCount++;
+      }
+    } catch {
+      failedCount++;
+    }
+  }
+
+  // Update upload record
+  await supabase
+    .from('stock_uploads')
+    .update({
+      successful_items: successCount,
+      failed_items: failedCount,
+    })
+    .eq('id', upload.id);
+
+  return {
+    success: successCount,
+    failed: failedCount,
+    uploadId: upload.id,
+  };
+};
+
+export const getStockItems = async (
+  productId?: string,
+  status?: StockStatus
+): Promise<StockItem[]> => {
+  let query = supabase
+    .from('stock_items')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (productId) {
+    query = query.eq('product_id', productId);
+  }
+
+  if (status) {
+    query = query.eq('status', status);
+  }
+
+  const { data, error } = await query;
+
+  if (error) throw error;
+  return Array.isArray(data) ? data : [];
+};
+
+export const getAvailableStockCount = async (productId: string): Promise<number> => {
+  const { count, error } = await supabase
+    .from('stock_items')
+    .select('*', { count: 'exact', head: true })
+    .eq('product_id', productId)
+    .eq('status', 'available');
+
+  if (error) throw error;
+  return count || 0;
+};
+
+export const reserveStockItem = async (
+  productId: string,
+  userId: string,
+  orderId: string
+): Promise<StockItem | null> => {
+  // Get first available stock item
+  const { data: availableItems, error: fetchError } = await supabase
+    .from('stock_items')
+    .select('*')
+    .eq('product_id', productId)
+    .eq('status', 'available')
+    .limit(1);
+
+  if (fetchError) throw fetchError;
+  if (!availableItems || availableItems.length === 0) return null;
+
+  const stockItem = availableItems[0];
+
+  // Reserve it
+  const { data, error } = await supabase
+    .from('stock_items')
+    .update({
+      status: 'reserved',
+      reserved_by: userId,
+      reserved_at: new Date().toISOString(),
+      order_id: orderId,
+    })
+    .eq('id', stockItem.id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const markStockItemSold = async (stockItemId: string, userId: string): Promise<void> => {
+  const { error } = await supabase
+    .from('stock_items')
+    .update({
+      status: 'sold',
+      sold_to: userId,
+      sold_at: new Date().toISOString(),
+    })
+    .eq('id', stockItemId);
+
+  if (error) throw error;
+};
+
+export const releaseStockItem = async (stockItemId: string): Promise<void> => {
+  const { error } = await supabase
+    .from('stock_items')
+    .update({
+      status: 'available',
+      reserved_by: null,
+      reserved_at: null,
+      order_id: null,
+    })
+    .eq('id', stockItemId);
+
+  if (error) throw error;
+};
+
+export const deleteStockItem = async (stockItemId: string): Promise<void> => {
+  const { error } = await supabase
+    .from('stock_items')
+    .delete()
+    .eq('id', stockItemId);
+
+  if (error) throw error;
+};
+
+export const getStockUploads = async (productId?: string): Promise<StockUpload[]> => {
+  let query = supabase
+    .from('stock_uploads')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (productId) {
+    query = query.eq('product_id', productId);
+  }
+
+  const { data, error } = await query;
+
+  if (error) throw error;
+  return Array.isArray(data) ? data : [];
+};
+
+// ==================== API Key Management Functions ====================
+
+export const generateApiKey = (): string => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let key = 'mm_'; // MediaMoney prefix
+  for (let i = 0; i < 32; i++) {
+    key += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return key;
+};
+
+export const createApiKey = async (
+  name: string,
+  note: string | null,
+  permissions: ApiPermissions,
+  createdBy: string,
+  version: ApiKeyVersion = 'v2'
+): Promise<ApiKey> => {
+  const key = generateApiKey();
+
+  const { data, error } = await supabase
+    .from('api_keys')
+    .insert({
+      key,
+      name,
+      note,
+      version,
+      permissions,
+      created_by: createdBy,
+      status: 'active',
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const getApiKeys = async (): Promise<ApiKey[]> => {
+  const { data, error } = await supabase
+    .from('api_keys')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return Array.isArray(data) ? data : [];
+};
+
+export const getApiKeyById = async (id: string): Promise<ApiKey | null> => {
+  const { data, error } = await supabase
+    .from('api_keys')
+    .select('*')
+    .eq('id', id)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+};
+
+export const updateApiKey = async (
+  id: string,
+  updates: Partial<Pick<ApiKey, 'name' | 'note' | 'permissions' | 'status'>>
+): Promise<ApiKey> => {
+  const { data, error } = await supabase
+    .from('api_keys')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const deleteApiKey = async (id: string): Promise<void> => {
+  const { error } = await supabase
+    .from('api_keys')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+};
+
+export const toggleApiKeyStatus = async (id: string, status: ApiKeyStatus): Promise<void> => {
+  const { error } = await supabase
+    .from('api_keys')
+    .update({ status })
+    .eq('id', id);
+
+  if (error) throw error;
+};
+
+export const validateApiKey = async (key: string): Promise<ApiKey | null> => {
+  const { data, error } = await supabase
+    .from('api_keys')
+    .select('*')
+    .eq('key', key)
+    .eq('status', 'active')
+    .maybeSingle();
+
+  if (error) throw error;
+
+  // Update last_used_at
+  if (data) {
+    await supabase
+      .from('api_keys')
+      .update({ last_used_at: new Date().toISOString() })
+      .eq('id', data.id);
+  }
+
+  return data;
+};
+
+// Get stock codes for a completed order
+export const getOrderStockCodes = async (orderId: string, userId: string): Promise<StockItem[]> => {
+  const { data, error } = await supabase
+    .from('stock_items')
+    .select('*')
+    .eq('order_id', orderId)
+    .eq('sold_to', userId)
+    .eq('status', 'sold');
+
+  if (error) throw error;
+  return Array.isArray(data) ? data : [];
 };

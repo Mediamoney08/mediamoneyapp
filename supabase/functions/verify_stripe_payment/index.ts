@@ -77,6 +77,17 @@ async function updateOrderStatus(
     return false;
   }
 
+  // Mark reserved stock items as sold
+  await supabase
+    .from("stock_items")
+    .update({
+      status: "sold",
+      sold_to: order.user_id,
+      sold_at: new Date().toISOString(),
+    })
+    .eq("order_id", order.id)
+    .eq("status", "reserved");
+
   // Update user wallet balance if user exists
   if (order.user_id) {
     const { data: profile } = await supabase
