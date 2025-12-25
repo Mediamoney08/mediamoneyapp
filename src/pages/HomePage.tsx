@@ -258,31 +258,39 @@ export default function HomePage() {
                       {filteredCategories.map((category) => (
                         <Card
                           key={category.id}
-                          className="group hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden"
+                          className="group hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden border-2 hover:border-primary"
                           onClick={() => handleCategoryClick(category)}
                         >
-                          {category.image_url && (
-                            <div className="aspect-video overflow-hidden bg-muted">
+                          {category.image_url ? (
+                            <div className="relative aspect-video overflow-hidden bg-muted">
                               <img
                                 src={category.image_url}
                                 alt={category.name}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                               />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                              <div className="absolute bottom-0 left-0 right-0 p-4">
+                                <h3 className="text-white font-bold text-lg drop-shadow-lg">{category.name}</h3>
+                                {category.description && (
+                                  <p className="text-white/90 text-sm line-clamp-1 drop-shadow-md">
+                                    {category.description}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="aspect-video bg-muted flex items-center justify-center">
+                              <div className="text-center p-4">
+                                <Package className="w-12 h-12 mx-auto text-muted-foreground mb-2" />
+                                <h3 className="font-bold text-lg">{category.name}</h3>
+                                {category.description && (
+                                  <p className="text-sm text-muted-foreground line-clamp-2">
+                                    {category.description}
+                                  </p>
+                                )}
+                              </div>
                             </div>
                           )}
-                          <CardHeader>
-                            <CardTitle className="line-clamp-1">{category.name}</CardTitle>
-                            {category.description && (
-                              <CardDescription className="line-clamp-2">
-                                {category.description}
-                              </CardDescription>
-                            )}
-                          </CardHeader>
-                          <CardContent>
-                            <Button variant="outline" className="w-full">
-                              View Products
-                            </Button>
-                          </CardContent>
                         </Card>
                       ))}
                     </div>
