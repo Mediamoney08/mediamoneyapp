@@ -11,6 +11,7 @@ import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import NotificationsPage from './pages/NotificationsPage';
 import CheckoutPage from './pages/CheckoutPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import AdminManagementPage from './pages/AdminManagementPage';
 import type { ReactNode } from 'react';
 
 interface RouteConfig {
@@ -73,6 +74,12 @@ const routes: RouteConfig[] = [
     name: 'Admin Dashboard',
     path: '/admin',
     element: <AdminDashboardPage />,
+    visible: false,
+  },
+  {
+    name: 'Admin Management',
+    path: '/admin/manage',
+    element: <AdminManagementPage />,
     visible: false,
   },
   {

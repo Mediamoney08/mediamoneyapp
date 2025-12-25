@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { Moon, Sun, Menu, Bell, Wallet, User, LogOut, Shield } from 'lucide-react';
+import { Moon, Sun, Menu, Bell, Wallet, User, LogOut, Shield, Settings } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import {
   DropdownMenu,
@@ -135,7 +135,11 @@ export default function Header() {
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={() => navigate('/admin')}>
                         <Shield className="mr-2 h-4 w-4" />
-                        Admin Panel
+                        Payment Approvals
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate('/admin/manage')}>
+                        <Settings className="mr-2 h-4 w-4" />
+                        Admin Management
                       </DropdownMenuItem>
                     </>
                   )}

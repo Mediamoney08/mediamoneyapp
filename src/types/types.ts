@@ -78,7 +78,7 @@ export interface Product {
   description: string | null;
   category: ServiceCategory;
   category_id: string | null;
-  subcategory_id: string | null;
+  service_name: string | null; // e.g., "Global", "Prime", "Prime Plus"
   price: number;
   currency: string;
   image_url: string | null;
@@ -88,7 +88,14 @@ export interface Product {
   created_at: string;
   updated_at: string;
   category_info?: Category;
-  subcategory_info?: Subcategory;
+}
+
+export interface AdminSettings {
+  id: string;
+  key: string;
+  value: any;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface OrderItem {

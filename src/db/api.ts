@@ -337,38 +337,17 @@ export const getCategory = async (id: string): Promise<Category | null> => {
 };
 
 // ============ Subcategories ============
-export const getSubcategories = async (categoryId: string): Promise<Subcategory[]> => {
-  const { data, error} = await supabase
-    .from('subcategories')
-    .select('*')
-    .eq('category_id', categoryId)
-    .eq('is_active', true)
-    .order('display_order');
-
-  if (error) throw error;
-  return Array.isArray(data) ? data : [];
-};
-
-// ============ Products by Category/Subcategory ============
+// ============ Products by Category ============
 export const getProductsByCategory = async (categoryId: string): Promise<Product[]> => {
   const { data, error } = await supabase
     .from('products')
-    .select('*')
+    .select(`
+      *,
+      category_info:categories(name, service_type, image_url)
+    `)
     .eq('category_id', categoryId)
     .eq('is_active', true)
-    .order('created_at', { ascending: false });
-
-  if (error) throw error;
-  return Array.isArray(data) ? data : [];
-};
-
-export const getProductsBySubcategory = async (subcategoryId: string): Promise<Product[]> => {
-  const { data, error } = await supabase
-    .from('products')
-    .select('*')
-    .eq('subcategory_id', subcategoryId)
-    .eq('is_active', true)
-    .order('created_at', { ascending: false });
+    .order('service_name', { ascending: true });
 
   if (error) throw error;
   return Array.isArray(data) ? data : [];
@@ -558,4 +537,262 @@ export const purchaseWithWallet = async (
   );
 
   return order;
+};
+
+// ============================================
+// ADMIN MANAGEMENT FUNCTIONS
+// ============================================
+
+// ============ Category Management ============
+export const getAllCategoriesAdmin = async (): Promise<Category[]> => {
+  const { data, error } = await supabase
+    .from('categories')
+    .select('*')
+    .order('display_order', { ascending: true });
+
+  if (error) throw error;
+  return Array.isArray(data) ? data : [];
+};
+
+export const createCategory = async (category: Partial<Category>): Promise<Category> => {
+  const { data, error } = await supabase
+    .from('categories')
+    .insert(category)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const updateCategory = async (id: string, updates: Partial<Category>): Promise<Category> => {
+  const { data, error } = await supabase
+    .from('categories')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const deleteCategory = async (id: string): Promise<void> => {
+  const { error } = await supabase
+    .from('categories')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+};
+
+// ============ Product Management ============
+export const getAllProductsAdmin = async (): Promise<Product[]> => {
+  const { data, error } = await supabase
+    .from('products')
+    .select(`
+      *,
+      category_info:categories(name, service_type, image_url)
+    `)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return Array.isArray(data) ? data : [];
+};
+
+export const createProduct = async (product: Partial<Product>): Promise<Product> => {
+  const { data, error } = await supabase
+    .from('products')
+    .insert(product)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const updateProduct = async (id: string, updates: Partial<Product>): Promise<Product> => {
+  const { data, error } = await supabase
+    .from('products')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const deleteProduct = async (id: string): Promise<void> => {
+  const { error } = await supabase
+    .from('products')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+};
+
+// ============ User Management ============
+export const getAllUsers = async (): Promise<Profile[]> => {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return Array.isArray(data) ? data : [];
+};
+
+export const updateUserProfile = async (id: string, updates: Partial<Profile>): Promise<Profile> => {
+  const { data, error } = await supabase
+    .from('profiles')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const updateUserBalance = async (userId: string, amount: number, description: string): Promise<void> => {
+  // Get current balance
+  const profile = await getProfile(userId);
+  if (!profile) throw new Error('User not found');
+
+  const newBalance = profile.wallet_balance + amount;
+
+  // Update balance
+  await supabase
+    .from('profiles')
+    .update({ wallet_balance: newBalance })
+    .eq('id', userId);
+
+  // Add transaction
+  await addWalletTransaction(userId, amount, amount > 0 ? 'credit' : 'debit', description);
+
+  // Send notification
+  await createNotification(
+    userId,
+    'balance_update',
+    'Balance Updated',
+    `Your wallet balance has been ${amount > 0 ? 'increased' : 'decreased'} by $${Math.abs(amount).toFixed(2)}. ${description}`
+  );
+};
+
+// ============ Order Management ============
+export const getAllOrdersAdmin = async (): Promise<Order[]> => {
+  const { data, error } = await supabase
+    .from('orders')
+    .select(`
+      *,
+      user:profiles(username, email),
+      items:order_items(*)
+    `)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return Array.isArray(data) ? data : [];
+};
+
+export const updateOrderStatus = async (orderId: string, status: string): Promise<Order> => {
+  const { data, error } = await supabase
+    .from('orders')
+    .update({ status })
+    .eq('id', orderId)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  // Send notification to user
+  const order = data as Order;
+  await createNotification(
+    order.user_id,
+    'order_status_update',
+    'Order Status Updated',
+    `Your order #${order.id.substring(0, 8)} status has been updated to: ${status}`
+  );
+
+  return data;
+};
+
+export const refundOrder = async (orderId: string): Promise<void> => {
+  // Get order details
+  const { data: order, error: orderError } = await supabase
+    .from('orders')
+    .select('*')
+    .eq('id', orderId)
+    .single();
+
+  if (orderError) throw orderError;
+
+  // Refund to wallet
+  await updateUserBalance(order.user_id, order.total_amount, `Refund for order #${orderId.substring(0, 8)}`);
+
+  // Update order status
+  await updateOrderStatus(orderId, 'refunded');
+};
+
+// ============ Payment Method Management ============
+export const getAllPaymentMethodsAdmin = async (): Promise<PaymentMethod[]> => {
+  const { data, error } = await supabase
+    .from('payment_methods')
+    .select('*')
+    .order('display_order', { ascending: true });
+
+  if (error) throw error;
+  return Array.isArray(data) ? data : [];
+};
+
+export const createPaymentMethod = async (method: Partial<PaymentMethod>): Promise<PaymentMethod> => {
+  const { data, error } = await supabase
+    .from('payment_methods')
+    .insert(method)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const updatePaymentMethod = async (id: string, updates: Partial<PaymentMethod>): Promise<PaymentMethod> => {
+  const { data, error } = await supabase
+    .from('payment_methods')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const deletePaymentMethod = async (id: string): Promise<void> => {
+  const { error } = await supabase
+    .from('payment_methods')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+};
+
+// ============ Site Settings Management ============
+export const getSiteSetting = async (key: string): Promise<any> => {
+  const { data, error } = await supabase
+    .from('admin_settings')
+    .select('value')
+    .eq('key', key)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data?.value;
+};
+
+export const updateSiteSetting = async (key: string, value: any): Promise<void> => {
+  const { error } = await supabase
+    .from('admin_settings')
+    .upsert({ key, value, updated_at: new Date().toISOString() });
+
+  if (error) throw error;
 };
