@@ -12,7 +12,7 @@ A comprehensive online platform for digital recharge services, offering game top
 play4cards.com
 
 ### 1.4 Reference Images
-- Screenshot2025-12-25 195356.png: Category layout reference
+- Screenshot2025-12-25195356.png: Category layout reference
 - Screenshot 2025-12-25 195350.png: Service card design reference
 - Screenshot 2025-12-25 195327.png: Main category structure reference
 
@@ -37,7 +37,8 @@ play4cards.com
   - Some categories include subcategories (e.g., denominations, regions)
 
 ### 2.2 User System
-- User registration and login\n- Personal wallet system\n- Balance top-up functionality
+- User registration and login\n- Personal wallet system
+- Balance top-up functionality
 - Order history tracking
 - Security settings\n- **Wallet-only purchase requirement: All purchases must be made using wallet balance**
 
@@ -48,22 +49,31 @@ play4cards.com
 - **Wallet-based payment processing only**
 
 ### 2.4 Notification System
-- Order completion alerts
-- Order failure notifications
-- Service price updates
-- Site news and announcements
-- Push notifications\n
+- **Order Status Notifications**:\n  - Order completion alerts
+  - Order cancellation notifications
+- **Wallet Notifications**:
+  - Balance added to wallet confirmation
+  - Wallet transaction alerts
+- **Security Notifications**:
+  - API key change alerts
+  - Account security updates
+- **General Notifications**:
+  - Service price updates
+  - Site news and announcements
+- **Delivery Methods**:
+  - In-app notification center
+  - Push notifications
+  - Email notifications (optional)
+
 ### 2.5 Support System
 - Ticket support for customer inquiries
 \n### 2.6 API System
 - GET and POST API endpoints for integration
 \n### 2.7 Interface Features
+- **Advertisement Banner**: Moving banner at the top of screen displaying promotional photos and ads
 - Dark mode and light mode toggle
 - Multi-language support
-- Slide bar navigation
-- Navigation bar\n- Header section
-- Attractive animations
-
+- Slide bar navigation\n- Navigation bar\n- Header section\n- Attractive animations\n
 ### 2.8 Admin Management System
 - **Admin Login Page**: Dedicated secure login page exclusively for administrators
 - **Full Site Management**: Complete control over all website aspects
@@ -74,6 +84,7 @@ play4cards.com
 - **Payment Verification**: Review and approve/reject balance top-up requests with payment proofs
 - **Category & Image Management**: Upload and assign main images for each category; organize service groupings
 - **Notification Management**: Send announcements, alerts, and updates to users
+- **Advertisement Management**: Upload and manage promotional photos for top banner; control banner rotation and display
 - **Analytics Dashboard**: View site statistics, revenue reports, popular services, and user activity
 - **API Management**: Configure API settings and monitor API usage
 - **Support Ticket Management**: View and respond to customer support tickets
@@ -82,15 +93,13 @@ play4cards.com
 ## 3. Website Pages
 
 ### 3.1 Customer-Facing Pages
-1. **Home** - Main landing page with service categories
+1. **Home** - Main landing page with service categories and top advertisement banner
 2. **Wallet** - User wallet management and balance display
 3. **Add Balance** - Wallet recharge page with multiple payment methods
 4. **My Orders** - Order history and status tracking
-5. **Security** - Account security settings\n6. **API** - API documentation and access
-7. **About Us** - Company information and contact details
+5. **Security** - Account security settings\n6. **API** - API documentation and access\n7. **About Us** - Company information and contact details
 8. **Service Category Pages** - Dedicated pages for each main service type (Games, Apps, Streaming, Gift Cards) with category/subcategory navigation and unified category images
-
-### 3.2 Admin-Only Pages
+\n### 3.2 Admin-Only Pages
 1. **Admin Login** - Secure authentication page for administrators only
 2. **Admin Dashboard** - Overview of site statistics and quick access to management tools
 3. **Order Management** - Interface for managing all customer orders
@@ -98,8 +107,8 @@ play4cards.com
 5. **Service Management** - Interface for managing services, categories, and pricing
 6. **Stock Management** - Interface for inventory control\n7. **Payment Verification** - Interface for reviewing balance top-up requests
 8. **Category Management** - Interface for organizing services and uploading category main images
-9. **Support Management** - Interface for handling customer tickets
-10. **Site Settings** - Interface for configuring all site parameters
+9. **Advertisement Management** - Interface for uploading and managing top banner promotional content
+10. **Support Management** - Interface for handling customer tickets\n11. **Site Settings** - Interface for configuring all site parameters
 
 ## 4. Add Balance Payment System
 
@@ -129,14 +138,14 @@ For each balance top-up request, customers must:
 - Payment proof storage and verification workflow
 - Admin authentication and authorization system
 - Role-based access control for admin functions
+- Notification queue and delivery system
 
 ### 5.2 Stock Inventory System
 - Automated gift card delivery from stock upon purchase
 - Real-time inventory tracking and management
 - Stock management across categories and subcategories
 - Admin interface for stock updates and monitoring
-
-### 5.3 Category Management
+\n### 5.3 Category Management
 - Hierarchical category structure (Category → Subcategory → Service)
 - Unified service grouping by name within categories
 - Dynamic category display based on service type
@@ -151,17 +160,26 @@ For each balance top-up request, customers must:
 - Session management and timeout controls
 - Activity logging for admin actions
 - Two-factor authentication option for admin accounts
-\n## 6. Design Style\n
+\n### 5.6 Advertisement System
+- Image storage for promotional banners
+- Automatic rotation mechanism for multiple ads
+- Click tracking and analytics
+- Admin control for banner scheduling and display order
+
+## 6. Design Style\n
 ### 6.1 Visual Design
+- **Top Advertisement Banner**: Horizontal moving banner displaying promotional photos with smooth scrolling animation
 - Card-based layout for categories with unified main images representing each service group
 - Vibrant blue and purple gradient accents on clean backgrounds
 - Smooth animations for category navigation and transitions
 - Professional admin panel interface with clear data visualization
 \n### 6.2 Interactive Elements
+- **Advertisement Banner**: Auto-scrolling promotional photos with pause-on-hover functionality
 - Expandable category menus with service option selection
 - Hover effects on service cards\n- Animated payment method selection interface
 - Image upload preview for payment proofs
-- Drag-and-drop functionality in admin panel for category management
+- **Real-time notification badges** with slide-in animation for new alerts
+- Drag-and-drop functionality in admin panel for category management and banner uploads
 - Real-time data updates in admin dashboard
 
 ### 6.3 Theme Options

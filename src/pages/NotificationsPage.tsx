@@ -4,25 +4,33 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getNotifications, markNotificationAsRead, markAllNotificationsAsRead } from '@/db/api';
+import { getUserNotifications, markNotificationAsRead, markAllNotificationsAsRead } from '@/db/api';
 import type { Notification } from '@/types/types';
 import { Bell, CheckCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const notificationTypeLabels = {
   order_completed: 'Order Completed',
-  order_failed: 'Order Failed',
-  price_update: 'Price Update',
-  news: 'News',
-  system: 'System',
+  order_canceled: 'Order Canceled',
+  order_refunded: 'Order Refunded',
+  wallet_credited: 'Wallet Credited',
+  wallet_debited: 'Wallet Debited',
+  payment_approved: 'Payment Approved',
+  payment_rejected: 'Payment Rejected',
+  api_key_changed: 'API Key Changed',
+  system_announcement: 'System Announcement',
 };
 
 const notificationTypeColors = {
   order_completed: 'bg-green-500',
-  order_failed: 'bg-red-500',
-  price_update: 'bg-blue-500',
-  news: 'bg-purple-500',
-  system: 'bg-yellow-500',
+  order_canceled: 'bg-red-500',
+  order_refunded: 'bg-orange-500',
+  wallet_credited: 'bg-green-500',
+  wallet_debited: 'bg-red-500',
+  payment_approved: 'bg-green-500',
+  payment_rejected: 'bg-red-500',
+  api_key_changed: 'bg-blue-500',
+  system_announcement: 'bg-purple-500',
 };
 
 export default function NotificationsPage() {
@@ -41,7 +49,7 @@ export default function NotificationsPage() {
     if (!user) return;
     try {
       setLoading(true);
-      const data = await getNotifications(user.id);
+      const data = await getUserNotifications(user.id);
       setNotifications(data);
     } catch (error) {
       console.error('Failed to load notifications:', error);

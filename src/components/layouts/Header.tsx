@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { Moon, Sun, Menu, Bell, Wallet, User, LogOut, Shield, Settings } from 'lucide-react';
+import { Moon, Sun, Menu, Wallet, User, LogOut, Shield, Settings } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import {
   DropdownMenu,
@@ -12,24 +12,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Badge } from '@/components/ui/badge';
-import { useState, useEffect } from 'react';
-import { getNotifications } from '@/db/api';
+import NotificationBell from '@/components/notifications/NotificationBell';
 
 export default function Header() {
   const { user, profile, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
-  const [unreadCount, setUnreadCount] = useState(0);
-
-  useEffect(() => {
-    if (user) {
-      getNotifications(user.id).then(notifications => {
-        const unread = notifications.filter(n => !n.is_read).length;
-        setUnreadCount(unread);
-      }).catch(console.error);
-    }
-  }, [user]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -85,19 +73,7 @@ export default function Header() {
           {user ? (
             <>
               {/* Notifications */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-full relative"
-                onClick={() => navigate('/notifications')}
-              >
-                <Bell className="h-5 w-5" />
-                {unreadCount > 0 && (
-                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
-                    {unreadCount}
-                  </Badge>
-                )}
-              </Button>
+              <NotificationBell />
 
               {/* User Menu */}
               <DropdownMenu>

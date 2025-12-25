@@ -5,6 +5,7 @@ import routes from './routes';
 
 import Header from '@/components/layouts/Header';
 import Footer from '@/components/layouts/Footer';
+import TopBanner from '@/components/banners/TopBanner';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { RouteGuard } from '@/components/common/RouteGuard';
 import { Toaster } from '@/components/ui/toaster';
@@ -15,6 +16,7 @@ const App: React.FC = () => {
       <AuthProvider>
         <RouteGuard>
           <div className="flex flex-col min-h-screen">
+            <TopBanner />
             <Header />
             <main className="flex-grow">
               <Routes>

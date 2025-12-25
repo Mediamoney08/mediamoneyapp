@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
+import BannerManagement from '@/components/admin/BannerManagement';
 import { 
   getAllCategoriesAdmin, 
   createCategory, 
@@ -451,7 +452,7 @@ export default function AdminManagementPage() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-6 mb-8">
+        <TabsList className="grid w-full grid-cols-7 mb-8">
           <TabsTrigger value="categories">
             <Package className="w-4 h-4 mr-2" />
             Categories
@@ -475,6 +476,10 @@ export default function AdminManagementPage() {
           <TabsTrigger value="payment-methods">
             <Settings className="w-4 h-4 mr-2" />
             Methods
+          </TabsTrigger>
+          <TabsTrigger value="banners">
+            <Settings className="w-4 h-4 mr-2" />
+            Banners
           </TabsTrigger>
         </TabsList>
 
@@ -772,6 +777,11 @@ export default function AdminManagementPage() {
               <p className="text-muted-foreground">Payment method management - {paymentMethods.length} methods</p>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Banners Tab */}
+        <TabsContent value="banners">
+          <BannerManagement />
         </TabsContent>
       </Tabs>
     </div>

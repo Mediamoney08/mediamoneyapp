@@ -1,7 +1,16 @@
 export type UserRole = 'user' | 'admin';
 export type OrderStatus = 'pending' | 'completed' | 'cancelled' | 'refunded';
 export type TicketStatus = 'open' | 'in_progress' | 'resolved' | 'closed';
-export type NotificationType = 'order_completed' | 'order_failed' | 'price_update' | 'news' | 'system';
+export type NotificationType = 
+  | 'order_completed' 
+  | 'order_canceled' 
+  | 'order_refunded' 
+  | 'wallet_credited' 
+  | 'wallet_debited' 
+  | 'payment_approved' 
+  | 'payment_rejected' 
+  | 'api_key_changed' 
+  | 'system_announcement';
 export type ServiceCategory = 'game' | 'app' | 'streaming' | 'gift_card';
 export type PaymentProofStatus = 'pending' | 'approved' | 'rejected';
 
@@ -155,6 +164,20 @@ export interface Notification {
   is_read: boolean;
   metadata: any;
   created_at: string;
+}
+
+export interface Banner {
+  id: string;
+  title: string;
+  content: string;
+  image_url: string | null;
+  link_url: string | null;
+  background_color: string;
+  text_color: string;
+  is_active: boolean;
+  display_order: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface CheckoutRequest {
