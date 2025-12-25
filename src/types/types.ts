@@ -3,6 +3,63 @@ export type OrderStatus = 'pending' | 'completed' | 'cancelled' | 'refunded';
 export type TicketStatus = 'open' | 'in_progress' | 'resolved' | 'closed';
 export type NotificationType = 'order_completed' | 'order_failed' | 'price_update' | 'news' | 'system';
 export type ServiceCategory = 'game' | 'app' | 'streaming' | 'gift_card';
+export type PaymentProofStatus = 'pending' | 'approved' | 'rejected';
+
+export interface Category {
+  id: string;
+  name: string;
+  service_type: ServiceCategory;
+  description: string | null;
+  image_url: string | null;
+  icon: string | null;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Subcategory {
+  id: string;
+  category_id: string;
+  name: string;
+  description: string | null;
+  image_url: string | null;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PaymentMethod {
+  id: string;
+  name: string;
+  description: string | null;
+  icon_url: string | null;
+  instructions: string | null;
+  account_details: any;
+  is_active: boolean;
+  display_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PaymentProof {
+  id: string;
+  user_id: string;
+  payment_method_id: string;
+  amount: number;
+  currency: string;
+  transaction_id: string | null;
+  transaction_details: string | null;
+  proof_image_url: string | null;
+  status: PaymentProofStatus;
+  admin_notes: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+  updated_at: string;
+  payment_method?: PaymentMethod;
+}
 
 export interface Profile {
   id: string;
@@ -20,6 +77,8 @@ export interface Product {
   name: string;
   description: string | null;
   category: ServiceCategory;
+  category_id: string | null;
+  subcategory_id: string | null;
   price: number;
   currency: string;
   image_url: string | null;
@@ -28,6 +87,8 @@ export interface Product {
   metadata: any;
   created_at: string;
   updated_at: string;
+  category_info?: Category;
+  subcategory_info?: Subcategory;
 }
 
 export interface OrderItem {

@@ -1,88 +1,67 @@
-import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
-import { createCheckoutSession } from '@/db/api';
-import type { Product } from '@/types/types';
-import { CreditCard, Wallet, ArrowLeft } from 'lucide-react';
+import { getProduct, purchaseWithWallet, getProfile } from '@/db/api';
+import type { Product, Profile } from '@/types/types';
+import { Wallet, ShoppingCart, AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function CheckoutPage() {
-  const location = useLocation();
   const navigate = useNavigate();
-  const { user, profile } = useAuth();
+  const [searchParams] = useSearchParams();
+  const { user } = useAuth();
   const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'wallet' | 'card'>('card');
+  
+  const [product, setProduct] = useState<Product | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [quantity, setQuantity] = useState(1);
   const [playerId, setPlayerId] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [purchasing, setPurchasing] = useState(false);
 
-  const product = location.state?.product as Product | undefined;
+  useEffect(() => {
+    const productId = searchParams.get('product');
+    if (!productId) {
+      navigate('/');
+      return;
+    }
+    loadData(productId);
+  }, [searchParams, user]);
 
-  if (!product) {
-    navigate('/');
-    return null;
-  }
-
-  const handleCheckout = async () => {
+  const loadData = async (productId: string) => {
     if (!user) {
-      navigate('/login', { state: { from: '/checkout' } });
+      navigate('/login');
       return;
     }
-
-    if (paymentMethod === 'wallet') {
-      if (!profile || profile.wallet_balance < product.price) {
-        toast({
-          title: 'Insufficient Balance',
-          description: 'Please add balance to your wallet',
-          variant: 'destructive',
-        });
-        return;
-      }
-      // TODO: Implement wallet payment
-      toast({
-        title: 'Coming Soon',
-        description: 'Wallet payment will be available soon',
-      });
-      return;
-    }
-
-    setLoading(true);
 
     try {
-      const response = await createCheckoutSession({
-        items: [
-          {
-            product_id: product.id,
-            name: product.name,
-            price: product.price,
-            quantity: 1,
-            image_url: product.image_url,
-          },
-        ],
-        currency: product.currency,
-        player_id: playerId || undefined,
-      });
+      const [productData, profileData] = await Promise.all([
+        getProduct(productId),
+        getProfile(user.id),
+      ]);
 
-      window.open(response.url, '_blank');
-      
-      toast({
-        title: 'Redirecting to Payment',
-        description: 'Please complete your payment in the new window',
-      });
+      if (!productData) {
+        toast({
+          title: 'Product Not Found',
+          description: 'The requested product could not be found',
+          variant: 'destructive',
+        });
+        navigate('/');
+        return;
+      }
 
-      // Navigate to orders page after a delay
-      setTimeout(() => {
-        navigate('/orders');
-      }, 2000);
-    } catch (error: any) {
-      console.error('Payment error:', error);
+      setProduct(productData);
+      setProfile(profileData);
+    } catch (error) {
+      console.error('Error loading data:', error);
       toast({
-        title: 'Payment Failed',
-        description: error.message || 'Failed to initiate payment',
+        title: 'Error',
+        description: 'Failed to load product information',
         variant: 'destructive',
       });
     } finally {
@@ -90,92 +69,129 @@ export default function CheckoutPage() {
     }
   };
 
-  return (
-    <div className="container py-8">
-      <div className="max-w-4xl mx-auto space-y-8">
-        <Button variant="ghost" onClick={() => navigate(-1)}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back
-        </Button>
+  const handlePurchase = async () => {
+    if (!product || !user) return;
 
-        <div className="grid md:grid-cols-2 gap-8">
-          {/* Product Details */}
+    const totalAmount = product.price * quantity;
+
+    if (!profile || profile.wallet_balance < totalAmount) {
+      toast({
+        title: 'Insufficient Balance',
+        description: 'Please add funds to your wallet first',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (product.stock_quantity < quantity) {
+      toast({
+        title: 'Insufficient Stock',
+        description: 'Not enough items in stock',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setPurchasing(true);
+    try {
+      await purchaseWithWallet(product.id, quantity, playerId || undefined);
+
+      toast({
+        title: 'Purchase Successful',
+        description: 'Your order has been completed successfully',
+      });
+
+      navigate('/orders');
+    } catch (error: any) {
+      console.error('Error purchasing:', error);
+      toast({
+        title: 'Purchase Failed',
+        description: error.message || 'Failed to complete purchase',
+        variant: 'destructive',
+      });
+    } finally {
+      setPurchasing(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return null;
+  }
+
+  const totalAmount = product.price * quantity;
+  const hasInsufficientBalance = !profile || profile.wallet_balance < totalAmount;
+
+  return (
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">Checkout</h1>
+        <p className="text-muted-foreground">
+          Complete your purchase using wallet balance
+        </p>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Order Summary */}
+        <div className="lg:col-span-2 space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Order Summary</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <ShoppingCart className="w-5 h-5" />
+                Order Summary
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="relative h-48 rounded-lg overflow-hidden bg-muted">
-                <img
-                  src={product.image_url || 'https://images.unsplash.com/photo-1607252650355-f7fd0460ccdb?w=400'}
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg">{product.name}</h3>
-                <p className="text-sm text-muted-foreground">{product.description}</p>
-              </div>
-              <div className="flex items-center justify-between pt-4 border-t border-border">
-                <span className="text-muted-foreground">Price</span>
-                <span className="text-2xl font-bold text-primary">
-                  ${product.price.toFixed(2)} {product.currency.toUpperCase()}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Payment Details */}
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Payment Method</CardTitle>
-                <CardDescription>Choose how you want to pay</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <RadioGroup value={paymentMethod} onValueChange={(value) => setPaymentMethod(value as 'wallet' | 'card')}>
-                  <div className="flex items-center space-x-2 p-4 rounded-lg border border-border cursor-pointer hover:bg-muted/50">
-                    <RadioGroupItem value="card" id="card" />
-                    <Label htmlFor="card" className="flex-1 cursor-pointer">
-                      <div className="flex items-center space-x-3">
-                        <CreditCard className="h-5 w-5" />
-                        <div>
-                          <p className="font-medium">Credit/Debit Card</p>
-                          <p className="text-xs text-muted-foreground">Pay securely with Stripe</p>
-                        </div>
-                      </div>
-                    </Label>
+            <CardContent>
+              <div className="flex gap-4">
+                {product.image_url && (
+                  <img
+                    src={product.image_url}
+                    alt={product.name}
+                    className="w-24 h-24 object-cover rounded-lg"
+                  />
+                )}
+                <div className="flex-1">
+                  <h3 className="font-semibold text-lg">{product.name}</h3>
+                  {product.description && (
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {product.description}
+                    </p>
+                  )}
+                  <div className="mt-2 flex items-center gap-4">
+                    <span className="text-lg font-bold text-primary">
+                      ${product.price.toFixed(2)}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      Stock: {product.stock_quantity}
+                    </span>
                   </div>
-                  <div className="flex items-center space-x-2 p-4 rounded-lg border border-border cursor-pointer hover:bg-muted/50">
-                    <RadioGroupItem value="wallet" id="wallet" />
-                    <Label htmlFor="wallet" className="flex-1 cursor-pointer">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <Wallet className="h-5 w-5" />
-                          <div>
-                            <p className="font-medium">Wallet Balance</p>
-                            <p className="text-xs text-muted-foreground">
-                              Available: ${profile?.wallet_balance?.toFixed(2) || '0.00'}
-                            </p>
-                          </div>
-                        </div>
-                        {profile && profile.wallet_balance < product.price && (
-                          <span className="text-xs text-red-500">Insufficient</span>
-                        )}
-                      </div>
-                    </Label>
-                  </div>
-                </RadioGroup>
-              </CardContent>
-            </Card>
+                </div>
+              </div>
 
-            {(product.category === 'game' || product.category === 'app') && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Player Information</CardTitle>
-                  <CardDescription>Enter your player ID for delivery</CardDescription>
-                </CardHeader>
-                <CardContent>
+              <div className="mt-6 space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="quantity">Quantity</Label>
+                  <Input
+                    id="quantity"
+                    type="number"
+                    min="1"
+                    max={product.stock_quantity}
+                    value={quantity}
+                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                  />
+                </div>
+
+                {product.category === 'game' && (
                   <div className="space-y-2">
                     <Label htmlFor="player-id">Player ID (Optional)</Label>
                     <Input
@@ -185,26 +201,103 @@ export default function CheckoutPage() {
                       onChange={(e) => setPlayerId(e.target.value)}
                     />
                     <p className="text-xs text-muted-foreground">
-                      If provided, the product will be delivered directly to this ID
+                      Enter your in-game player ID for automatic delivery
                     </p>
                   </div>
-                </CardContent>
-              </Card>
-            )}
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-            <Card>
-              <CardFooter className="pt-6">
+        {/* Payment Section */}
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Wallet className="w-5 h-5" />
+                Wallet Balance
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="bg-muted p-4 rounded-lg">
+                <div className="text-sm text-muted-foreground mb-1">Available Balance</div>
+                <div className="text-2xl font-bold">
+                  ${profile?.wallet_balance.toFixed(2) || '0.00'}
+                </div>
+              </div>
+
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Subtotal</span>
+                  <span>${(product.price * quantity).toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between font-semibold text-base pt-2 border-t">
+                  <span>Total</span>
+                  <span className="text-primary">${totalAmount.toFixed(2)}</span>
+                </div>
+                {profile && (
+                  <div className="flex justify-between text-muted-foreground">
+                    <span>Balance After</span>
+                    <span>${(profile.wallet_balance - totalAmount).toFixed(2)}</span>
+                  </div>
+                )}
+              </div>
+
+              {hasInsufficientBalance && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    Insufficient balance. Please add funds to your wallet.
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              <div className="space-y-2">
                 <Button
-                  className="w-full gradient-bg"
+                  onClick={handlePurchase}
+                  disabled={purchasing || hasInsufficientBalance || product.stock_quantity < quantity}
+                  className="w-full"
                   size="lg"
-                  onClick={handleCheckout}
-                  disabled={loading}
                 >
-                  {loading ? 'Processing...' : `Pay $${product.price.toFixed(2)}`}
+                  {purchasing ? 'Processing...' : 'Complete Purchase'}
                 </Button>
-              </CardFooter>
-            </Card>
-          </div>
+
+                {hasInsufficientBalance && (
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate('/add-balance')}
+                    className="w-full"
+                  >
+                    Add Balance
+                  </Button>
+                )}
+
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate('/')}
+                  className="w-full"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-muted/50">
+            <CardHeader>
+              <CardTitle className="text-sm">Payment Method</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-2 text-sm">
+                <Wallet className="w-4 h-4 text-primary" />
+                <span>Wallet Balance Only</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                All purchases must be made using your wallet balance. Add funds to your wallet to continue.
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

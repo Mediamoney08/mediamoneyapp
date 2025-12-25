@@ -10,6 +10,7 @@ import SupportPage from './pages/SupportPage';
 import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import NotificationsPage from './pages/NotificationsPage';
 import CheckoutPage from './pages/CheckoutPage';
+import AdminDashboardPage from './pages/AdminDashboardPage';
 import type { ReactNode } from 'react';
 
 interface RouteConfig {
@@ -66,6 +67,12 @@ const routes: RouteConfig[] = [
     name: 'Security',
     path: '/security',
     element: <SecurityPage />,
+    visible: false,
+  },
+  {
+    name: 'Admin Dashboard',
+    path: '/admin',
+    element: <AdminDashboardPage />,
     visible: false,
   },
   {
