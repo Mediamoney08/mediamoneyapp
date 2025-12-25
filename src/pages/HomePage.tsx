@@ -254,40 +254,30 @@ export default function HomePage() {
                       </CardContent>
                     </Card>
                   ) : (
-                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    <div className="grid gap-3 grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                       {filteredCategories.map((category) => (
                         <Card
                           key={category.id}
-                          className="group hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden border-2 hover:border-primary"
+                          className="group hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden border hover:border-primary"
                           onClick={() => handleCategoryClick(category)}
                         >
                           {category.image_url ? (
-                            <div className="relative aspect-video overflow-hidden bg-muted">
+                            <div className="relative aspect-square overflow-hidden bg-muted">
                               <img
                                 src={category.image_url}
                                 alt={category.name}
                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                               />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                              <div className="absolute bottom-0 left-0 right-0 p-4">
-                                <h3 className="text-white font-bold text-lg drop-shadow-lg">{category.name}</h3>
-                                {category.description && (
-                                  <p className="text-white/90 text-sm line-clamp-1 drop-shadow-md">
-                                    {category.description}
-                                  </p>
-                                )}
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                              <div className="absolute bottom-0 left-0 right-0 p-2">
+                                <h3 className="text-white font-semibold text-xs xl:text-sm drop-shadow-lg line-clamp-2">{category.name}</h3>
                               </div>
                             </div>
                           ) : (
-                            <div className="aspect-video bg-muted flex items-center justify-center">
-                              <div className="text-center p-4">
-                                <Package className="w-12 h-12 mx-auto text-muted-foreground mb-2" />
-                                <h3 className="font-bold text-lg">{category.name}</h3>
-                                {category.description && (
-                                  <p className="text-sm text-muted-foreground line-clamp-2">
-                                    {category.description}
-                                  </p>
-                                )}
+                            <div className="aspect-square bg-muted flex items-center justify-center">
+                              <div className="text-center p-2">
+                                <Package className="w-6 h-6 xl:w-8 xl:h-8 mx-auto text-muted-foreground mb-1" />
+                                <h3 className="font-semibold text-xs xl:text-sm line-clamp-2">{category.name}</h3>
                               </div>
                             </div>
                           )}
