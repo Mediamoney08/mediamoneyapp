@@ -4,10 +4,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { getCategories, getProductsByCategory } from '@/db/api';
-import type { Category, Product, ServiceCategory } from '@/types/types';
-import { Search, Gamepad2, Tv, Gift, Smartphone, ArrowLeft, Package } from 'lucide-react';
+import { getCategories, getProductsByCategory, getPriceBreakdown, getProfile } from '@/db/api';
+import type { Category, Product, ServiceCategory, PriceCalculation } from '@/types/types';
+import { Search, Gamepad2, Tv, Gift, Smartphone, ArrowLeft, Package, TrendingDown } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useAuth } from '@/contexts/AuthContext';
 
 const SERVICE_ICONS = {
   game: Gamepad2,
@@ -25,6 +26,7 @@ const SERVICE_LABELS = {
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedService, setSelectedService] = useState<ServiceCategory>('game');
@@ -32,6 +34,8 @@ export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userPrices, setUserPrices] = useState<Record<string, PriceCalculation>>({});
+  const [userLevelName, setUserLevelName] = useState<string | null>(null);
 
   useEffect(() => {
     const service = searchParams.get('service') as ServiceCategory;
@@ -71,8 +75,42 @@ export default function HomePage() {
     try {
       const prods = await getProductsByCategory(categoryId);
       setProducts(prods);
+      
+      // Load user-specific prices if user is logged in
+      if (user) {
+        await loadUserPrices(prods);
+        await loadUserLevel();
+      }
     } catch (error) {
       console.error('Error loading products:', error);
+    }
+  };
+
+  const loadUserPrices = async (prods: Product[]) => {
+    if (!user) return;
+    
+    try {
+      const prices: Record<string, PriceCalculation> = {};
+      for (const product of prods) {
+        const priceCalc = await getPriceBreakdown(user.id, product.id);
+        prices[product.id] = priceCalc;
+      }
+      setUserPrices(prices);
+    } catch (error) {
+      console.error('Error loading user prices:', error);
+    }
+  };
+
+  const loadUserLevel = async () => {
+    if (!user) return;
+    
+    try {
+      const profile = await getProfile(user.id);
+      if (profile && (profile as any).user_level_name) {
+        setUserLevelName((profile as any).user_level_name);
+      }
+    } catch (error) {
+      console.error('Error loading user level:', error);
     }
   };
 
@@ -123,6 +161,14 @@ export default function HomePage() {
       {/* Search Bar Section */}
       <section className="container mx-auto px-4 pb-6">
         <div className="max-w-2xl mx-auto">
+          {user && userLevelName && (
+            <div className="flex justify-center mb-4">
+              <Badge variant="secondary" className="text-sm py-1 px-3">
+                <span className="mr-2">🏆</span>
+                {userLevelName} Member
+              </Badge>
+            </div>
+          )}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
             <Input
@@ -214,11 +260,37 @@ export default function HomePage() {
                           </CardHeader>
                           <CardContent>
                             <div className="flex items-center justify-between">
-                              <div>
-                                <div className="text-2xl font-bold text-primary">
-                                  ${product.price.toFixed(2)}
-                                </div>
-                                <div className="text-sm text-muted-foreground">
+                              <div className="flex-1">
+                                {user && userPrices[product.id] ? (
+                                  <div>
+                                    <div className="flex items-center gap-2">
+                                      <div className="text-2xl font-bold text-primary">
+                                        ${userPrices[product.id].final_price.toFixed(2)}
+                                      </div>
+                                      {userPrices[product.id].discount_percentage > 0 && (
+                                        <Badge variant="secondary" className="bg-green-100 text-green-800">
+                                          <TrendingDown className="w-3 h-3 mr-1" />
+                                          {userPrices[product.id].discount_percentage.toFixed(0)}% OFF
+                                        </Badge>
+                                      )}
+                                    </div>
+                                    {userPrices[product.id].discount_percentage > 0 && (
+                                      <div className="text-sm text-muted-foreground line-through">
+                                        ${userPrices[product.id].base_price.toFixed(2)}
+                                      </div>
+                                    )}
+                                    {userPrices[product.id].discount_reason && (
+                                      <div className="text-xs text-muted-foreground mt-1">
+                                        {userPrices[product.id].discount_reason}
+                                      </div>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <div className="text-2xl font-bold text-primary">
+                                    ${product.price.toFixed(2)}
+                                  </div>
+                                )}
+                                <div className="text-sm text-muted-foreground mt-1">
                                   Stock: {product.stock_quantity}
                                 </div>
                               </div>

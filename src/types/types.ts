@@ -294,3 +294,85 @@ export interface ApiKey {
   created_at: string;
   updated_at: string;
 }
+
+// Provider types
+export type ApiType = 'rest' | 'graphql' | 'soap';
+
+export interface Provider {
+  id: string;
+  name: string;
+  description: string | null;
+  api_endpoint: string;
+  api_key: string | null;
+  api_type: ApiType;
+  is_active: boolean;
+  config: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+}
+
+// User Level types
+export interface UserLevel {
+  id: string;
+  name: string;
+  description: string | null;
+  discount_percentage: number;
+  min_spent: number;
+  color: string;
+  priority: number;
+  benefits: string[];
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// Custom Rate types
+export interface CustomRate {
+  id: string;
+  user_id: string;
+  product_id: string;
+  custom_price: number;
+  discount_percentage: number | null;
+  note: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// Global Settings types
+export interface GlobalSetting {
+  id: string;
+  key: string;
+  value: string;
+  description: string | null;
+  updated_at: string;
+}
+
+// Extended Product with pricing fields
+export interface ProductWithPricing extends Product {
+  provider_id: string | null;
+  provider_product_id: string | null;
+  base_price: number | null;
+  profit_margin: number;
+  use_global_margin: boolean;
+}
+
+// Extended Profile with user level
+export interface ProfileWithLevel extends Profile {
+  user_level_id: string | null;
+  total_spent: number;
+  user_level?: UserLevel;
+}
+
+// Price calculation result
+export interface PriceCalculation {
+  base_price: number;
+  profit_margin: number;
+  price_with_margin: number;
+  user_level_discount: number;
+  custom_rate: number | null;
+  final_price: number;
+  savings: number;
+  discount_percentage: number;
+  discount_reason: string | null;
+}

@@ -9,6 +9,7 @@ import { getOrders, verifyPayment, getOrderStockCodes } from '@/db/api';
 import type { Order, StockItem } from '@/types/types';
 import { Package, RefreshCw, Key, Copy, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import InvoiceDialog from '@/components/InvoiceDialog';
 
 const statusColors = {
   pending: 'bg-yellow-500',
@@ -227,25 +228,25 @@ export default function OrdersPage() {
                         })}
                       </div>
                       
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => loadStockCodes(order.id)}
-                            className="mt-2"
-                          >
-                            <Key className="mr-2 h-4 w-4" />
-                            View Codes
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-2xl">
-                          <DialogHeader>
-                            <DialogTitle>Order Codes</DialogTitle>
-                            <DialogDescription>
-                              Your purchased codes for order #{order.id.slice(0, 8)}
-                            </DialogDescription>
-                          </DialogHeader>
+                      <div className="flex gap-2 mt-2">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => loadStockCodes(order.id)}
+                            >
+                              <Key className="mr-2 h-4 w-4" />
+                              View Codes
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-2xl">
+                            <DialogHeader>
+                              <DialogTitle>Order Codes</DialogTitle>
+                              <DialogDescription>
+                                Your purchased codes for order #{order.id.slice(0, 8)}
+                              </DialogDescription>
+                            </DialogHeader>
                           
                           {loadingCodes === order.id ? (
                             <div className="space-y-2">
@@ -289,6 +290,9 @@ export default function OrdersPage() {
                           )}
                         </DialogContent>
                       </Dialog>
+                      
+                      <InvoiceDialog order={order} />
+                    </div>
                     </>
                   )}
                 </CardContent>

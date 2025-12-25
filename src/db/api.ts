@@ -24,6 +24,11 @@ import type {
   ApiKeyVersion,
   ApiKeyStatus,
   ApiPermissions,
+  Provider,
+  UserLevel,
+  CustomRate,
+  GlobalSetting,
+  PriceCalculation,
 } from '@/types/types';
 
 // Profile APIs
@@ -1236,4 +1241,247 @@ export const getOrderStockCodes = async (orderId: string, userId: string): Promi
 
   if (error) throw error;
   return Array.isArray(data) ? data : [];
+};
+
+// ============================================================================
+// Provider Management
+// ============================================================================
+
+export const getAllProviders = async (): Promise<Provider[]> => {
+  const { data, error } = await supabase
+    .from('providers')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return Array.isArray(data) ? data : [];
+};
+
+export const getProvider = async (id: string): Promise<Provider | null> => {
+  const { data, error } = await supabase
+    .from('providers')
+    .select('*')
+    .eq('id', id)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+};
+
+export const createProvider = async (provider: Partial<Provider>): Promise<Provider> => {
+  const { data, error } = await supabase
+    .from('providers')
+    .insert(provider)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const updateProvider = async (id: string, updates: Partial<Provider>): Promise<Provider> => {
+  const { data, error } = await supabase
+    .from('providers')
+    .update({ ...updates, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const deleteProvider = async (id: string): Promise<void> => {
+  const { error } = await supabase
+    .from('providers')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+};
+
+// ============================================================================
+// User Level Management
+// ============================================================================
+
+export const getAllUserLevels = async (): Promise<UserLevel[]> => {
+  const { data, error } = await supabase
+    .from('user_levels')
+    .select('*')
+    .order('priority', { ascending: false });
+
+  if (error) throw error;
+  return Array.isArray(data) ? data : [];
+};
+
+export const getUserLevel = async (id: string): Promise<UserLevel | null> => {
+  const { data, error } = await supabase
+    .from('user_levels')
+    .select('*')
+    .eq('id', id)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+};
+
+export const createUserLevel = async (level: Partial<UserLevel>): Promise<UserLevel> => {
+  const { data, error } = await supabase
+    .from('user_levels')
+    .insert(level)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const updateUserLevel = async (id: string, updates: Partial<UserLevel>): Promise<UserLevel> => {
+  const { data, error } = await supabase
+    .from('user_levels')
+    .update({ ...updates, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const deleteUserLevel = async (id: string): Promise<void> => {
+  const { error } = await supabase
+    .from('user_levels')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+};
+
+// ============================================================================
+// Custom Rate Management
+// ============================================================================
+
+export const getAllCustomRates = async (): Promise<CustomRate[]> => {
+  const { data, error } = await supabase
+    .from('custom_rates')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return Array.isArray(data) ? data : [];
+};
+
+export const getCustomRate = async (userId: string, productId: string): Promise<CustomRate | null> => {
+  const { data, error } = await supabase
+    .from('custom_rates')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('product_id', productId)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+};
+
+export const createCustomRate = async (rate: Partial<CustomRate>): Promise<CustomRate> => {
+  const { data, error } = await supabase
+    .from('custom_rates')
+    .insert(rate)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const updateCustomRate = async (id: string, updates: Partial<CustomRate>): Promise<CustomRate> => {
+  const { data, error } = await supabase
+    .from('custom_rates')
+    .update({ ...updates, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const deleteCustomRate = async (id: string): Promise<void> => {
+  const { error } = await supabase
+    .from('custom_rates')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+};
+
+// ============================================================================
+// Global Settings Management
+// ============================================================================
+
+export const getGlobalSetting = async (key: string): Promise<GlobalSetting | null> => {
+  const { data, error } = await supabase
+    .from('global_settings')
+    .select('*')
+    .eq('key', key)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+};
+
+export const updateGlobalSetting = async (key: string, value: string): Promise<GlobalSetting> => {
+  const { data, error } = await supabase
+    .from('global_settings')
+    .update({ value, updated_at: new Date().toISOString() })
+    .eq('key', key)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const getGlobalProfitMargin = async (): Promise<number> => {
+  const setting = await getGlobalSetting('global_profit_margin');
+  return setting ? parseFloat(setting.value) : 10;
+};
+
+export const updateGlobalProfitMargin = async (margin: number): Promise<void> => {
+  await updateGlobalSetting('global_profit_margin', margin.toString());
+};
+
+// ============================================================================
+// Price Calculation
+// ============================================================================
+
+export const calculateUserPrice = async (userId: string, productId: string): Promise<number> => {
+  const { data, error } = await supabase.rpc('calculate_user_price', {
+    p_user_id: userId,
+    p_product_id: productId,
+  });
+
+  if (error) throw error;
+  return data || 0;
+};
+
+export const getPriceBreakdown = async (userId: string, productId: string): Promise<PriceCalculation> => {
+  const { data, error } = await supabase.rpc('get_price_details', {
+    p_user_id: userId,
+    p_product_id: productId,
+  });
+
+  if (error) throw error;
+  
+  return {
+    base_price: data.base_price,
+    profit_margin: data.profit_margin,
+    price_with_margin: data.price_with_margin,
+    user_level_discount: data.user_level_discount,
+    custom_rate: data.custom_rate,
+    final_price: data.final_price,
+    savings: data.savings,
+    discount_percentage: data.discount_percentage,
+    discount_reason: data.discount_reason,
+  };
 };

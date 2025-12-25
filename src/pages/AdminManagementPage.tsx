@@ -10,6 +10,10 @@ import { useToast } from '@/hooks/use-toast';
 import BannerManagement from '@/components/admin/BannerManagement';
 import StockManagement from '@/components/admin/StockManagement';
 import ApiKeyManagement from '@/components/admin/ApiKeyManagement';
+import ProviderManagement from '@/components/admin/ProviderManagement';
+import UserLevelManagement from '@/components/admin/UserLevelManagement';
+import CustomRateManagement from '@/components/admin/CustomRateManagement';
+import ProfitMarginSettings from '@/components/admin/ProfitMarginSettings';
 import { 
   getAllCategoriesAdmin, 
   createCategory, 
@@ -51,7 +55,10 @@ import {
   XCircle,
   Clock,
   Key,
-  Database
+  Database,
+  Server,
+  Award,
+  TrendingUp
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -456,7 +463,7 @@ export default function AdminManagementPage() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-9 mb-8">
+        <TabsList className="grid w-full grid-cols-13 mb-8">
           <TabsTrigger value="categories">
             <Package className="w-4 h-4 mr-2" />
             Categories
@@ -468,6 +475,22 @@ export default function AdminManagementPage() {
           <TabsTrigger value="stock">
             <Database className="w-4 h-4 mr-2" />
             Stock
+          </TabsTrigger>
+          <TabsTrigger value="providers">
+            <Server className="w-4 h-4 mr-2" />
+            Providers
+          </TabsTrigger>
+          <TabsTrigger value="profit-margin">
+            <TrendingUp className="w-4 h-4 mr-2" />
+            Margins
+          </TabsTrigger>
+          <TabsTrigger value="user-levels">
+            <Award className="w-4 h-4 mr-2" />
+            Levels
+          </TabsTrigger>
+          <TabsTrigger value="custom-rates">
+            <DollarSign className="w-4 h-4 mr-2" />
+            Rates
           </TabsTrigger>
           <TabsTrigger value="users">
             <Users className="w-4 h-4 mr-2" />
@@ -804,6 +827,26 @@ export default function AdminManagementPage() {
         {/* API Keys Tab */}
         <TabsContent value="api-keys">
           <ApiKeyManagement />
+        </TabsContent>
+
+        {/* Providers Tab */}
+        <TabsContent value="providers">
+          <ProviderManagement />
+        </TabsContent>
+
+        {/* Profit Margin Tab */}
+        <TabsContent value="profit-margin">
+          <ProfitMarginSettings />
+        </TabsContent>
+
+        {/* User Levels Tab */}
+        <TabsContent value="user-levels">
+          <UserLevelManagement />
+        </TabsContent>
+
+        {/* Custom Rates Tab */}
+        <TabsContent value="custom-rates">
+          <CustomRateManagement />
         </TabsContent>
       </Tabs>
     </div>
