@@ -771,6 +771,9 @@ export const getUserNotifications = async (userId: string, limit: number = 50): 
   return Array.isArray(data) ? data : [];
 };
 
+// Backward compatibility alias
+export const getNotifications = getUserNotifications;
+
 export const getUnreadNotificationCount = async (userId: string): Promise<number> => {
   const { count, error } = await supabase
     .from('notifications')
