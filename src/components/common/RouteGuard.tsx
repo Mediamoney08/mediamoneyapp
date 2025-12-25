@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface RouteGuardProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 // Please add the pages that can be accessed without logging in to PUBLIC_ROUTES.
