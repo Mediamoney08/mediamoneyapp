@@ -14,6 +14,8 @@ import ProviderManagement from '@/components/admin/ProviderManagement';
 import UserLevelManagement from '@/components/admin/UserLevelManagement';
 import CustomRateManagement from '@/components/admin/CustomRateManagement';
 import ProfitMarginSettings from '@/components/admin/ProfitMarginSettings';
+import ProductFieldsManagement from '@/components/admin/ProductFieldsManagement';
+import SiteSettingsManagement from '@/components/admin/SiteSettingsManagement';
 import { 
   getAllCategoriesAdmin, 
   createCategory, 
@@ -58,7 +60,9 @@ import {
   Database,
   Server,
   Award,
-  TrendingUp
+  TrendingUp,
+  Layers,
+  Image
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -463,7 +467,7 @@ export default function AdminManagementPage() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-13 mb-8">
+        <TabsList className="grid w-full grid-cols-15 mb-8">
           <TabsTrigger value="categories">
             <Package className="w-4 h-4 mr-2" />
             Categories
@@ -471,6 +475,10 @@ export default function AdminManagementPage() {
           <TabsTrigger value="products">
             <ShoppingCart className="w-4 h-4 mr-2" />
             Products
+          </TabsTrigger>
+          <TabsTrigger value="product-fields">
+            <Layers className="w-4 h-4 mr-2" />
+            Fields
           </TabsTrigger>
           <TabsTrigger value="stock">
             <Database className="w-4 h-4 mr-2" />
@@ -507,6 +515,10 @@ export default function AdminManagementPage() {
           <TabsTrigger value="payment-methods">
             <Settings className="w-4 h-4 mr-2" />
             Methods
+          </TabsTrigger>
+          <TabsTrigger value="site-settings">
+            <Image className="w-4 h-4 mr-2" />
+            Site
           </TabsTrigger>
           <TabsTrigger value="banners">
             <Settings className="w-4 h-4 mr-2" />
@@ -827,6 +839,16 @@ export default function AdminManagementPage() {
         {/* API Keys Tab */}
         <TabsContent value="api-keys">
           <ApiKeyManagement />
+        </TabsContent>
+
+        {/* Product Fields Tab */}
+        <TabsContent value="product-fields">
+          <ProductFieldsManagement />
+        </TabsContent>
+
+        {/* Site Settings Tab */}
+        <TabsContent value="site-settings">
+          <SiteSettingsManagement />
         </TabsContent>
 
         {/* Providers Tab */}

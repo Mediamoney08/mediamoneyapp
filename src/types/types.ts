@@ -376,3 +376,46 @@ export interface PriceCalculation {
   discount_percentage: number;
   discount_reason: string | null;
 }
+
+// Product Field Types
+export interface ProductField {
+  id: string;
+  product_id: string;
+  field_name: string;
+  field_value: string;
+  field_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+// Site Settings Types
+export type SettingType = 'text' | 'image' | 'video' | 'json';
+
+export interface SiteSetting {
+  id: string;
+  setting_key: string;
+  setting_value: string;
+  setting_type: SettingType;
+  created_at: string;
+  updated_at: string;
+}
+
+// Banner Types
+export type BannerMediaType = 'image' | 'gif';
+
+export interface SiteBanner {
+  id: string;
+  title: string;
+  media_url: string;
+  media_type: BannerMediaType;
+  link_url: string | null;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// Product with fields
+export interface ProductWithFields extends Product {
+  fields?: ProductField[];
+}

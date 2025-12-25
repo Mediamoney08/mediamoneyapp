@@ -4,11 +4,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { getCategories, getProductsByCategory, getPriceBreakdown, getProfile } from '@/db/api';
-import type { Category, Product, ServiceCategory, PriceCalculation } from '@/types/types';
+import { getCategories, getProductsByCategory, getPriceBreakdown, getProfile, getNewSiteSetting, getProductFields } from '@/db/api';
+import type { Category, Product, ServiceCategory, PriceCalculation, ProductField } from '@/types/types';
 import { Search, Gamepad2, Tv, Gift, Smartphone, ArrowLeft, Package, TrendingDown } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
+import BannerCarousel from '@/components/BannerCarousel';
 
 const SERVICE_ICONS = {
   game: Gamepad2,
@@ -36,6 +37,9 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [userPrices, setUserPrices] = useState<Record<string, PriceCalculation>>({});
   const [userLevelName, setUserLevelName] = useState<string | null>(null);
+  const [siteLogo, setSiteLogo] = useState<string>('');
+  const [logoType, setLogoType] = useState<string>('image');
+  const [productFields, setProductFields] = useState<Record<string, ProductField[]>>({});
 
   useEffect(() => {
     const service = searchParams.get('service') as ServiceCategory;
@@ -76,6 +80,9 @@ export default function HomePage() {
       const prods = await getProductsByCategory(categoryId);
       setProducts(prods);
       
+      // Load product fields
+      await loadProductFields(prods);
+      
       // Load user-specific prices if user is logged in
       if (user) {
         await loadUserPrices(prods);
@@ -114,6 +121,41 @@ export default function HomePage() {
     }
   };
 
+  const loadSiteLogo = async () => {
+    try {
+      const logoSetting = await getNewSiteSetting('site_logo');
+      const logoTypeSetting = await getNewSiteSetting('site_logo_type');
+      
+      if (logoSetting) {
+        setSiteLogo(logoSetting.setting_value);
+      }
+      if (logoTypeSetting) {
+        setLogoType(logoTypeSetting.setting_value);
+      }
+    } catch (error) {
+      console.error('Error loading site logo:', error);
+    }
+  };
+
+  const loadProductFields = async (prods: Product[]) => {
+    try {
+      const fieldsMap: Record<string, ProductField[]> = {};
+      for (const product of prods) {
+        const fields = await getProductFields(product.id);
+        if (fields.length > 0) {
+          fieldsMap[product.id] = fields;
+        }
+      }
+      setProductFields(fieldsMap);
+    } catch (error) {
+      console.error('Error loading product fields:', error);
+    }
+  };
+
+  useEffect(() => {
+    loadSiteLogo();
+  }, []);
+
   const handleServiceChange = (service: ServiceCategory) => {
     setSelectedService(service);
     setSearchParams({ service });
@@ -145,24 +187,45 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden py-8 px-4">
-        <div className="absolute inset-0 from-primary/10 via-secondary/10 to-accent/10 animate-gradient border-solid border-[rgb(229,231,235)] bg-[#f9f9f9ff] bg-none border-[0px] border-[#f1f1f1ff]"></div>
+      {/* Logo Section */}
+      <section className="relative overflow-hidden py-6 px-4">
         <div className="container relative mx-auto text-center">
-          <h1 className="text-3xl md:text-5xl font-bold mb-3 animate-fadeInUp">
-            <span className="gradient-text">MediaMoney</span>
-          </h1>
-          <p className="text-lg text-muted-foreground mb-4 max-w-2xl mx-auto animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
-            Your one-stop destination for game top-ups, streaming subscriptions, and digital gift cards
-          </p>
+          {siteLogo && (
+            <div className="flex justify-center mb-2">
+              {logoType === 'video' ? (
+                <video
+                  src={siteLogo}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="h-16 md:h-20 object-contain"
+                />
+              ) : (
+                <img
+                  src={siteLogo}
+                  alt="MediaMoney"
+                  className="h-16 md:h-20 object-contain"
+                />
+              )}
+            </div>
+          )}
+          {!siteLogo && (
+            <h1 className="text-3xl md:text-5xl font-bold mb-2 animate-fadeInUp">
+              <span className="gradient-text">MediaMoney</span>
+            </h1>
+          )}
         </div>
       </section>
-      
+
+      {/* Banner Carousel */}
+      <BannerCarousel />
+
       {/* Search Bar Section */}
-      <section className="container mx-auto px-4 pb-6">
-        <div className="max-w-2xl mx-auto">
+      <section className="container mx-auto px-4 pb-6 pt-4">
+        <div className="max-w-xl mx-auto">
           {user && userLevelName && (
-            <div className="flex justify-center mb-4">
+            <div className="flex justify-center mb-3">
               <Badge variant="secondary" className="text-sm py-1 px-3">
                 <span className="mr-2">🏆</span>
                 {userLevelName} Member
@@ -170,13 +233,13 @@ export default function HomePage() {
             </div>
           )}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               type="text"
               placeholder="Search for games, services, or gift cards..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-12 text-lg rounded-[4px]"
+              className="pl-9 h-10 text-base rounded-[4px]"
             />
           </div>
         </div>
@@ -293,6 +356,16 @@ export default function HomePage() {
                                 <div className="text-sm text-muted-foreground mt-1">
                                   Stock: {product.stock_quantity}
                                 </div>
+                                {/* Custom Fields */}
+                                {productFields[product.id] && productFields[product.id].length > 0 && (
+                                  <div className="mt-2 space-y-1">
+                                    {productFields[product.id].map((field) => (
+                                      <div key={field.id} className="text-xs text-muted-foreground">
+                                        <span className="font-medium">{field.field_name}:</span> {field.field_value}
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
                               </div>
                               <Button size="sm">
                                 Buy Now

@@ -1485,3 +1485,167 @@ export const getPriceBreakdown = async (userId: string, productId: string): Prom
     discount_reason: data.discount_reason,
   };
 };
+
+// ==================== Product Fields API ====================
+
+export const getProductFields = async (productId: string) => {
+  const { data, error } = await supabase
+    .from('product_fields')
+    .select('*')
+    .eq('product_id', productId)
+    .order('field_order', { ascending: true });
+
+  if (error) throw error;
+  return Array.isArray(data) ? data : [];
+};
+
+export const createProductField = async (fieldData: {
+  product_id: string;
+  field_name: string;
+  field_value: string;
+  field_order?: number;
+}) => {
+  const { data, error } = await supabase
+    .from('product_fields')
+    .insert([fieldData])
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const updateProductField = async (id: string, updates: {
+  field_name?: string;
+  field_value?: string;
+  field_order?: number;
+}) => {
+  const { data, error } = await supabase
+    .from('product_fields')
+    .update({ ...updates, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const deleteProductField = async (id: string) => {
+  const { error } = await supabase
+    .from('product_fields')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+};
+
+// ==================== Site Settings API (New) ====================
+
+export const getNewSiteSetting = async (key: string) => {
+  const { data, error } = await supabase
+    .from('site_settings')
+    .select('*')
+    .eq('setting_key', key)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+};
+
+export const getAllNewSiteSettings = async () => {
+  const { data, error } = await supabase
+    .from('site_settings')
+    .select('*')
+    .order('setting_key');
+
+  if (error) throw error;
+  return Array.isArray(data) ? data : [];
+};
+
+export const updateNewSiteSetting = async (key: string, value: string, type?: string) => {
+  const { data, error } = await supabase
+    .from('site_settings')
+    .upsert({
+      setting_key: key,
+      setting_value: value,
+      setting_type: type || 'text',
+      updated_at: new Date().toISOString(),
+    }, {
+      onConflict: 'setting_key'
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+// ==================== Site Banners API (New) ====================
+
+export const getNewActiveBanners = async () => {
+  const { data, error } = await supabase
+    .from('site_banners')
+    .select('*')
+    .eq('is_active', true)
+    .order('display_order', { ascending: true });
+
+  if (error) throw error;
+  return Array.isArray(data) ? data : [];
+};
+
+export const getAllNewBanners = async () => {
+  const { data, error } = await supabase
+    .from('site_banners')
+    .select('*')
+    .order('display_order', { ascending: true });
+
+  if (error) throw error;
+  return Array.isArray(data) ? data : [];
+};
+
+export const createNewBanner = async (bannerData: {
+  title: string;
+  media_url: string;
+  media_type?: string;
+  link_url?: string;
+  display_order?: number;
+  is_active?: boolean;
+}) => {
+  const { data, error } = await supabase
+    .from('site_banners')
+    .insert([bannerData])
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const updateNewBanner = async (id: string, updates: {
+  title?: string;
+  media_url?: string;
+  media_type?: string;
+  link_url?: string;
+  display_order?: number;
+  is_active?: boolean;
+}) => {
+  const { data, error } = await supabase
+    .from('site_banners')
+    .update({ ...updates, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const deleteNewBanner = async (id: string) => {
+  const { error } = await supabase
+    .from('site_banners')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+};
