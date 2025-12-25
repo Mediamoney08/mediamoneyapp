@@ -62,6 +62,26 @@ export default function LoginPage() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validate username
+    if (signUpForm.username.length < 3) {
+      toast({
+        title: 'Invalid Username',
+        description: 'Username must be at least 3 characters',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Validate username format (alphanumeric and underscore only)
+    if (!/^[a-zA-Z0-9_]+$/.test(signUpForm.username)) {
+      toast({
+        title: 'Invalid Username',
+        description: 'Username can only contain letters, numbers, and underscores',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     if (signUpForm.password !== signUpForm.confirmPassword) {
       toast({
         title: 'Password Mismatch',
@@ -71,19 +91,25 @@ export default function LoginPage() {
       return;
     }
 
-    if (signUpForm.password.length < 6) {
+    // Enhanced password validation
+    if (signUpForm.password.length < 8) {
       toast({
         title: 'Weak Password',
-        description: 'Password must be at least 6 characters',
+        description: 'Password must be at least 8 characters',
         variant: 'destructive',
       });
       return;
     }
 
-    if (!/^[a-zA-Z0-9_]+$/.test(signUpForm.username)) {
+    // Check for password complexity
+    const hasUpperCase = /[A-Z]/.test(signUpForm.password);
+    const hasLowerCase = /[a-z]/.test(signUpForm.password);
+    const hasNumber = /[0-9]/.test(signUpForm.password);
+    
+    if (!hasUpperCase || !hasLowerCase || !hasNumber) {
       toast({
-        title: 'Invalid Username',
-        description: 'Username can only contain letters, numbers, and underscores',
+        title: 'Weak Password',
+        description: 'Password must contain uppercase, lowercase, and numbers',
         variant: 'destructive',
       });
       return;
@@ -200,6 +226,9 @@ export default function LoginPage() {
                       onChange={(e) => setSignUpForm({ ...signUpForm, password: e.target.value })}
                       required
                     />
+                    <p className="text-xs text-muted-foreground">
+                      Must be 8+ characters with uppercase, lowercase, and numbers
+                    </p>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="signup-confirm-password">Confirm Password</Label>
