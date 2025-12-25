@@ -42,7 +42,8 @@ play4cards.com
 - Security settings\n- **Wallet-only purchase requirement: All purchases must be made using wallet balance**
 
 ### 2.3 User Level System
-- **User Level Tiers**: Admin can create and manage multiple user levels\n- **Custom Discount Rates**: Admin can assign custom discount percentages to each user level
+- **User Level Tiers**: Admin can create and manage multiple user levels
+- **Custom Discount Rates**: Admin can assign custom discount percentages to each user level
 - **Flexible Discount Configuration**: Admin has full control to set any discount rate per level
 - **Automatic Price Adjustment**: User prices are automatically adjusted based on their assigned level and discount rate
 - **Level Assignment**: Admin can assign users to specific levels through user management panel
@@ -52,8 +53,7 @@ play4cards.com
 - Real-time stock management\n- Multi-currency support
 - **Wallet-based payment processing only**
 - **Invoice Generation**: Customers can generate and download invoices for their orders from the order page
-
-### 2.5 Stock Management System
+\n### 2.5 Stock Management System
 - **Stock Manager Role**: Dedicated role for managing inventory of gift cards and digital codes
 - **Direct Order Fulfillment**: Customers receive orders immediately upon purchase from available stock
 - **Stock Categories**: Gift cards, Netflix codes, Shahid codes, PUBG codes, and other digital products
@@ -121,7 +121,8 @@ play4cards.com
   - Get user list
   - View email
   - View balance
-  - View spent\n  - View user details
+  - View spent
+  - View user details
 \n- **Tickets Permissions**:
   - Get ticket list
   - Get ticket\n  - Reply to a ticket
@@ -203,6 +204,7 @@ For each balance top-up request, customers must:
 - Automatic order fulfillment system from stock\n- **User level system database with discount rate configuration**
 - **Pricing calculation engine for profit markup and custom user rates**
 - **Invoice generation system with PDF export functionality**
+- **Supabase Integration**: Configure Supabase connection files including supabase.js, supabaseClient.js, lib/supabase.js, and src/supabase.ts to connect the application to Supabase backend services
 
 ### 5.2 Stock Inventory System
 - Automated gift card and digital code delivery from stock upon purchase
