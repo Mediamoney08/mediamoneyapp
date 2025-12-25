@@ -418,6 +418,9 @@ export const getAllPaymentProofs = async (): Promise<PaymentProof[]> => {
   return Array.isArray(data) ? data : [];
 };
 
+// Alias for backward compatibility
+export const getAllPaymentProofsAdmin = getAllPaymentProofs;
+
 export const updatePaymentProofStatus = async (
   proofId: string,
   status: 'approved' | 'rejected',
