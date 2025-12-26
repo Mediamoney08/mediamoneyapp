@@ -247,6 +247,7 @@ export function CurrencySwitcher() {
 export function useCurrency() {
   const [currentCurrency, setCurrentCurrency] = useState('USD');
   const [exchangeRate, setExchangeRate] = useState(1);
+  const [currencySymbol, setCurrencySymbol] = useState('$');
 
   useEffect(() => {
     loadCurrency();
@@ -273,10 +274,13 @@ export function useCurrency() {
         .maybeSingle();
 
       if (!error && data) {
-        setExchangeRate(data.exchange_rate);
+        setExchangeRate(Number(data.exchange_rate) || 1);
+        setCurrencySymbol(data.symbol || '$');
       }
     } catch (error) {
       console.error('Error loading currency:', error);
+      setExchangeRate(1);
+      setCurrencySymbol('$');
     }
   };
 
@@ -284,28 +288,15 @@ export function useCurrency() {
     return Number((priceInUSD * exchangeRate).toFixed(2));
   };
 
-  const formatPrice = async (priceInUSD: number): Promise<string> => {
-    try {
-      const { data, error } = await supabase
-        .from('currencies')
-        .select('symbol')
-        .eq('code', currentCurrency)
-        .maybeSingle();
-
-      if (error || !data) {
-        return `$${priceInUSD.toFixed(2)}`;
-      }
-
-      const convertedPrice = convertPrice(priceInUSD);
-      return `${data.symbol}${convertedPrice.toFixed(2)}`;
-    } catch (error) {
-      return `$${priceInUSD.toFixed(2)}`;
-    }
+  const formatPrice = (priceInUSD: number): string => {
+    const convertedPrice = convertPrice(priceInUSD);
+    return `${currencySymbol}${convertedPrice.toFixed(2)}`;
   };
 
   return {
     currentCurrency,
     exchangeRate,
+    currencySymbol,
     convertPrice,
     formatPrice,
   };

@@ -43,6 +43,10 @@
   - [x] Move language/currency to profile settings
   - [x] Fix currency loading from database
   - [x] Add Preferences tab to profile page
+  - [x] Change profile tabs to icon-only design
+  - [x] Fix currency conversion with proper exchange rates
+  - [x] Add currency symbol to useCurrency hook
+  - [x] Update wallet balance to show in selected currency
 - [ ] Step 3: Connect user-facing pages to backend
   - [ ] HomePage - categories and products
   - [ ] CheckoutPage - order creation

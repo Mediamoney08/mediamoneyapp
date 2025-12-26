@@ -13,10 +13,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import NotificationBell from '@/components/notifications/NotificationBell';
+import { useCurrency } from '@/components/LanguageCurrencySwitcher';
 
 export default function Header() {
   const { user, profile, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { formatPrice } = useCurrency();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -67,7 +69,7 @@ export default function Header() {
             <div className="flex flex-col">
               <span className="text-xs text-muted-foreground font-medium">Balance</span>
               <span className="text-sm font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                ${profile.wallet_balance?.toFixed(2) || '0.00'}
+                {formatPrice(profile.wallet_balance || 0)}
               </span>
             </div>
           </Link>

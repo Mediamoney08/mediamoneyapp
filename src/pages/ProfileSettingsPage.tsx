@@ -653,25 +653,20 @@ export default function ProfileSettingsPage() {
       </div>
       <Tabs defaultValue="profile" className="space-y-6">
         <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="profile" className="text-[12px]">
-            <User className="h-4 w-4 mr-2" />
-            Profile
+          <TabsTrigger value="profile" className="px-3">
+            <User className="h-5 w-5" />
           </TabsTrigger>
-          <TabsTrigger value="preferences" className="text-[12px]">
-            <Globe className="h-4 w-4 mr-2" />
-            Preferences
+          <TabsTrigger value="preferences" className="px-3">
+            <Globe className="h-5 w-5" />
           </TabsTrigger>
-          <TabsTrigger value="security">
-            <Lock className="h-4 w-4 mr-2" />
-            Security
+          <TabsTrigger value="security" className="px-3">
+            <Lock className="h-5 w-5" />
           </TabsTrigger>
-          <TabsTrigger value="2fa">
-            <Shield className="h-4 w-4 mr-2" />
-            2FA
+          <TabsTrigger value="2fa" className="px-3">
+            <Shield className="h-5 w-5" />
           </TabsTrigger>
-          <TabsTrigger value="activity">
-            <History className="h-4 w-4 mr-2" />
-            Activity
+          <TabsTrigger value="activity" className="px-3">
+            <History className="h-5 w-5" />
           </TabsTrigger>
         </TabsList>
 
