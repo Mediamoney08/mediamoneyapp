@@ -47,6 +47,8 @@
   - [x] Fix currency conversion with proper exchange rates
   - [x] Add currency symbol to useCurrency hook
   - [x] Update wallet balance to show in selected currency
+  - [x] Fix profile loading error (single to maybeSingle)
+  - [x] Improve error handling and loading states
 - [ ] Step 3: Connect user-facing pages to backend
   - [ ] HomePage - categories and products
   - [ ] CheckoutPage - order creation

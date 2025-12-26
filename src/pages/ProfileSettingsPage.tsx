@@ -123,25 +123,32 @@ export default function ProfileSettingsPage() {
   const loadProfile = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        setLoading(false);
+        return;
+      }
 
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
 
-      if (error) throw error;
-      setProfile(data);
-      setUsername(data.username);
-      setNewEmail(data.email);
+      if (error) {
+        console.error('Error loading profile:', error);
+        // Don't throw, just log and continue
+      }
+      
+      if (data) {
+        setProfile(data);
+        setUsername(data.username || '');
+        setNewEmail(data.email || '');
+      } else {
+        // Profile doesn't exist, create a default one
+        console.log('Profile not found, user may need to complete registration');
+      }
     } catch (error: any) {
       console.error('Error loading profile:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load profile',
-        variant: 'destructive',
-      });
     } finally {
       setLoading(false);
     }
@@ -638,7 +645,25 @@ export default function ProfileSettingsPage() {
   if (loading) {
     return (
       <div className="container mx-auto py-8 px-4">
-        <p className="text-center">Loading...</p>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading profile...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="container mx-auto py-8 px-4">
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            Profile not found. Please try logging out and logging back in.
+          </AlertDescription>
+        </Alert>
       </div>
     );
   }
