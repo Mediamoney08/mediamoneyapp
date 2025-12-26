@@ -15,9 +15,7 @@ play4cards.com
 - Screenshot 2025-12-25 195327.png: Main category structure reference
 - Screenshot 2025-12-26 133441.png: Admin dashboard navigation menu reference
 - Screenshot 2025-12-26 133448.png: Admin settings sidebar reference
-
-## 2. Core Features
-
+\n## 2. Core Features\n
 ### 2.1 Service Categories Structure
 - **Unified Service Grouping**: All services with the same name are grouped into one category, allowing customers to choose from available options within that category
 - **Category Main Image**: Each category displays a unified main image representing all services within that category
@@ -39,7 +37,8 @@ play4cards.com
 
 ### 2.2 User System
 - User registration and login\n- **Two-Step Verification (2FA)**: Mandatory two-factor authentication for all users to protect accounts using authenticator apps (Google Authenticator, Authy, etc.) or SMS verification
-- **Profile Management**: Users can edit and update their profile information including:\n  - Email address
+- **Profile Management**: Users can edit and update their profile information including:
+  - Email address
   - Password
   - Phone number
   - Display name
@@ -60,8 +59,7 @@ play4cards.com
 - **Level Assignment**: Admin can assign users to specific levels through user management panel
 \n### 2.4 Transaction Features
 - **Automatic order fulfillment from stock inventory**: When customers purchase gift cards, Netflix codes, Shahid codes, or PUBG codes, orders are fulfilled directly from stock and delivered immediately
-- Real-time stock management
-- **Multi-currency support**: Support for all major global currencies with real-time exchange rate conversion
+- Real-time stock management\n- **Multi-currency support**: Support for all major global currencies with real-time exchange rate conversion
 - **Wallet-based payment processing only**
 - **Invoice Generation**: Customers can generate and download invoices for their orders from the order page
 \n### 2.5 Stock Management System
@@ -223,9 +221,16 @@ play4cards.com
 - **Multi-Level Admin Roles**: Super Admin, Admin, Manager, Support Staff, Stock Manager with customizable permission sets
 - **Role-Based Access Control (RBAC)**: Granular permissions for each admin role with ability to create custom roles
 - **Admin Login Page**: Dedicated secure login page exclusively for administrators with CAPTCHA protection
+- **Admin Login Credentials**: Administrators must log in using their admin credentials (username/email and password) to access the admin dashboard
+- **Admin Authentication Flow**: \n  - Admin enters username/email and password on admin login page
+  - System validates credentials against admin database
+  - CAPTCHA verification to prevent automated attacks
+  - Two-Factor Authentication (2FA) verification required\n  - Upon successful authentication, admin is redirected to admin dashboard
+  - Failed login attempts are logged and monitored
 - **Two-Factor Authentication (2FA)**: Mandatory 2FA for all admin accounts using authenticator apps (Google Authenticator, Authy, etc.) or SMS verification to protect admin access
 - **Admin Profile Management**: Admins can edit and update their profile information including:
-  - Email address\n  - Password
+  - Email address
+  - Password
   - Phone number
   - Display name
   - Profile picture
@@ -274,14 +279,16 @@ Full navigation menu with the following modules:
 - **General**: Basic site configuration, site name, URL, timezone, general preferences, maintenance mode, and site status
 - **Providers**: Configure service provider API connections, manage provider settings, provider priority, and failover rules
 - **Payments Modules**: Set up and manage payment gateway integrations for balance top-ups, payment method ordering, and fee configuration
-- **Integrations**: Connect third-party services and tools (analytics, CRM, marketing automation, etc.)\n- **Notifications**: Configure notification settings, templates, delivery methods, and notification scheduling
+- **Integrations**: Connect third-party services and tools (analytics, CRM, marketing automation, etc.)
+- **Notifications**: Configure notification settings, templates, delivery methods, and notification scheduling
 - **Bonuses**: Set up bonus programs, promotional offers, reward systems, and loyalty programs
 - **Signup form**: Customize user registration form fields, validation rules, and email verification settings
 - **Ticket form**: Configure support ticket form fields, categories, priority levels, and auto-assignment rules
 - **API Settings**: Configure public API parameters, rate limits, authentication methods, and API documentation access
 - **Currency Settings**: Manage supported currencies, exchange rates, automatic rate updates, and default currency configuration
 - **Language Settings**: Add/edit language packs, set default language, manage translations, and configure language selector display
-- **Tax Configuration**: Set up tax rules, VAT settings, and regional tax compliance\n- **Terms & Policies**: Manage Terms of Service, Privacy Policy, Refund Policy, and legal documents
+- **Tax Configuration**: Set up tax rules, VAT settings, and regional tax compliance
+- **Terms & Policies**: Manage Terms of Service, Privacy Policy, Refund Policy, and legal documents
 - **GDPR Compliance**: Configure data retention policies, user data export, and right to be forgotten features
 - **Rate Limiting**: Configure API rate limits, request throttling, and abuse prevention
 - **Cache Management**: Configure caching settings, clear cache, and optimize performance
@@ -319,7 +326,7 @@ Full navigation menu with the following modules:
 9. **About Us** - Company information and contact details
 10. **Service Category Pages** - Dedicated pages for each main service type (Games, Apps, Streaming, Gift Cards) with category/subcategory navigation and unified category images
 \n### 3.2 Admin-Only Pages
-1. **Admin Login** - Secure authentication page with 2FA for administrators only
+1. **Admin Login** - Secure authentication page with username/email and password fields, CAPTCHA protection, and 2FA verification for administrators only
 2. **Admin Dashboard** - Overview of site statistics and quick access to all management modules
 3. **Admin Profile Settings** - Admin profile management page for editing email, password, phone number, display name, profile picture, and 2FA settings
 4. **Users Management** - Interface for managing user accounts, permissions, levels, activity, profile information, and 2FA status
@@ -382,10 +389,10 @@ For each balance top-up request, customers must:
 - Backend server for business logic and API handling
 - Category and subcategory management system with image storage
 - Payment proof storage and verification workflow
-- Admin authentication and authorization system
+- **Admin authentication and authorization system with secure credential validation**
+- **Admin login session management with token-based authentication**
 - Role-based access control for admin functions and stock managers
-- Notification queue and delivery system
-- Stock inventory database for gift cards, Netflix codes, Shahid codes, PUBG codes, and digital products
+- Notification queue and delivery system\n- Stock inventory database for gift cards, Netflix codes, Shahid codes, PUBG codes, and digital products
 - Automatic order fulfillment system from stock\n- **User level system database with discount rate configuration**
 - **Pricing calculation engine for profit markup and custom user rates**
 - **Invoice generation system with PDF export functionality**
@@ -425,7 +432,8 @@ For each balance top-up request, customers must:
 - **Security Headers**: Implementation of security headers (HSTS, X-Frame-Options, etc.)
 - **Vulnerability Scanning**: Regular automated security scans
 - **Penetration Testing**: Periodic security audits and penetration testing
-- **Data Backup Encryption**: Encrypted backup storage\n- **Secure File Upload**: File type validation and malware scanning
+- **Data Backup Encryption**: Encrypted backup storage
+- **Secure File Upload**: File type validation and malware scanning
 - **Admin Session Security**: Secure session management with token rotation
 - **API Key Encryption**: Encrypted storage of API keys in database
 - **Request Signature Verification**: HMAC-SHA256 signature validation for API requests
@@ -623,6 +631,7 @@ For each balance top-up request, customers must:
 - **API Documentation Portal**: Clean, developer-friendly interface with syntax highlighting and interactive elements
 - **Profile Settings Page**: Clean, organized layout with tabbed sections for different profile settings including language and currency preferences
 - **2FA Setup Interface**: Step-by-step wizard with QR code display and backup codes presentation
+- **Admin Login Page**: Clean, secure login interface with username/email and password fields, CAPTCHA, and 2FA verification
 \n### 6.2 Interactive Elements
 - **Advertisement Banner**: Auto-scrolling promotional photos with pause-on-hover functionality
 - **Search Field**: Instant search with autocomplete suggestions
@@ -650,12 +659,15 @@ For each balance top-up request, customers must:
 - **Trusted Devices List**: Manage and revoke trusted devices with confirmation dialogs
 - **Language Translation Editor**: In-context translation editing for admins
 - **Currency Converter Widget**: Real-time currency conversion display on pricing pages
-\n### 6.3 Theme Options
+- **Admin Login Form**: Responsive login form with real-time validation and error messages
+
+### 6.3 Theme Options
 - Light mode: White background with soft shadows and colorful category cards with main images
 - Dark mode: Deep dark background with neon highlights and glowing category borders
 - Admin panel: Clean, data-focused interface with customizable dashboard widgets and organized navigation structure
 - API Documentation: Developer-friendly theme with syntax highlighting and clear code examples
 - **RTL Layout**: Fully mirrored layout for right-to-left languages with proper text alignment
+- **Admin Login Page**: Professional, secure design with brand colors and trust indicators
 \n## 7. Reference Documentation
 - API Documentation Reference: https://api.play4cards.com/api-docs
 \n## 8. Reference Images
