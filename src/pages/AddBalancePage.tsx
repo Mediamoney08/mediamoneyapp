@@ -232,7 +232,6 @@ export default function AddBalancePage() {
           Top up your wallet by submitting payment proof
         </p>
       </div>
-
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Payment Form */}
         <Card>
@@ -366,7 +365,7 @@ export default function AddBalancePage() {
             <Button
               onClick={handleSubmitProof}
               disabled={loading || uploading}
-              className="w-full"
+              className="w-full bg-[#c744eee6] bg-none"
               size="lg"
             >
               {loading || uploading ? (
