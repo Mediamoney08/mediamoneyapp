@@ -217,10 +217,8 @@ export default function HomePage() {
           )}
         </div>
       </section>
-
       {/* Banner Carousel */}
       <BannerCarousel />
-
       {/* Search Bar Section */}
       <section className="container mx-auto px-4 pb-6 pt-4">
         <div className="max-w-xl mx-auto">
@@ -277,7 +275,7 @@ export default function HomePage() {
                     <div>
                       <h2 className="text-3xl font-bold">{selectedCategory.name}</h2>
                       {selectedCategory.description && (
-                        <p className="text-muted-foreground mt-1">{selectedCategory.description}</p>
+                        <></>
                       )}
                     </div>
                   </div>
@@ -300,25 +298,21 @@ export default function HomePage() {
                         >
                           {/* Use category image if product doesn't have one */}
                           {(product.image_url || selectedCategory.image_url) && (
-                            <div className="aspect-video overflow-hidden bg-muted relative">
+                            <div className="aspect-square overflow-hidden bg-muted relative">
                               <img
                                 src={product.image_url || selectedCategory.image_url || ''}
                                 alt={product.name}
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                               />
                               {product.service_name && (
-                                <Badge className="absolute top-2 right-2 bg-primary">
-                                  {product.service_name}
-                                </Badge>
+                                <></>
                               )}
                             </div>
                           )}
                           <CardHeader>
                             <CardTitle className="line-clamp-1">{product.name}</CardTitle>
                             {product.description && (
-                              <CardDescription className="line-clamp-2">
-                                {product.description}
-                              </CardDescription>
+                              <></>
                             )}
                           </CardHeader>
                           <CardContent>
@@ -327,7 +321,7 @@ export default function HomePage() {
                                 {user && userPrices[product.id] ? (
                                   <div>
                                     <div className="flex items-center gap-2 justify-center flex-wrap">
-                                      <div className="text-2xl font-bold text-primary">
+                                      <div className="font-bold text-primary text-[13px]">
                                         ${userPrices[product.id].final_price.toFixed(2)}
                                       </div>
                                       {userPrices[product.id].discount_percentage > 0 && (
