@@ -36,7 +36,7 @@ export default function Header() {
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-2">
           <div className="gradient-bg rounded-lg p-2">
-            <Wallet className="h-6 w-6 text-white" />
+            <Wallet className="h-6 w-6 text-white" data-href="/" />
           </div>
 
         </Link>

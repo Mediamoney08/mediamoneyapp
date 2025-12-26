@@ -40,6 +40,7 @@ export default function HomePage() {
   const [siteLogo, setSiteLogo] = useState<string>('');
   const [logoType, setLogoType] = useState<string>('image');
   const [productFields, setProductFields] = useState<Record<string, ProductField[]>>({});
+  const [profile, setProfile] = useState<any>(null);
 
   useEffect(() => {
     const service = searchParams.get('service') as ServiceCategory;
@@ -112,9 +113,12 @@ export default function HomePage() {
     if (!user) return;
     
     try {
-      const profile = await getProfile(user.id);
-      if (profile && (profile as any).user_level_name) {
-        setUserLevelName((profile as any).user_level_name);
+      const userProfile = await getProfile(user.id);
+      if (userProfile) {
+        setProfile(userProfile);
+        if ((userProfile as any).user_level_name) {
+          setUserLevelName((userProfile as any).user_level_name);
+        }
       }
     } catch (error) {
       console.error('Error loading user level:', error);
@@ -155,6 +159,14 @@ export default function HomePage() {
   useEffect(() => {
     loadSiteLogo();
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      loadUserLevel();
+    } else {
+      setProfile(null);
+    }
+  }, [user]);
 
   const handleServiceChange = (service: ServiceCategory) => {
     setSelectedService(service);
@@ -215,6 +227,18 @@ export default function HomePage() {
               <span className="gradient-text">MediaMoney</span>
             </h1>
           )}
+          
+          {/* Welcome Message */}
+          {user && profile && (
+            <div className="mt-4 animate-fadeInUp">
+              <p className="text-lg md:text-xl text-muted-foreground">
+                Welcome to <span className="font-semibold text-foreground">MediaMoney</span>{' '}
+                <span className="font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                  {profile.username}
+                </span>
+              </p>
+            </div>
+          )}
         </div>
       </section>
       {/* Banner Carousel */}
@@ -237,7 +261,7 @@ export default function HomePage() {
               placeholder="Search for games, services, or gift cards..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 h-10 text-base rounded-[4px]"
+              className="pl-9 h-10 text-base border-solid border-[#9f44ee] border-[0.8px] rounded-[6px] border-[#9f44ee]"
             />
           </div>
         </div>
@@ -311,9 +335,7 @@ export default function HomePage() {
                           <div className="p-3 space-y-2">
                             {/* Service name - smaller */}
                             {product.service_name && (
-                              <div className="text-[9px] text-muted-foreground uppercase tracking-wide">
-                                {product.service_name}
-                              </div>
+                              <></>
                             )}
                             
                             {/* Product name */}
@@ -334,7 +356,7 @@ export default function HomePage() {
                                 {user && userPrices[product.id] ? (
                                   <div>
                                     <div className="flex items-center gap-2 justify-center flex-wrap">
-                                      <div className="text-base font-bold text-primary">
+                                      <div className="font-bold text-primary text-[11px]">
                                         ${userPrices[product.id].final_price.toFixed(2)}
                                       </div>
                                       {userPrices[product.id].discount_percentage > 0 && (
