@@ -296,7 +296,7 @@ export default function HomePage() {
                           className="group hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden"
                           onClick={() => navigate(`/checkout?product=${product.id}`)}
                         >
-                          {/* Use category image if product doesn't have one */}
+                          {/* Square image - only picture */}
                           {(product.image_url || selectedCategory.image_url) && (
                             <div className="aspect-square overflow-hidden bg-muted relative">
                               <img
@@ -304,46 +304,51 @@ export default function HomePage() {
                                 alt={product.name}
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                               />
-                              {product.service_name && (
-                                <></>
-                              )}
                             </div>
                           )}
-                          <CardHeader>
-                            <CardTitle className="line-clamp-1">{product.name}</CardTitle>
+                          <CardHeader className="pb-2">
+                            {/* Service name badge - smaller */}
+                            {product.service_name && (
+                              <Badge variant="secondary" className="text-[10px] px-2 py-0.5 w-fit mb-1">
+                                {product.service_name}
+                              </Badge>
+                            )}
+                            <CardTitle className="line-clamp-1 text-sm">{product.name}</CardTitle>
                             {product.description && (
-                              <></>
+                              <CardDescription className="line-clamp-2 text-xs">
+                                {product.description}
+                              </CardDescription>
                             )}
                           </CardHeader>
-                          <CardContent>
+                          <CardContent className="pt-0">
                             <div className="flex items-center justify-center">
                               <div className="w-full">
                                 {user && userPrices[product.id] ? (
                                   <div>
                                     <div className="flex items-center gap-2 justify-center flex-wrap">
-                                      <div className="font-bold text-primary text-[13px]">
+                                      <div className="text-lg font-bold text-primary">
                                         ${userPrices[product.id].final_price.toFixed(2)}
                                       </div>
                                       {userPrices[product.id].discount_percentage > 0 && (
-                                        <Badge variant="secondary" className="bg-green-100 text-green-800">
+                                        <Badge variant="secondary" className="bg-green-100 text-green-800 text-[10px]">
                                           <TrendingDown className="w-3 h-3 mr-1" />
                                           {userPrices[product.id].discount_percentage.toFixed(0)}% OFF
                                         </Badge>
                                       )}
                                     </div>
                                     {userPrices[product.id].discount_percentage > 0 && (
-                                      <div className="text-sm text-muted-foreground line-through text-center">
+                                      <div className="text-xs text-muted-foreground line-through text-center">
                                         ${userPrices[product.id].base_price.toFixed(2)}
                                       </div>
                                     )}
                                     {userPrices[product.id].discount_reason && (
-                                      <div className="text-xs text-muted-foreground mt-1 text-center">
+                                      <div className="text-[10px] text-muted-foreground mt-1 text-center">
                                         {userPrices[product.id].discount_reason}
                                       </div>
                                     )}
                                   </div>
                                 ) : (
-                                  <div className="text-2xl font-bold text-primary text-center">
+                                  <div className="text-lg font-bold text-primary text-center">
                                     ${product.price.toFixed(2)}
                                   </div>
                                 )}
@@ -351,7 +356,7 @@ export default function HomePage() {
                                 {productFields[product.id] && productFields[product.id].length > 0 && (
                                   <div className="mt-2 space-y-1">
                                     {productFields[product.id].map((field) => (
-                                      <div key={field.id} className="text-xs text-muted-foreground text-center">
+                                      <div key={field.id} className="text-[10px] text-muted-foreground text-center">
                                         <span className="font-medium">{field.field_name}:</span> {field.field_value}
                                       </div>
                                     ))}
