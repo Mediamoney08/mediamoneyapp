@@ -2,22 +2,23 @@
 
 ## Admin Account Information
 
-**Email:** `mediamoney@miaoda.com`  
+**Email:** `mediamoney01@gmail.com`  
+**Password:** `718191@@Aa`  
 **Role:** Admin  
-**Username:** mediamoney
+**Username:** admin
 
 ## How to Access Admin Dashboard
 
 ### Step 1: Login
-1. Go to the login page: `/login`
-2. Enter the admin email: `mediamoney@miaoda.com`
-3. Enter your password (if you don't know it, you'll need to reset it)
+1. Go to the login page: `https://medo.dev/projects/app-8herke1wtngh/login`
+2. Enter the admin email: `mediamoney01@gmail.com`
+3. Enter the password: `718191@@Aa`
 
 ### Step 2: Access Admin Dashboard
 Once logged in, navigate to:
-- **Main Admin Dashboard:** `/admin`
-- **Admin Management:** `/admin/manage`
-- **Old Dashboard:** `/admin/old`
+- **Main Admin Dashboard:** `https://medo.dev/projects/app-8herke1wtngh/admin`
+- **Admin Management:** `https://medo.dev/projects/app-8herke1wtngh/admin/manage`
+- **Old Dashboard:** `https://medo.dev/projects/app-8herke1wtngh/admin/old`
 
 Or click on your profile icon in the header and look for admin options.
 
@@ -64,7 +65,12 @@ If you need to reset the admin password:
 
 ## Admin Dashboard URL
 
-Direct link: `https://your-domain.com/admin`
+**Direct link:** `https://medo.dev/projects/app-8herke1wtngh/admin`
+
+**Quick Access:**
+1. Login at: `https://medo.dev/projects/app-8herke1wtngh/login`
+2. Use credentials: `mediamoney01@gmail.com` / `718191@@Aa`
+3. Navigate to: `https://medo.dev/projects/app-8herke1wtngh/admin`
 
 ---
 
