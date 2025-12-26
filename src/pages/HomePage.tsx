@@ -296,7 +296,7 @@ export default function HomePage() {
                           className="group hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden"
                           onClick={() => navigate(`/checkout?product=${product.id}`)}
                         >
-                          {/* Square image - only picture */}
+                          {/* Div 1: Square image only */}
                           {(product.image_url || selectedCategory.image_url) && (
                             <div className="aspect-square overflow-hidden bg-muted relative">
                               <img
@@ -306,57 +306,66 @@ export default function HomePage() {
                               />
                             </div>
                           )}
-                          <CardHeader className="pb-2">
-                            {/* Service name badge - smaller */}
+                          
+                          {/* Div 2: All text content */}
+                          <div className="p-3 space-y-2">
+                            {/* Service name - smaller */}
                             {product.service_name && (
-                              <Badge variant="secondary" className="text-[10px] px-2 py-0.5 w-fit mb-1">
+                              <div className="text-[9px] text-muted-foreground uppercase tracking-wide">
                                 {product.service_name}
-                              </Badge>
+                              </div>
                             )}
-                            <CardTitle className="line-clamp-1 text-sm">{product.name}</CardTitle>
+                            
+                            {/* Product name */}
+                            <div className="line-clamp-1 text-sm font-semibold">
+                              {product.name}
+                            </div>
+                            
+                            {/* Description */}
                             {product.description && (
-                              <CardDescription className="line-clamp-2 text-xs">
+                              <div className="line-clamp-2 text-[10px] text-muted-foreground">
                                 {product.description}
-                              </CardDescription>
+                              </div>
                             )}
-                          </CardHeader>
-                          <CardContent className="pt-0">
+                            
+                            {/* Price */}
                             <div className="flex items-center justify-center">
                               <div className="w-full">
                                 {user && userPrices[product.id] ? (
                                   <div>
                                     <div className="flex items-center gap-2 justify-center flex-wrap">
-                                      <div className="text-lg font-bold text-primary">
+                                      <div className="text-base font-bold text-primary">
                                         ${userPrices[product.id].final_price.toFixed(2)}
                                       </div>
                                       {userPrices[product.id].discount_percentage > 0 && (
-                                        <Badge variant="secondary" className="bg-green-100 text-green-800 text-[10px]">
-                                          <TrendingDown className="w-3 h-3 mr-1" />
+                                        <Badge variant="secondary" className="bg-green-100 text-green-800 text-[9px] px-1.5 py-0">
+                                          <TrendingDown className="w-2.5 h-2.5 mr-0.5" />
                                           {userPrices[product.id].discount_percentage.toFixed(0)}% OFF
                                         </Badge>
                                       )}
                                     </div>
                                     {userPrices[product.id].discount_percentage > 0 && (
-                                      <div className="text-xs text-muted-foreground line-through text-center">
+                                      <div className="text-[10px] text-muted-foreground line-through text-center mt-0.5">
                                         ${userPrices[product.id].base_price.toFixed(2)}
                                       </div>
                                     )}
                                     {userPrices[product.id].discount_reason && (
-                                      <div className="text-[10px] text-muted-foreground mt-1 text-center">
+                                      <div className="text-[9px] text-muted-foreground mt-1 text-center">
                                         {userPrices[product.id].discount_reason}
                                       </div>
                                     )}
                                   </div>
                                 ) : (
-                                  <div className="text-lg font-bold text-primary text-center">
+                                  <div className="text-base font-bold text-primary text-center">
                                     ${product.price.toFixed(2)}
                                   </div>
                                 )}
+                                
                                 {/* Custom Fields */}
                                 {productFields[product.id] && productFields[product.id].length > 0 && (
-                                  <div className="mt-2 space-y-1">
+                                  <div className="mt-2 space-y-0.5">
                                     {productFields[product.id].map((field) => (
-                                      <div key={field.id} className="text-[10px] text-muted-foreground text-center">
+                                      <div key={field.id} className="text-[9px] text-muted-foreground text-center">
                                         <span className="font-medium">{field.field_name}:</span> {field.field_value}
                                       </div>
                                     ))}
@@ -364,7 +373,7 @@ export default function HomePage() {
                                 )}
                               </div>
                             </div>
-                          </CardContent>
+                          </div>
                         </Card>
                       ))}
                     </div>
