@@ -136,7 +136,6 @@ export default function ProfileSettingsPage() {
 
       if (error) {
         console.error('Error loading profile:', error);
-        // Don't throw, just log and continue
       }
       
       if (data) {
@@ -144,8 +143,37 @@ export default function ProfileSettingsPage() {
         setUsername(data.username || '');
         setNewEmail(data.email || '');
       } else {
-        // Profile doesn't exist, create a default one
-        console.log('Profile not found, user may need to complete registration');
+        // Profile doesn't exist, create one
+        console.log('Profile not found, creating one...');
+        const { data: newProfile, error: createError } = await supabase
+          .from('profiles')
+          .insert({
+            id: user.id,
+            email: user.email,
+            username: user.email?.split('@')[0] || 'user',
+            role: 'user',
+            wallet_balance: 0,
+            currency: 'USD'
+          })
+          .select()
+          .single();
+
+        if (createError) {
+          console.error('Error creating profile:', createError);
+          toast({
+            title: 'Error',
+            description: 'Failed to create profile. Please contact support.',
+            variant: 'destructive',
+          });
+        } else if (newProfile) {
+          setProfile(newProfile);
+          setUsername(newProfile.username || '');
+          setNewEmail(newProfile.email || '');
+          toast({
+            title: 'Profile Created',
+            description: 'Your profile has been created successfully.',
+          });
+        }
       }
     } catch (error: any) {
       console.error('Error loading profile:', error);

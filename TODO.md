@@ -52,6 +52,10 @@
   - [x] Fix i18n initialization errors in profile page
   - [x] Add null checks for i18n object
   - [x] Improve async error handling
+  - [x] Fix profile creation triggers (INSERT and UPDATE)
+  - [x] Add INSERT policy for profiles table
+  - [x] Create profiles for existing users
+  - [x] Add frontend auto-create fallback
 - [ ] Step 3: Connect user-facing pages to backend
   - [ ] HomePage - categories and products
   - [ ] CheckoutPage - order creation
