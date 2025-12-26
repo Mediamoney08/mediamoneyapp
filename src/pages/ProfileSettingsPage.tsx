@@ -124,10 +124,14 @@ export default function ProfileSettingsPage() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
+        console.error('No authenticated user found');
         setLoading(false);
         return;
       }
 
+      console.log('Loading profile for user:', user.id);
+
+      // Try to load existing profile
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -139,54 +143,75 @@ export default function ProfileSettingsPage() {
       }
       
       if (data) {
+        console.log('Profile loaded successfully:', data);
         setProfile(data);
         setUsername(data.username || '');
         setNewEmail(data.email || '');
         setLoading(false);
-      } else {
-        // Profile doesn't exist, create one
-        console.log('Profile not found, creating one...');
-        const { data: newProfile, error: createError } = await supabase
-          .from('profiles')
-          .insert({
-            id: user.id,
-            email: user.email,
-            username: user.email?.split('@')[0] || 'user',
-            role: 'user',
-            wallet_balance: 0,
-            currency: 'USD'
-          })
-          .select()
-          .single();
-
-        if (createError) {
-          console.error('Error creating profile:', createError);
-          // Try one more time after a short delay
-          setTimeout(async () => {
-            const { data: retryData } = await supabase
-              .from('profiles')
-              .select('*')
-              .eq('id', user.id)
-              .maybeSingle();
-            
-            if (retryData) {
-              setProfile(retryData);
-              setUsername(retryData.username || '');
-              setNewEmail(retryData.email || '');
-            }
-            setLoading(false);
-          }, 1000);
-        } else if (newProfile) {
-          setProfile(newProfile);
-          setUsername(newProfile.username || '');
-          setNewEmail(newProfile.email || '');
-          setLoading(false);
-        } else {
-          setLoading(false);
-        }
+        return;
       }
+
+      // Profile doesn't exist, try to create one
+      console.log('Profile not found, attempting to create...');
+      const { data: newProfile, error: createError } = await supabase
+        .from('profiles')
+        .insert({
+          id: user.id,
+          email: user.email,
+          username: user.email?.split('@')[0] || 'user',
+          role: 'user',
+          wallet_balance: 0,
+          currency: 'USD'
+        })
+        .select()
+        .single();
+
+      if (createError) {
+        console.error('Error creating profile:', createError);
+        
+        // Maybe it was created by trigger, try loading again
+        const { data: retryData, error: retryError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle();
+        
+        if (retryError) {
+          console.error('Error on retry:', retryError);
+        }
+        
+        if (retryData) {
+          console.log('Profile found on retry:', retryData);
+          setProfile(retryData);
+          setUsername(retryData.username || '');
+          setNewEmail(retryData.email || '');
+        } else {
+          console.error('Failed to load or create profile');
+          toast({
+            title: 'Error',
+            description: 'Unable to load profile. Please refresh the page.',
+            variant: 'destructive',
+          });
+        }
+        setLoading(false);
+        return;
+      }
+
+      if (newProfile) {
+        console.log('Profile created successfully:', newProfile);
+        setProfile(newProfile);
+        setUsername(newProfile.username || '');
+        setNewEmail(newProfile.email || '');
+      }
+      
+      setLoading(false);
     } catch (error: any) {
-      console.error('Error loading profile:', error);
+      console.error('Unexpected error loading profile:', error);
+      toast({
+        title: 'Error',
+        description: 'An unexpected error occurred. Please refresh the page.',
+        variant: 'destructive',
+      });
       setLoading(false);
     }
   };
@@ -700,12 +725,39 @@ export default function ProfileSettingsPage() {
   if (!profile) {
     return (
       <div className="container mx-auto py-8 px-4">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Setting up your profile...</p>
-          </div>
-        </div>
+        <Card className="max-w-md mx-auto mt-8">
+          <CardHeader>
+            <CardTitle>Profile Not Available</CardTitle>
+            <CardDescription>
+              We couldn't load your profile. This might be a temporary issue.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Please try one of the following:
+            </p>
+            <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
+              <li>Refresh the page</li>
+              <li>Log out and log back in</li>
+              <li>Clear your browser cache</li>
+            </ul>
+            <div className="flex gap-2">
+              <Button onClick={() => window.location.reload()} className="flex-1">
+                Refresh Page
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  supabase.auth.signOut();
+                  window.location.href = '/login';
+                }}
+                className="flex-1"
+              >
+                Log Out
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
