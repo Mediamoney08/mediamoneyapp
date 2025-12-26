@@ -165,15 +165,15 @@ export default function Header() {
                 {user && profile && (
                   <Link 
                     to="/wallet" 
-                    className="flex items-center gap-3 p-4 rounded-lg bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 hover:border-primary/40 transition-all duration-300"
+                    className="flex items-center gap-2 p-2.5 rounded-lg bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 hover:border-primary/40 transition-all duration-300"
                   >
                     <div className="relative">
-                      <Wallet className="h-6 w-6 text-primary" />
-                      <div className="absolute -top-1 -right-1 h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
+                      <Wallet className="h-4 w-4 text-primary" />
+                      <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 bg-green-500 rounded-full animate-pulse"></div>
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-xs text-muted-foreground font-medium">Wallet Balance</span>
-                      <span className="text-lg font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                      <span className="text-[9px] text-muted-foreground font-medium">Wallet Balance</span>
+                      <span className="text-sm font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                         ${profile.wallet_balance?.toFixed(2) || '0.00'}
                       </span>
                     </div>
@@ -184,24 +184,24 @@ export default function Header() {
                   <Link
                     key={link.path}
                     to={link.path}
-                    className="text-lg font-medium hover:text-primary transition-colors"
+                    className="text-sm font-medium hover:text-primary transition-colors"
                   >
                     {link.name}
                   </Link>
                 ))}
                 {user && (
                   <>
-                    <Link to="/wallet" className="text-lg font-medium hover:text-primary transition-colors">
+                    <Link to="/wallet" className="text-sm font-medium hover:text-primary transition-colors">
                       Wallet
                     </Link>
-                    <Link to="/orders" className="text-lg font-medium hover:text-primary transition-colors">
+                    <Link to="/orders" className="text-sm font-medium hover:text-primary transition-colors">
                       My Orders
                     </Link>
-                    <Link to="/security" className="text-lg font-medium hover:text-primary transition-colors">
+                    <Link to="/security" className="text-sm font-medium hover:text-primary transition-colors">
                       Security
                     </Link>
                     {profile?.role === 'admin' && (
-                      <Link to="/admin" className="text-lg font-medium hover:text-primary transition-colors">
+                      <Link to="/admin" className="text-sm font-medium hover:text-primary transition-colors">
                         Admin Panel
                       </Link>
                     )}
