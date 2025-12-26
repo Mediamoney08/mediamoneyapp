@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,40 +12,13 @@ import { supabase } from '@/db/supabase';
 
 export default function AdminLoginPage() {
   const navigate = useNavigate();
-  const { signIn, user } = useAuth();
+  const { signIn } = useAuth();
   const { toast } = useToast();
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    // If already logged in, check if admin and redirect
-    if (user) {
-      checkAdminAndRedirect();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
-
-  const checkAdminAndRedirect = async () => {
-    if (!user) return;
-    
-    try {
-      const profile = await getProfile(user.id);
-      if (profile?.role === 'admin') {
-        navigate('/admin/dashboard');
-      } else {
-        toast({
-          title: 'Access Denied',
-          description: 'This account does not have admin privileges',
-          variant: 'destructive',
-        });
-      }
-    } catch (error) {
-      console.error('Error checking admin status:', error);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,7 +43,7 @@ export default function AdminLoginPage() {
       }
 
       // Wait a moment for auth state to update
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       // Check if user is admin
       const { data: { user: currentUser } } = await supabase.auth.getUser();
@@ -90,6 +63,7 @@ export default function AdminLoginPage() {
           description: 'This account does not have admin privileges. Please use an admin account.',
           variant: 'destructive',
         });
+        setLoading(false);
         return;
       }
 
@@ -107,7 +81,6 @@ export default function AdminLoginPage() {
         description: error.message || 'Invalid email or password',
         variant: 'destructive',
       });
-    } finally {
       setLoading(false);
     }
   };
