@@ -206,12 +206,47 @@ export default function ProfileSettingsPage() {
       return;
     }
 
+    // Password strength validation
+    const hasUpperCase = /[A-Z]/.test(newPassword);
+    const hasLowerCase = /[a-z]/.test(newPassword);
+    const hasNumbers = /\d/.test(newPassword);
+
+    if (!hasUpperCase || !hasLowerCase || !hasNumbers) {
+      toast({
+        title: 'Error',
+        description: 'Password must contain uppercase, lowercase, and numbers',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     try {
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({
+          title: 'Error',
+          description: 'You must be logged in',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      // Call secure Edge Function to change password
+      const { data, error } = await supabase.functions.invoke('change-password', {
+        body: {
+          current_password: currentPassword,
+          new_password: newPassword
+        },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
       });
 
       if (error) throw error;
+
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to change password');
+      }
 
       toast({
         title: 'Success',
@@ -222,9 +257,10 @@ export default function ProfileSettingsPage() {
       setNewPassword('');
       setConfirmPassword('');
     } catch (error: any) {
+      console.error('Password change error:', error);
       toast({
         title: 'Error',
-        description: error.message,
+        description: error.message || 'Failed to update password',
         variant: 'destructive',
       });
     }
@@ -262,40 +298,38 @@ export default function ProfileSettingsPage() {
 
   const setup2FA = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      // Generate secret
-      const secret = Array.from(crypto.getRandomValues(new Uint8Array(20)))
-        .map(b => b.toString(16).padStart(2, '0'))
-        .join('')
-        .toUpperCase();
-
-      // Generate backup codes
-      const { data: backupCodes, error: codesError } = await supabase.rpc('generate_backup_codes');
-      if (codesError) throw codesError;
-
-      // Save to database (not enabled yet)
-      const { error: insertError } = await supabase
-        .from('two_factor_auth')
-        .upsert({
-          user_id: user.id,
-          secret,
-          is_enabled: false,
-          backup_codes: backupCodes
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({
+          title: 'Error',
+          description: 'You must be logged in',
+          variant: 'destructive',
         });
+        return;
+      }
 
-      if (insertError) throw insertError;
+      // Call secure Edge Function to generate 2FA secret
+      const { data, error } = await supabase.functions.invoke('two-factor-auth', {
+        body: { action: 'setup' },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      });
 
-      // Generate QR code
-      const otpauthUrl = `otpauth://totp/RechargeHub:${profile?.email}?secret=${secret}&issuer=RechargeHub`;
-      const qrUrl = await QRCode.toDataURL(otpauthUrl);
+      if (error) throw error;
+
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to setup 2FA');
+      }
+
+      // Generate QR code from the URL
+      const qrUrl = await QRCode.toDataURL(data.data.qr_url);
       setQrCodeUrl(qrUrl);
 
       setTwoFactorAuth({
         is_enabled: false,
-        secret,
-        backup_codes: backupCodes
+        secret: data.data.secret,
+        backup_codes: data.data.backup_codes
       });
 
       setShowBackupCodes(true);
@@ -305,9 +339,10 @@ export default function ProfileSettingsPage() {
         description: 'Scan the QR code with your authenticator app',
       });
     } catch (error: any) {
+      console.error('2FA setup error:', error);
       toast({
         title: 'Error',
-        description: error.message,
+        description: error.message || 'Failed to setup 2FA',
         variant: 'destructive',
       });
     }
@@ -324,20 +359,32 @@ export default function ProfileSettingsPage() {
     }
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({
+          title: 'Error',
+          description: 'You must be logged in',
+          variant: 'destructive',
+        });
+        return;
+      }
 
-      // In production, verify the TOTP code on the server
-      // For now, we'll just enable it
-      const { error } = await supabase
-        .from('two_factor_auth')
-        .update({
-          is_enabled: true,
-          enabled_at: new Date().toISOString()
-        })
-        .eq('user_id', user.id);
+      // Call secure Edge Function to verify code
+      const { data, error } = await supabase.functions.invoke('two-factor-auth', {
+        body: { 
+          action: 'verify',
+          code: verificationCode
+        },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      });
 
       if (error) throw error;
+
+      if (!data.success) {
+        throw new Error(data.error || 'Verification failed');
+      }
 
       toast({
         title: 'Success',
@@ -348,9 +395,10 @@ export default function ProfileSettingsPage() {
       setQrCodeUrl('');
       await load2FAStatus();
     } catch (error: any) {
+      console.error('2FA verification error:', error);
       toast({
         title: 'Error',
-        description: error.message,
+        description: error.message || 'Invalid verification code',
         variant: 'destructive',
       });
     }
@@ -362,15 +410,29 @@ export default function ProfileSettingsPage() {
     }
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({
+          title: 'Error',
+          description: 'You must be logged in',
+          variant: 'destructive',
+        });
+        return;
+      }
 
-      const { error } = await supabase
-        .from('two_factor_auth')
-        .delete()
-        .eq('user_id', user.id);
+      // Call secure Edge Function to disable 2FA
+      const { data, error } = await supabase.functions.invoke('two-factor-auth', {
+        body: { action: 'disable' },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      });
 
       if (error) throw error;
+
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to disable 2FA');
+      }
 
       toast({
         title: 'Success',
@@ -380,9 +442,10 @@ export default function ProfileSettingsPage() {
       setTwoFactorAuth({ is_enabled: false });
       setQrCodeUrl('');
     } catch (error: any) {
+      console.error('2FA disable error:', error);
       toast({
         title: 'Error',
-        description: error.message,
+        description: error.message || 'Failed to disable 2FA',
         variant: 'destructive',
       });
     }
@@ -423,15 +486,14 @@ export default function ProfileSettingsPage() {
           Manage your account settings and security preferences
         </p>
       </div>
-
       <Tabs defaultValue="profile" className="space-y-6">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="profile">
+          <TabsTrigger value="profile" className="text-[12px]">
             <User className="h-4 w-4 mr-2" />
             Profile
           </TabsTrigger>
           <TabsTrigger value="security">
-            <Lock className="h-4 w-4 mr-2" />
+            <Lock className="text-[12px]" />
             Security
           </TabsTrigger>
           <TabsTrigger value="2fa">
@@ -599,12 +661,14 @@ export default function ProfileSettingsPage() {
                   <Smartphone className="h-5 w-5" />
                   <div>
                     <p className="font-medium">Authenticator App</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-[12px]">
                       Use an app like Google Authenticator or Authy
                     </p>
                   </div>
                 </div>
-                <Badge variant={twoFactorAuth.is_enabled ? 'default' : 'secondary'}>
+                <Badge
+                  variant={twoFactorAuth.is_enabled ? 'default' : 'secondary'}
+                  className="bg-[#f80003] bg-none">
                   {twoFactorAuth.is_enabled ? 'Enabled' : 'Disabled'}
                 </Badge>
               </div>
