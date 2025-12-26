@@ -5,7 +5,7 @@ import AddBalancePage from './pages/AddBalancePage';
 import OrdersPage from './pages/OrdersPage';
 import SecurityPage from './pages/SecurityPage';
 import AboutPage from './pages/AboutPage';
-import APIDocsPage from './pages/APIDocsPage';
+import ApiDocsPage from './pages/ApiDocsPage';
 import SupportPage from './pages/SupportPage';
 import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import NotificationsPage from './pages/NotificationsPage';
@@ -146,7 +146,7 @@ const routes: RouteConfig[] = [
   {
     name: 'API Documentation',
     path: '/api-docs',
-    element: <APIDocsPage />,
+    element: <ApiDocsPage />,
     visible: true,
   },
   {

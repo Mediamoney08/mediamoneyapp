@@ -7,7 +7,8 @@ MediaMoney\n
 ### 1.2 Website Description
 A comprehensive online platform for digital recharge services, offering game top-ups, app subscriptions, streaming service subscriptions (Netflix, Shahid, etc.), and gift cards. Users can recharge through player IDs and manage transactions via personal wallets.
 
-### 1.3 Reference Website\nplay4cards.com
+### 1.3 Reference Website
+play4cards.com
 
 ### 1.4 Reference Images
 - Screenshot2025-12-25195356.png: Category layout reference\n- Screenshot 2025-12-25 195350.png: Service card design reference
@@ -37,8 +38,7 @@ A comprehensive online platform for digital recharge services, offering game top
   - Some categories include subcategories (e.g., denominations, regions)
 
 ### 2.2 User System
-- User registration and login\n- Personal wallet system
-- Balance top-up functionality
+- User registration and login\n- Personal wallet system\n- Balance top-up functionality
 - Order history tracking
 - **Invoice generation for orders**
 - Security settings\n- **Wallet-only purchase requirement: All purchases must be made using wallet balance**
@@ -51,16 +51,17 @@ A comprehensive online platform for digital recharge services, offering game top
 
 ### 2.4 Transaction Features
 - **Automatic order fulfillment from stock inventory**: When customers purchase gift cards, Netflix codes, Shahid codes, or PUBG codes, orders are fulfilled directly from stock and delivered immediately
-- Real-time stock management\n- Multi-currency support
+- Real-time stock management
+- Multi-currency support
 - **Wallet-based payment processing only**
 - **Invoice Generation**: Customers can generate and download invoices for their orders from the order page
-\n### 2.5 Stock Management System
+
+### 2.5 Stock Management System
 - **Stock Manager Role**: Dedicated role for managing inventory of gift cards and digital codes
 - **Direct Order Fulfillment**: Customers receive orders immediately upon purchase from available stock
 - **Stock Categories**: Gift cards, Netflix codes, Shahid codes, PUBG codes, and other digital products\n- **Real-time Inventory Tracking**: Automatic stock level updates after each purchase
 - **Stock Alerts**: Notifications when stock levels are low
-- **Stock Manager Permissions**:
-  - Add new stock items
+- **Stock Manager Permissions**:\n  - Add new stock items
   - Update stock quantities
   - View stock history
   - Manage stock categories
@@ -86,38 +87,105 @@ A comprehensive online platform for digital recharge services, offering game top
 
 ### 2.7 Support System
 - Ticket support for customer inquiries
-\n### 2.8 API System
-\n#### 2.8.1 Customer API
-- API endpoints for customer integration
-- Customer API key management
-- Order placement and tracking via API
-- Balance inquiry functionality
-\n#### 2.8.2 Admin API v2
-- **API Key Management**:
+\n### 2.8 Comprehensive API System
+\n#### 2.8.1 Public API for External Integration
+- **API Documentation Portal**: Interactive API documentation similar to https://api.play4cards.com/api-docs
+- **RESTful API Architecture**: Standard REST endpoints with JSON request/response format
+- **API Authentication**: Secure API key-based authentication for all requests
+- **API Versioning**: Version control system (v1, v2, etc.) for backward compatibility
+\n**Available API Endpoints:**
+\n**Authentication & Account Management:**
+- POST /api/v1/auth/register - Register new API user
+- POST /api/v1/auth/login - Authenticate and get API token
+- GET /api/v1/account/balance - Check wallet balance
+- GET /api/v1/account/profile - Get user profile information
+\n**Services & Pricing:**
+- GET /api/v1/services - List all available services
+- GET /api/v1/services/{id} - Get specific service details
+- GET /api/v1/services/categories - List all service categories
+- GET /api/v1/services/search - Search services by keyword
+- GET /api/v1/pricing/{service_id} - Get current pricing for service
+
+**Order Management:**
+- POST /api/v1/orders/create - Create new order
+- GET /api/v1/orders/{order_id} - Get order status and details
+- GET /api/v1/orders/list - List all orders with filters
+- POST /api/v1/orders/{order_id}/cancel - Request order cancellation
+- GET /api/v1/orders/{order_id}/invoice - Download order invoice
+
+**Wallet Operations:**
+- POST /api/v1/wallet/topup - Submit balance top-up request
+- GET /api/v1/wallet/transactions - Get wallet transaction history
+- GET /api/v1/wallet/pending - Get pending payment requests
+\n**Stock Availability:**
+- GET /api/v1/stock/check/{service_id} - Check stock availability\n- GET /api/v1/stock/status - Get real-time stock status for multiple services
+
+**Webhooks:**
+- POST /api/v1/webhooks/configure - Set up webhook endpoints
+- GET /api/v1/webhooks/list - List configured webhooks
+- DELETE /api/v1/webhooks/{id} - Remove webhook\n
+**API Security Features:**
+- **API Key Management**: Generate, rotate, and revoke API keys
+- **Rate Limiting**: Configurable request limits per API key (e.g., 1000 requests/hour)
+- **IP Whitelisting**: Restrict API access to specific IP addresses\n- **Request Signing**: HMAC-SHA256 signature verification for sensitive operations
+- **SSL/TLS Encryption**: All API communications encrypted via HTTPS
+- **API Key Scopes**: Granular permission control (read-only, write, admin)
+- **Request Throttling**: Automatic throttling for excessive requests
+- **API Audit Logs**: Complete logging of all API requests and responses
+
+**API Response Format:**
+```json
+{
+  'status': 'success/error',
+  'code': 200,
+  'message': 'Operation completed successfully',
+  'data': {},
+  'timestamp': '2025-12-26T17:17:16Z'
+}
+```
+
+**Error Handling:**
+- Standard HTTP status codes (200, 400, 401, 403, 404, 429, 500)
+- Detailed error messages with error codes
+- Rate limit headers in responses
+\n**API Documentation Features:**
+- Interactive API explorer with 'Try it out' functionality
+- Code examples in multiple languages (PHP, Python, JavaScript, cURL)
+- Request/response schema documentation
+- Authentication guide and quick start tutorial
+- Webhook integration examples
+- Postman collection export
+
+#### 2.8.2 Customer API Dashboard
+- **API Key Management Interface**: Generate and manage API keys from user dashboard
+- **API Usage Statistics**: View request counts, success rates, and error logs
+- **API Testing Console**: Built-in testing tool for API endpoints\n- **API Documentation Access**: Direct access to API docs from user account
+- **Webhook Configuration**: Set up and test webhook endpoints
+- **API Logs Viewer**: View recent API requests and responses
+
+#### 2.8.3 Admin API v2\n- **API Key Management**:
   - Create and edit API keys
   - Set API key name and notes
   - Enable/disable API key status
   - Configure granular access permissions per key
 \n- **Orders Permissions**:
-  - Edit link\n  - Resend order\n  - Get order list
-  - View provider charge\n  - View External ID
+  - Edit link\n  - Resend order
+  - Get order list
+  - View provider charge
+  - View External ID
   - View provider response
   - View provider URL instead of alias
   - Change status
-  - Cancel and refund
-  - Set partial\n  - Pull orders
+  - Cancel and refund\n  - Set partial\n  - Pull orders
   - Update orders
-
-- **Cancel Permissions**:
+\n- **Cancel Permissions**:
   - Request cancel
   - Pull cancel tasks
   - Reject cancel\n\n- **Refill Permissions**:
   - Pull refill tasks
   - Change refill status
-
-- **Payments Permissions**:
-  - Add payment
-  - Get payment list
+\n- **Payments Permissions**:
+  - Add payment\n  - Get payment list
   - View user details
 \n- **Users Permissions**:
   - Add user
@@ -128,17 +196,13 @@ A comprehensive online platform for digital recharge services, offering game top
   - View user details
 \n- **Tickets Permissions**:
   - Get ticket list
-  - Get ticket
-  - Reply to a ticket
+  - Get ticket\n  - Reply to a ticket
   - Add ticket
 \n### 2.9 Interface Features
 - **Advertisement Banner**: Reduced height moving banner at the top of screen displaying promotional photos and ads
 - **Search Field**: Positioned below the advertisement banner\n- Dark mode and light mode toggle
 - Multi-language support
-- Slide bar navigation
-- Navigation bar\n- Header section
-- Attractive animations
-\n### 2.10 Admin Management System
+- Slide bar navigation\n- Navigation bar\n- Header section\n- Attractive animations\n\n### 2.10 Admin Management System
 \n#### 2.10.1 Admin Access & Security
 - **Multi-Level Admin Roles**: Super Admin, Admin, Manager, Support Staff, Stock Manager with customizable permission sets
 - **Role-Based Access Control (RBAC)**: Granular permissions for each admin role with ability to create custom roles
@@ -161,7 +225,8 @@ A comprehensive online platform for digital recharge services, offering game top
 - **Backup Admin Access**: Emergency access recovery system for Super Admin
 
 #### 2.10.2 Comprehensive Dashboard Navigation
-Full navigation menu with the following modules:\n- **Dashboard Home**: Overview with key metrics, recent activities, and quick action buttons
+Full navigation menu with the following modules:
+- **Dashboard Home**: Overview with key metrics, recent activities, and quick action buttons
 - **Users**: Manage user accounts, permissions, wallet balances, activity, user level assignments, and bulk user operations
 - **Orders**: View, process, update, edit links, resend orders, cancel and refund, set partial, pull and update orders, export order data
 - **Subscriptions**: Manage recurring subscription services, billing cycles, renewal settings, and subscription analytics
@@ -177,6 +242,7 @@ Full navigation menu with the following modules:\n- **Dashboard Home**: Overview
 - **Reports**: Access analytics dashboard with site statistics, revenue reports, popular services, user activity, financial reports, and custom report builder
 - **Appearance**: Customize site theme, colors, logos, visual elements, and frontend layout options
 - **Settings**: Configure all site parameters through comprehensive settings sidebar
+- **API Management**: Manage public API settings, monitor API usage, configure rate limits, and view API logs
 - **Logs & Monitoring**: System logs, error logs, API logs, admin activity logs, and real-time monitoring dashboard
 - **Backup & Restore**: Database backup scheduling, backup history, one-click restore, and export/import functionality
 - **Email Templates**: Manage email notification templates for all system events with WYSIWYG editor
@@ -186,11 +252,11 @@ Full navigation menu with the following modules:\n- **Dashboard Home**: Overview
 - **General**: Basic site configuration, site name, URL, timezone, general preferences, maintenance mode, and site status
 - **Providers**: Configure service provider API connections, manage provider settings, provider priority, and failover rules
 - **Payments Modules**: Set up and manage payment gateway integrations for balance top-ups, payment method ordering, and fee configuration
-- **Integrations**: Connect third-party services and tools (analytics, CRM, marketing automation, etc.)
-- **Notifications**: Configure notification settings, templates, delivery methods, and notification scheduling
+- **Integrations**: Connect third-party services and tools (analytics, CRM, marketing automation, etc.)\n- **Notifications**: Configure notification settings, templates, delivery methods, and notification scheduling
 - **Bonuses**: Set up bonus programs, promotional offers, reward systems, and loyalty programs
 - **Signup form**: Customize user registration form fields, validation rules, and email verification settings
 - **Ticket form**: Configure support ticket form fields, categories, priority levels, and auto-assignment rules
+- **API Settings**: Configure public API parameters, rate limits, authentication methods, and API documentation access
 - **Currency Settings**: Manage supported currencies, exchange rates, and automatic rate updates
 - **Language Settings**: Add/edit language packs, set default language, and manage translations
 - **Tax Configuration**: Set up tax rules, VAT settings, and regional tax compliance
@@ -202,12 +268,11 @@ Full navigation menu with the following modules:\n- **Dashboard Home**: Overview
 - **User Level Management**: Create, edit, and delete user levels; assign custom discount rates to each level
 - **Custom Rate Configuration**: Set custom pricing rates for users based on their level and discount settings
 - **Service Import with Profit Markup**: Import services via API from providers with automatic profit percentage addition
-- **Stock Inventory Control**: Manage gift card stock, track inventory levels, add new stock for digital products
-- **Stock Manager Assignment**: Assign and manage stock manager roles and permissions
+- **Stock Inventory Control**: Manage gift card stock, track inventory levels, add new stock for digital products\n- **Stock Manager Assignment**: Assign and manage stock manager roles and permissions
 - **Category & Image Management**: Upload and assign main images for each category; organize service groupings
 - **Advertisement Management**: Upload and manage promotional photos for top banner; control banner rotation and display
 - **Admin API v2 Management**: Create and edit API keys, set granular permissions, and monitor API usage
-- **Customer API Management**: Configure customer API settings and monitor usage
+- **Public API Management**: Configure public API settings, manage API documentation, monitor API usage statistics
 - **Bulk Operations**: Bulk user management, bulk order processing, bulk service updates, and bulk email sending
 - **Advanced Search & Filtering**: Powerful search across all modules with multiple filter criteria
 - **Data Export**: Export data to CSV, Excel, PDF formats for all major modules
@@ -225,8 +290,10 @@ Full navigation menu with the following modules:\n- **Dashboard Home**: Overview
 2. **Wallet** - User wallet management and balance display
 3. **Add Balance** - Wallet recharge page with multiple payment methods
 4. **My Orders** - Order history and status tracking with invoice generation option
-5. **Security** - Account security settings\n6. **API** - Customer API documentation and access\n7. **About Us** - Company information and contact details
-8. **Service Category Pages** - Dedicated pages for each main service type (Games, Apps, Streaming, Gift Cards) with category/subcategory navigation and unified category images
+5. **Security** - Account security settings\n6. **API** - Customer API documentation, key management, and testing console
+7. **API Documentation** - Interactive API documentation portal with code examples and testing tools
+8. **About Us** - Company information and contact details
+9. **Service Category Pages** - Dedicated pages for each main service type (Games, Apps, Streaming, Gift Cards) with category/subcategory navigation and unified category images
 \n### 3.2 Admin-Only Pages
 1. **Admin Login** - Secure authentication page with 2FA for administrators only
 2. **Admin Dashboard** - Overview of site statistics and quick access to all management modules
@@ -241,23 +308,30 @@ Full navigation menu with the following modules:\n- **Dashboard Home**: Overview
 12. **Affiliates Management** - Interface for managing affiliate program and commissions
 13. **Child Panels Management** - Interface for managing reseller sub-panels\n14. **Updates** - Interface for viewing system updates and changelog
 15. **Reports & Analytics** - Interface for viewing site statistics and performance data
-16. **Appearance Settings** - Interface for customizing site visual design\n17. **General Settings** - Interface for basic site configuration
+16. **Appearance Settings** - Interface for customizing site visual design
+17. **General Settings** - Interface for basic site configuration
 18. **Providers Settings** - Interface for managing service provider API connections
 19. **Payments Modules Settings** - Interface for configuring payment gateway integrations
-20. **Integrations Settings** - Interface for connecting third-party services\n21. **Notifications Settings** - Interface for configuring notification system\n22. **Bonuses Settings** - Interface for setting up bonus programs
+20. **Integrations Settings** - Interface for connecting third-party services
+21. **Notifications Settings** - Interface for configuring notification system
+22. **Bonuses Settings** - Interface for setting up bonus programs
 23. **Signup Form Settings** - Interface for customizing registration form\n24. **Ticket Form Settings** - Interface for configuring support ticket form
-25. **User Level Management** - Interface for creating and managing user levels with custom discount rates
-26. **Stock Management** - Interface for inventory control of digital products
-27. **Stock Manager Management** - Interface for assigning and managing stock manager roles\n28. **Category Management** - Interface for organizing services and uploading category main images
-29. **Advertisement Management** - Interface for uploading and managing top banner promotional content
-30. **Admin API v2 Management** - Interface for creating, editing, and managing API keys with granular permission settings
-31. **Customer API Management** - Interface for managing customer API settings\n32. **Admin Roles & Permissions** - Interface for creating custom admin roles and assigning granular permissions
-33. **Security Center** - Interface for managing security settings, viewing security logs, and configuring protection rules
-34. **Logs & Monitoring** - Interface for viewing system logs, admin activity logs, and real-time monitoring\n35. **Backup & Restore** - Interface for managing database backups and restoration
-36. **Email Templates** - Interface for managing email notification templates\n37. **SMS Gateway** - Interface for configuring SMS settings\n38. **Bulk Operations** - Interface for performing bulk actions across multiple records
-39. **Scheduled Tasks** - Interface for configuring automated tasks and cron jobs
-40. **Webhook Management** - Interface for managing webhook integrations\n41. **Fraud Detection** - Interface for configuring fraud rules and viewing suspicious activities
-42. **Performance Dashboard** - Interface for monitoring system performance and optimization
+25. **API Settings** - Interface for configuring public API parameters and documentation\n26. **User Level Management** - Interface for creating and managing user levels with custom discount rates
+27. **Stock Management** - Interface for inventory control of digital products
+28. **Stock Manager Management** - Interface for assigning and managing stock manager roles
+29. **Category Management** - Interface for organizing services and uploading category main images
+30. **Advertisement Management** - Interface for uploading and managing top banner promotional content
+31. **Admin API v2 Management** - Interface for creating, editing, and managing API keys with granular permission settings
+32. **Public API Management** - Interface for managing public API settings, monitoring usage, and configuring rate limits
+33. **API Logs & Monitoring** - Interface for viewing API request logs, error tracking, and usage analytics
+34. **Admin Roles & Permissions** - Interface for creating custom admin roles and assigning granular permissions
+35. **Security Center** - Interface for managing security settings, viewing security logs, and configuring protection rules
+36. **Logs & Monitoring** - Interface for viewing system logs, admin activity logs, and real-time monitoring\n37. **Backup & Restore** - Interface for managing database backups and restoration
+38. **Email Templates** - Interface for managing email notification templates
+39. **SMS Gateway** - Interface for configuring SMS settings\n40. **Bulk Operations** - Interface for performing bulk actions across multiple records
+41. **Scheduled Tasks** - Interface for configuring automated tasks and cron jobs
+42. **Webhook Management** - Interface for managing webhook integrations\n43. **Fraud Detection** - Interface for configuring fraud rules and viewing suspicious activities
+44. **Performance Dashboard** - Interface for monitoring system performance and optimization
 \n## 4. Add Balance Payment System
 
 ### 4.1 Payment Methods
@@ -272,8 +346,7 @@ Full navigation menu with the following modules:\n- **Dashboard Home**: Overview
 For each balance top-up request, customers must:
 1. Select preferred payment method from available options
 2. Upload payment proof photo\n3. Enter transaction details\n4. Provide transaction ID\n5. Submit for verification
-
-### 4.3 Payment Verification
+\n### 4.3 Payment Verification
 - Admin review of submitted payment proofs through admin panel
 - Balance credited after verification
 - Notification sent upon approval or rejection
@@ -287,7 +360,8 @@ For each balance top-up request, customers must:
 - Admin authentication and authorization system
 - Role-based access control for admin functions and stock managers
 - Notification queue and delivery system
-- Stock inventory database for gift cards, Netflix codes, Shahid codes, PUBG codes, and digital products\n- Automatic order fulfillment system from stock\n- **User level system database with discount rate configuration**
+- Stock inventory database for gift cards, Netflix codes, Shahid codes, PUBG codes, and digital products
+- Automatic order fulfillment system from stock\n- **User level system database with discount rate configuration**
 - **Pricing calculation engine for profit markup and custom user rates**
 - **Invoice generation system with PDF export functionality**
 - **Supabase Integration**: Configure Supabase connection files including supabase.js, supabaseClient.js, lib/supabase.js, and src/supabase.ts to connect the application to Supabase backend services
@@ -298,6 +372,9 @@ For each balance top-up request, customers must:
 - **Comprehensive audit logging system** for all admin and user actions
 - **Backup and disaster recovery system** with automated scheduling
 - **Redis caching layer** for improved performance\n- **Queue management system** for background job processing
+- **API request/response logging system** for all API calls
+- **API rate limiting engine** with configurable thresholds
+- **Webhook delivery system** with retry mechanism
 \n### 5.2 Security Infrastructure
 - **SSL/TLS Encryption**: HTTPS enforcement across entire platform
 - **Database Encryption**: Encryption at rest for sensitive data
@@ -310,8 +387,13 @@ For each balance top-up request, customers must:
 - **Firewall Rules**: Web Application Firewall (WAF) configuration
 - **Security Headers**: Implementation of security headers (HSTS, X-Frame-Options, etc.)\n- **Vulnerability Scanning**: Regular automated security scans
 - **Penetration Testing**: Periodic security audits and penetration testing
-- **Data Backup Encryption**: Encrypted backup storage\n- **Secure File Upload**: File type validation and malware scanning
+- **Data Backup Encryption**: Encrypted backup storage
+- **Secure File Upload**: File type validation and malware scanning
 - **Admin Session Security**: Secure session management with token rotation
+- **API Key Encryption**: Encrypted storage of API keys in database
+- **Request Signature Verification**: HMAC-SHA256 signature validation for API requests
+- **IP Whitelisting for API**: Restrict API access to authorized IP addresses
+- **API Token Expiration**: Configurable token expiration and refresh mechanism
 \n### 5.3 Stock Inventory System
 - Automated gift card and digital code delivery from stock upon purchase
 - Real-time inventory tracking and management
@@ -332,8 +414,7 @@ For each balance top-up request, customers must:
 - **Custom Rate Engine**: Calculate final user prices based on user level discounts
 - **Dynamic Price Updates**: Real-time price adjustments when provider prices or profit margins change
 - **Price History Tracking**: Log all pricing changes for audit purposes
-\n### 5.6 Currency & Language\n- Multi-currency payment support
-- Multi-language interface options
+\n### 5.6 Currency & Language\n- Multi-currency payment support\n- Multi-language interface options
 \n### 5.7 Advertisement System
 - Image storage for promotional banners
 - Automatic rotation mechanism for multiple ads
@@ -342,8 +423,43 @@ For each balance top-up request, customers must:
 - Reduced banner height for better user experience
 
 ### 5.8 API System Architecture
-- **Admin API v2**: RESTful API with granular permission control per API key
-- **Customer API**: RESTful API for customer integrations
+\n#### 5.8.1 Public API Infrastructure
+- **RESTful API Design**: Standard REST architecture with JSON format
+- **API Gateway**: Centralized API gateway for request routing and management
+- **Load Balancing**: Distribute API requests across multiple servers
+- **API Versioning System**: Support multiple API versions simultaneously
+- **Request/Response Logging**: Complete logging of all API interactions
+- **Error Handling Framework**: Standardized error codes and messages
+- **API Documentation Generator**: Auto-generated interactive API documentation
+- **Swagger/OpenAPI Integration**: OpenAPI 3.0 specification for API documentation
+- **API Testing Suite**: Automated testing for all API endpoints
+- **API Monitoring Dashboard**: Real-time monitoring of API performance and health
+
+#### 5.8.2 API Security Layer
+- **API Key Authentication**: Secure API key generation and validation
+- **OAuth 2.0 Support**: Optional OAuth 2.0 authentication flow
+- **JWT Token Management**: JSON Web Token for session management
+- **Request Signing**: HMAC-SHA256 signature verification
+- **Rate Limiting Engine**: Configurable rate limits per API key
+- **IP Whitelisting**: Restrict API access by IP address
+- **API Key Scopes**: Granular permission control per API key
+- **Request Throttling**: Automatic throttling for excessive requests
+- **API Firewall**: Filter malicious requests and attacks
+- **Encryption**: End-to-end encryption for sensitive API data
+
+#### 5.8.3 API Documentation System
+- **Interactive Documentation Portal**: Similar to https://api.play4cards.com/api-docs
+- **Try It Out Feature**: Test API endpoints directly from documentation
+- **Code Examples**: Sample code in PHP, Python, JavaScript, cURL
+- **Request/Response Schemas**: Detailed schema documentation
+- **Authentication Guide**: Step-by-step authentication setup
+- **Quick Start Tutorial**: Getting started guide for developers
+- **Webhook Documentation**: Webhook setup and event documentation
+- **Postman Collection**: Exportable Postman collection for testing
+- **API Changelog**: Version history and breaking changes documentation
+
+#### 5.8.4 Admin API v2
+- RESTful API with granular permission control per API key
 - API key generation and management
 - Rate limiting and security controls
 - API usage monitoring and analytics
@@ -353,8 +469,7 @@ For each balance top-up request, customers must:
 - **Download Functionality**: Users can download invoices from order page
 - **Invoice Storage**: Secure storage of all generated invoices
 - **Invoice Numbering**: Sequential invoice number generation system
-
-### 5.10 Advanced Order Management
+\n### 5.10 Advanced Order Management
 - **Order Editing**: Edit order links and details
 - **Order Resending**: Resend failed or incomplete orders
 - **Partial Orders**: Set and manage partial order fulfillment
@@ -363,8 +478,7 @@ For each balance top-up request, customers must:
 - **Provider Charge Tracking**: View and track provider charges per order
 - **External ID Management**: Manage external order identifiers
 - **Provider Response Logging**: Log and view provider API responses
-
-### 5.11 Refill & Cancellation System
+\n### 5.11 Refill & Cancellation System
 - **Refill Task Queue**: Automated refill task management and processing
 - **Refill Status Control**: Change and track refill request status
 - **Cancel Request Handling**: Process and manage cancellation requests
@@ -384,6 +498,8 @@ For each balance top-up request, customers must:
 - **Service Performance**: Monitor popular services and identify trends
 - **System Health Monitoring**: Server uptime, response times, and error rates
 - **Alert System**: Configurable alerts for critical events and thresholds
+- **API Usage Analytics**: Track API request volumes, success rates, and error patterns
+- **API Performance Metrics**: Monitor API response times and latency
 
 ## 6. Design Style\n
 ### 6.1 Visual Design\n- **Top Advertisement Banner**: Reduced-height horizontal moving banner displaying promotional photos with smooth scrolling animation
@@ -393,7 +509,9 @@ For each balance top-up request, customers must:
 - Smooth animations for category navigation and transitions
 - Professional admin panel interface with clear data visualization and comprehensive navigation menu
 - Organized settings sidebar with grouped configuration modules
-\n### 6.2 Interactive Elements
+- **API Documentation Portal**: Clean, developer-friendly interface with syntax highlighting and interactive elements
+
+### 6.2 Interactive Elements
 - **Advertisement Banner**: Auto-scrolling promotional photos with pause-on-hover functionality
 - **Search Field**: Instant search with autocomplete suggestions
 - Expandable category menus with service option selection
@@ -410,11 +528,16 @@ For each balance top-up request, customers must:
 - **Data tables with sorting and filtering** in admin management pages
 - **Contextual tooltips** for admin features and settings
 - **Keyboard shortcuts** for common admin actions
+- **API Testing Console**: Interactive API endpoint testing with real-time response display
+- **Code Snippet Copy Button**: One-click copy for code examples in API documentation
 
 ### 6.3 Theme Options
 - Light mode: White background with soft shadows and colorful category cards with main images
 - Dark mode: Deep dark background with neon highlights and glowing category borders
 - Admin panel: Clean, data-focused interface with customizable dashboard widgets and organized navigation structure
-\n## 7. Reference Images
+- API Documentation: Developer-friendly theme with syntax highlighting and clear code examples
+\n## 7. Reference Documentation
+- API Documentation Reference: https://api.play4cards.com/api-docs
+\n## 8. Reference Images
 - Screenshot 2025-12-26 133441.png: Admin dashboard top navigation menu showing Users, Orders, Subscriptions, Drip-feed, Refill, Cancel, Services, Payments, Tickets, Affiliates, Child panels, Updates, Reports, Appearance, and Settings modules
 - Screenshot 2025-12-26 133448.png: Admin settings sidebar showing General, Providers, Payments Modules, Integrations, Notifications, Bonuses, Signup form, and Ticket form configuration sections
