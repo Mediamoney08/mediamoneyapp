@@ -38,7 +38,7 @@ export default function Header() {
           <div className="gradient-bg rounded-lg p-2">
             <Wallet className="h-6 w-6 text-white" />
           </div>
-          <span className="text-xl font-bold gradient-text">MediaMoney</span>
+
         </Link>
 
         {/* Desktop Navigation */}
@@ -53,6 +53,25 @@ export default function Header() {
             </Link>
           ))}
         </nav>
+
+        {/* Balance Display - Animated */}
+        {user && profile && (
+          <Link 
+            to="/wallet" 
+            className="hidden lg:flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 hover:border-primary/40 transition-all duration-300 hover:scale-105 group"
+          >
+            <div className="relative">
+              <Wallet className="h-5 w-5 text-primary group-hover:animate-bounce" />
+              <div className="absolute -top-1 -right-1 h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs text-muted-foreground font-medium">Balance</span>
+              <span className="text-sm font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                ${profile.wallet_balance?.toFixed(2) || '0.00'}
+              </span>
+            </div>
+          </Link>
+        )}
 
         {/* Right Side Actions */}
         <div className="flex items-center space-x-2">
@@ -142,6 +161,25 @@ export default function Header() {
             </SheetTrigger>
             <SheetContent side="right">
               <nav className="flex flex-col space-y-4 mt-8">
+                {/* Mobile Balance Display */}
+                {user && profile && (
+                  <Link 
+                    to="/wallet" 
+                    className="flex items-center gap-3 p-4 rounded-lg bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 hover:border-primary/40 transition-all duration-300"
+                  >
+                    <div className="relative">
+                      <Wallet className="h-6 w-6 text-primary" />
+                      <div className="absolute -top-1 -right-1 h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs text-muted-foreground font-medium">Wallet Balance</span>
+                      <span className="text-lg font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                        ${profile.wallet_balance?.toFixed(2) || '0.00'}
+                      </span>
+                    </div>
+                  </Link>
+                )}
+                
                 {navLinks.map(link => (
                   <Link
                     key={link.path}
