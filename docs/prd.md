@@ -15,7 +15,9 @@ play4cards.com
 - Screenshot 2025-12-25 195327.png: Main category structure reference
 - Screenshot 2025-12-26 133441.png: Admin dashboard navigation menu reference
 - Screenshot 2025-12-26 133448.png: Admin settings sidebar reference
-\n## 2. Core Features\n
+
+## 2. Core Features
+
 ### 2.1 Service Categories Structure
 - **Unified Service Grouping**: All services with the same name are grouped into one category, allowing customers to choose from available options within that category
 - **Category Main Image**: Each category displays a unified main image representing all services within that category
@@ -43,6 +45,8 @@ play4cards.com
   - Display name
   - Profile picture
   - Communication preferences
+  - **Language preference selection from all supported languages**
+  - **Currency preference selection from all supported currencies**
 - Personal wallet system\n- Balance top-up functionality
 - Order history tracking
 - **Invoice generation for orders**
@@ -56,7 +60,8 @@ play4cards.com
 - **Level Assignment**: Admin can assign users to specific levels through user management panel
 \n### 2.4 Transaction Features
 - **Automatic order fulfillment from stock inventory**: When customers purchase gift cards, Netflix codes, Shahid codes, or PUBG codes, orders are fulfilled directly from stock and delivered immediately
-- Real-time stock management\n- Multi-currency support
+- Real-time stock management
+- **Multi-currency support**: Support for all major global currencies with real-time exchange rate conversion
 - **Wallet-based payment processing only**
 - **Invoice Generation**: Customers can generate and download invoices for their orders from the order page
 \n### 2.5 Stock Management System
@@ -90,9 +95,11 @@ play4cards.com
   - In-app notification center
   - Push notifications
   - Email notifications (optional)
+- **Multi-language notification support**: All notifications delivered in user's selected language
 
 ### 2.7 Support System
 - Ticket support for customer inquiries
+- **Multi-language ticket support**: Customers can submit tickets in their preferred language
 \n### 2.8 Comprehensive API System
 \n#### 2.8.1 Public API for External Integration
 - **API Documentation Portal**: Interactive API documentation similar to https://api.play4cards.com/api-docs
@@ -210,9 +217,8 @@ play4cards.com
 \n### 2.9 Interface Features
 - **Advertisement Banner**: Reduced height moving banner at the top of screen displaying promotional photos and ads
 - **Search Field**: Positioned below the advertisement banner\n- Dark mode and light mode toggle
-- Multi-language support
-- Slide bar navigation\n- Navigation bar\n- Header section
-- Attractive animations\n\n### 2.10 Admin Management System
+- **Multi-language support**: Support for all major global languages with language selector in header
+- Slide bar navigation\n- Navigation bar\n- Header section\n- Attractive animations\n\n### 2.10 Admin Management System
 \n#### 2.10.1 Admin Access & Security
 - **Multi-Level Admin Roles**: Super Admin, Admin, Manager, Support Staff, Stock Manager with customizable permission sets
 - **Role-Based Access Control (RBAC)**: Granular permissions for each admin role with ability to create custom roles
@@ -273,10 +279,9 @@ Full navigation menu with the following modules:
 - **Signup form**: Customize user registration form fields, validation rules, and email verification settings
 - **Ticket form**: Configure support ticket form fields, categories, priority levels, and auto-assignment rules
 - **API Settings**: Configure public API parameters, rate limits, authentication methods, and API documentation access
-- **Currency Settings**: Manage supported currencies, exchange rates, and automatic rate updates
-- **Language Settings**: Add/edit language packs, set default language, and manage translations
-- **Tax Configuration**: Set up tax rules, VAT settings, and regional tax compliance
-- **Terms & Policies**: Manage Terms of Service, Privacy Policy, Refund Policy, and legal documents
+- **Currency Settings**: Manage supported currencies, exchange rates, automatic rate updates, and default currency configuration
+- **Language Settings**: Add/edit language packs, set default language, manage translations, and configure language selector display
+- **Tax Configuration**: Set up tax rules, VAT settings, and regional tax compliance\n- **Terms & Policies**: Manage Terms of Service, Privacy Policy, Refund Policy, and legal documents
 - **GDPR Compliance**: Configure data retention policies, user data export, and right to be forgotten features
 - **Rate Limiting**: Configure API rate limits, request throttling, and abuse prevention
 - **Cache Management**: Configure caching settings, clear cache, and optimize performance
@@ -300,14 +305,15 @@ Full navigation menu with the following modules:
 - **Performance Monitoring**: Real-time server performance metrics, database optimization tools, and bottleneck identification
 - **Multi-Admin Collaboration**: Admin notes, task assignment, internal messaging, and collaboration tools
 - **Version Control**: Track changes to services, prices, and configurations with rollback capability
+- **Language Management**: Add, edit, and manage all language translations; import/export language files; set language availability per region
+- **Currency Management**: Add, edit, and manage all supported currencies; configure exchange rate sources; set currency availability per region; manage currency conversion rules
 \n## 3. Website Pages
 
 ### 3.1 Customer-Facing Pages
-1. **Home** - Main landing page with reduced-height advertisement banner at top, search field below banner, and service categories
-2. **Wallet** - User wallet management and balance display
-3. **Add Balance** - Wallet recharge page with multiple payment methods
+1. **Home** - Main landing page with reduced-height advertisement banner at top, search field below banner, and service categories\n2. **Wallet** - User wallet management and balance display with multi-currency support
+3. **Add Balance** - Wallet recharge page with multiple payment methods and currency selection
 4. **My Orders** - Order history and status tracking with invoice generation option
-5. **Profile Settings** - User profile management page for editing email, password, phone number, display name, profile picture, and communication preferences
+5. **Profile Settings** - User profile management page for editing email, password, phone number, display name, profile picture, language preference, currency preference, and communication preferences
 6. **Security** - Account security settings including 2FA setup, trusted devices management, login history, and password change\n7. **API** - Customer API documentation, key management, and testing console
 8. **API Documentation** - Interactive API documentation portal with code examples and testing tools
 9. **About Us** - Company information and contact details
@@ -348,7 +354,7 @@ Full navigation menu with the following modules:
 42. **Scheduled Tasks** - Interface for configuring automated tasks and cron jobs
 43. **Webhook Management** - Interface for managing webhook integrations\n44. **Fraud Detection** - Interface for configuring fraud rules and viewing suspicious activities
 45. **Performance Dashboard** - Interface for monitoring system performance and optimization
-\n## 4. Add Balance Payment System
+46. **Language Management** - Interface for adding, editing, and managing all language translations; import/export language files; configure language availability\n47. **Currency Management** - Interface for adding, editing, and managing all supported currencies; configure exchange rates; set currency availability per region\n\n## 4. Add Balance Payment System
 
 ### 4.1 Payment Methods
 - Support for 15+ payment methods including:
@@ -357,16 +363,19 @@ Full navigation menu with the following modules:
   - Mobile Wallets\n  - Cryptocurrency
   - Local payment gateways
   - Other regional payment options
-
-### 4.2 Payment Submission Process
+- **Multi-currency payment support**: Accept payments in all supported currencies
+\n### 4.2 Payment Submission Process
 For each balance top-up request, customers must:
 1. Select preferred payment method from available options
-2. Upload payment proof photo\n3. Enter transaction details\n4. Provide transaction ID\n5. Submit for verification
-\n### 4.3 Payment Verification
+2. Select currency for payment
+3. Upload payment proof photo\n4. Enter transaction details\n5. Provide transaction ID\n6. Submit for verification
+
+### 4.3 Payment Verification
 - Admin review of submitted payment proofs through admin panel
-- Balance credited after verification
+- Balance credited after verification with automatic currency conversion if needed
 - Notification sent upon approval or rejection
-\n## 5. Technical Requirements
+
+## 5. Technical Requirements
 
 ### 5.1 Backend & Database
 - Database system for user data, orders, inventory, transactions, payment submissions, and admin accounts
@@ -398,6 +407,11 @@ For each balance top-up request, customers must:
 - **API request/response logging system** for all API calls
 - **API rate limiting engine** with configurable thresholds
 - **Webhook delivery system** with retry mechanism
+- **Multi-language database system**: Store translations for all interface elements, notifications, and content in all supported languages
+- **Multi-currency database system**: Store currency configurations, exchange rates, and conversion rules for all supported currencies
+- **Language preference storage**: Store user and admin language preferences
+- **Currency preference storage**: Store user currency preferences and transaction currency history
+- **Real-time exchange rate API integration**: Automatic currency exchange rate updates from reliable sources
 \n### 5.2 Security Infrastructure
 - **SSL/TLS Encryption**: HTTPS enforcement across entire platform
 - **Database Encryption**: Encryption at rest for sensitive data
@@ -408,7 +422,8 @@ For each balance top-up request, customers must:
 - **Rate Limiting**: API and login rate limiting to prevent abuse
 - **DDoS Protection**: Integration with DDoS mitigation services
 - **Firewall Rules**: Web Application Firewall (WAF) configuration
-- **Security Headers**: Implementation of security headers (HSTS, X-Frame-Options, etc.)\n- **Vulnerability Scanning**: Regular automated security scans
+- **Security Headers**: Implementation of security headers (HSTS, X-Frame-Options, etc.)
+- **Vulnerability Scanning**: Regular automated security scans
 - **Penetration Testing**: Periodic security audits and penetration testing
 - **Data Backup Encryption**: Encrypted backup storage\n- **Secure File Upload**: File type validation and malware scanning
 - **Admin Session Security**: Secure session management with token rotation
@@ -441,16 +456,79 @@ For each balance top-up request, customers must:
 - **Custom Rate Engine**: Calculate final user prices based on user level discounts
 - **Dynamic Price Updates**: Real-time price adjustments when provider prices or profit margins change
 - **Price History Tracking**: Log all pricing changes for audit purposes
-\n### 5.6 Currency & Language\n- Multi-currency payment support
-- Multi-language interface options
+- **Multi-currency pricing**: Display prices in user's selected currency with automatic conversion
+\n### 5.6 Currency & Language\n- **Multi-currency payment support**: Support for all major global currencies including:\n  - USD (US Dollar)
+  - EUR (Euro)
+  - GBP (British Pound)
+  - JPY (Japanese Yen)\n  - CNY (Chinese Yuan)
+  - AUD (Australian Dollar)
+  - CAD (Canadian Dollar)
+  - CHF (Swiss Franc)
+  - INR (Indian Rupee)
+  - SAR (Saudi Riyal)
+  - AED (UAE Dirham)
+  - KWD (Kuwaiti Dinar)
+  - QAR (Qatari Riyal)
+  - BHD (Bahraini Dinar)
+  - OMR (Omani Rial)
+  - EGP (Egyptian Pound)
+  - TRY (Turkish Lira)
+  - ZAR (South African Rand)\n  - BRL (Brazilian Real)
+  - MXN (Mexican Peso)\n  - RUB (Russian Ruble)\n  - KRW (South Korean Won)
+  - SGD (Singapore Dollar)
+  - HKD (Hong Kong Dollar)
+  - MYR (Malaysian Ringgit)
+  - THB (Thai Baht)
+  - IDR (Indonesian Rupiah)
+  - PHP (Philippine Peso)
+  - VND (Vietnamese Dong)
+  - PKR (Pakistani Rupee)
+  - BDT (Bangladeshi Taka)
+  - NGN (Nigerian Naira)
+  - And other major currencies
+- **Real-time exchange rate updates**: Automatic currency conversion based on current exchange rates
+- **Currency selector**: User-friendly currency selector in header and profile settings
+- **Multi-language interface**: Support for all major global languages including:
+  - English
+  - Arabic (العربية)
+  - Spanish (Español)
+  - French (Français)
+  - German (Deutsch)
+  - Chinese Simplified (简体中文)
+  - Chinese Traditional (繁體中文)
+  - Japanese (日本語)
+  - Korean (한국어)
+  - Portuguese (Português)
+  - Russian (Русский)
+  - Italian (Italiano)
+  - Dutch (Nederlands)
+  - Turkish (Türkçe)
+  - Polish (Polski)
+  - Hindi (हिन्दी)
+  - Bengali (বাংলা)
+  - Urdu (اردو)
+  - Indonesian (Bahasa Indonesia)
+  - Malay (Bahasa Melayu)
+  - Thai (ไทย)
+  - Vietnamese (Tiếng Việt)\n  - Filipino (Filipino)
+  - Swedish (Svenska)
+  - Norwegian (Norsk)
+  - Danish (Dansk)
+  - Finnish (Suomi)
+  - Greek (Ελληνικά)
+  - Hebrew (עברית)
+  - Persian (فارسی)
+  - And other major languages
+- **Language selector**: Prominent language selector in header for easy switching
+- **RTL support**: Full right-to-left language support for Arabic, Hebrew, Persian, and Urdu
+- **Translation management system**: Admin interface for managing all translations
+- **Automatic language detection**: Detect user's browser language and suggest appropriate language
 \n### 5.7 Advertisement System
-- Image storage for promotional banners
-- Automatic rotation mechanism for multiple ads
+- Image storage for promotional banners\n- Automatic rotation mechanism for multiple ads
 - Click tracking and analytics
 - Admin control for banner scheduling and display order
 - Reduced banner height for better user experience
-
-### 5.8 API System Architecture
+\n### 5.8 API System Architecture
 \n#### 5.8.1 Public API Infrastructure
 - **RESTful API Design**: Standard REST architecture with JSON format
 - **API Gateway**: Centralized API gateway for request routing and management
@@ -467,8 +545,7 @@ For each balance top-up request, customers must:
 - **API Key Authentication**: Secure API key generation and validation
 - **OAuth 2.0 Support**: Optional OAuth 2.0 authentication flow
 - **JWT Token Management**: JSON Web Token for session management
-- **Request Signing**: HMAC-SHA256 signature verification
-- **Rate Limiting Engine**: Configurable rate limits per API key
+- **Request Signing**: HMAC-SHA256 signature verification\n- **Rate Limiting Engine**: Configurable rate limits per API key
 - **IP Whitelisting**: Restrict API access by IP address
 - **API Key Scopes**: Granular permission control per API key
 - **Request Throttling**: Automatic throttling for excessive requests
@@ -488,7 +565,8 @@ For each balance top-up request, customers must:
 
 #### 5.8.4 Admin API v2
 - RESTful API with granular permission control per API key
-- API key generation and management\n- Rate limiting and security controls
+- API key generation and management
+- Rate limiting and security controls
 - API usage monitoring and analytics
 \n### 5.9 Invoice System
 - **PDF Generation**: Automatic invoice creation in PDF format
@@ -496,6 +574,8 @@ For each balance top-up request, customers must:
 - **Download Functionality**: Users can download invoices from order page
 - **Invoice Storage**: Secure storage of all generated invoices
 - **Invoice Numbering**: Sequential invoice number generation system
+- **Multi-language invoices**: Generate invoices in user's selected language
+- **Multi-currency invoices**: Display amounts in user's selected currency
 \n### 5.10 Advanced Order Management
 - **Order Editing**: Edit order links and details
 - **Order Resending**: Resend failed or incomplete orders
@@ -527,21 +607,27 @@ For each balance top-up request, customers must:
 - **Alert System**: Configurable alerts for critical events and thresholds
 - **API Usage Analytics**: Track API request volumes, success rates, and error patterns
 - **API Performance Metrics**: Monitor API response times and latency
+- **Multi-currency analytics**: View revenue and statistics in multiple currencies
+- **Language usage analytics**: Track which languages are most used by customers
 
 ## 6. Design Style\n
 ### 6.1 Visual Design\n- **Top Advertisement Banner**: Reduced-height horizontal moving banner displaying promotional photos with smooth scrolling animation
 - **Search Field**: Positioned directly below the advertisement banner for easy access
+- **Language Selector**: Prominent language dropdown in header with flag icons for easy identification
+- **Currency Selector**: Currency dropdown in header showing currency symbols and codes
 - Card-based layout for categories with unified main images representing each service group
 - Vibrant blue and purple gradient accents on clean backgrounds
 - Smooth animations for category navigation and transitions
 - Professional admin panel interface with clear data visualization and comprehensive navigation menu
 - Organized settings sidebar with grouped configuration modules
 - **API Documentation Portal**: Clean, developer-friendly interface with syntax highlighting and interactive elements
-- **Profile Settings Page**: Clean, organized layout with tabbed sections for different profile settings
+- **Profile Settings Page**: Clean, organized layout with tabbed sections for different profile settings including language and currency preferences
 - **2FA Setup Interface**: Step-by-step wizard with QR code display and backup codes presentation
 \n### 6.2 Interactive Elements
 - **Advertisement Banner**: Auto-scrolling promotional photos with pause-on-hover functionality
 - **Search Field**: Instant search with autocomplete suggestions
+- **Language Selector**: Dropdown with search functionality and flag icons
+- **Currency Selector**: Dropdown with real-time exchange rate display
 - Expandable category menus with service option selection
 - Hover effects on service cards\n- Animated payment method selection interface
 - Image upload preview for payment proofs
@@ -562,11 +648,14 @@ For each balance top-up request, customers must:
 - **2FA QR Code Scanner**: Interactive QR code display with copy-to-clipboard functionality
 - **Password Strength Indicator**: Real-time password strength visualization
 - **Trusted Devices List**: Manage and revoke trusted devices with confirmation dialogs
+- **Language Translation Editor**: In-context translation editing for admins
+- **Currency Converter Widget**: Real-time currency conversion display on pricing pages
 \n### 6.3 Theme Options
 - Light mode: White background with soft shadows and colorful category cards with main images
 - Dark mode: Deep dark background with neon highlights and glowing category borders
 - Admin panel: Clean, data-focused interface with customizable dashboard widgets and organized navigation structure
 - API Documentation: Developer-friendly theme with syntax highlighting and clear code examples
+- **RTL Layout**: Fully mirrored layout for right-to-left languages with proper text alignment
 \n## 7. Reference Documentation
 - API Documentation Reference: https://api.play4cards.com/api-docs
 \n## 8. Reference Images

@@ -8,6 +8,7 @@ import TopBanner from '@/components/banners/TopBanner';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { RouteGuard } from '@/components/common/RouteGuard';
 import { Toaster } from '@/components/ui/toaster';
+import '@/i18n/config';
 
 const App = () => {
   return (

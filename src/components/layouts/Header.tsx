@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import NotificationBell from '@/components/notifications/NotificationBell';
+import { LanguageSwitcher, CurrencySwitcher } from '@/components/LanguageCurrencySwitcher';
 
 export default function Header() {
   const { user, profile, signOut } = useAuth();
@@ -75,6 +76,12 @@ export default function Header() {
 
         {/* Right Side Actions */}
         <div className="flex items-center space-x-2">
+          {/* Language Switcher */}
+          <LanguageSwitcher />
+
+          {/* Currency Switcher */}
+          <CurrencySwitcher />
+
           {/* Theme Toggle */}
           <Button
             variant="ghost"
