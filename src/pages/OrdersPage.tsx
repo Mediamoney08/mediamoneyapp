@@ -127,10 +127,14 @@ export default function OrdersPage() {
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">My Orders</h1>
-            <p className="text-muted-foreground">View and manage your order history</p>
+            <h1 className="font-bold text-[18px]">My Orders</h1>
+            <p className="text-muted-foreground text-[12px]">View and manage your order history</p>
           </div>
-          <Button variant="outline" onClick={loadOrders} disabled={loading}>
+          <Button
+            variant="outline"
+            onClick={loadOrders}
+            disabled={loading}
+            className="bg-[#bb41ff] bg-none text-[10px] font-['BlinkMacSystemFont'] font-['SF Pro SC']">
             <RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
             Refresh
           </Button>

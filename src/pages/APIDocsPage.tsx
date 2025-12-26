@@ -9,8 +9,8 @@ export default function APIDocsPage() {
     <div className="container py-8">
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold">API Documentation</h1>
-          <p className="text-muted-foreground">Integrate Recharge Hub services into your application</p>
+          <h1 className="font-bold text-[16px]">API Documentation</h1>
+          <p className="text-muted-foreground text-[14px]">Integrate Recharge Hub services into your application</p>
         </div>
 
         <Card>

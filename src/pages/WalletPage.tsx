@@ -41,7 +41,7 @@ export default function WalletPage() {
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
           <CardHeader className="relative z-10">
             <CardDescription className="text-white/80">Total Balance</CardDescription>
-            <CardTitle className="text-4xl font-bold">
+            <CardTitle className="font-bold text-[32px]">
               ${profile?.wallet_balance?.toFixed(2) || '0.00'}
             </CardTitle>
           </CardHeader>
@@ -86,7 +86,7 @@ export default function WalletPage() {
                 <p className="text-muted-foreground">No transactions yet</p>
                 <Button
                   variant="outline"
-                  className="mt-4"
+                  className="mt-4 bg-[#8824c1] bg-none text-[12px]"
                   onClick={() => navigate('/add-balance')}
                 >
                   Add Balance

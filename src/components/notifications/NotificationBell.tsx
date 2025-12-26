@@ -97,10 +97,10 @@ export default function NotificationBell() {
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-full sm:max-w-md overflow-y-auto">
+      <SheetContent className="w-full sm:max-w-sm overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>Notifications</SheetTitle>
-          <SheetDescription>
+          <SheetTitle className="text-base">Notifications</SheetTitle>
+          <SheetDescription className="text-xs">
             {unreadCount > 0 ? (
               <div className="flex items-center justify-between">
                 <span>You have {unreadCount} unread notification{unreadCount !== 1 ? 's' : ''}</span>
@@ -108,7 +108,7 @@ export default function NotificationBell() {
                   variant="link"
                   size="sm"
                   onClick={handleMarkAllAsRead}
-                  className="h-auto p-0"
+                  className="h-auto p-0 text-xs"
                 >
                   Mark all as read
                 </Button>
@@ -118,7 +118,7 @@ export default function NotificationBell() {
             )}
           </SheetDescription>
         </SheetHeader>
-        <div className="mt-6">
+        <div className="mt-4">
           <NotificationList
             notifications={notifications}
             isLoading={isLoading}
