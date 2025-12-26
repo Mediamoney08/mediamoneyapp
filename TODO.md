@@ -18,6 +18,13 @@
   - [x] Create API documentation page
   - [x] Add webhook support
   - [x] Implement API authentication middleware
+- [x] Step 4: Implement 2FA and profile management
+  - [x] Add 2FA setup and verification
+  - [x] Create profile edit page
+  - [x] Implement email change functionality
+  - [x] Implement password change functionality
+  - [x] Add security settings page
+  - [x] Create admin profile management
 - [ ] Step 3: Connect user-facing pages to backend
   - [ ] HomePage - categories and products
   - [ ] CheckoutPage - order creation

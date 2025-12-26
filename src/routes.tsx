@@ -4,6 +4,7 @@ import WalletPage from './pages/WalletPage';
 import AddBalancePage from './pages/AddBalancePage';
 import OrdersPage from './pages/OrdersPage';
 import SecurityPage from './pages/SecurityPage';
+import ProfileSettingsPage from './pages/ProfileSettingsPage';
 import AboutPage from './pages/AboutPage';
 import ApiDocsPage from './pages/ApiDocsPage';
 import SupportPage from './pages/SupportPage';
@@ -99,6 +100,17 @@ const routes: RouteConfig[] = [
     element: (
       <ProtectedRoute>
         <SecurityPage />
+      </ProtectedRoute>
+    ),
+    visible: false,
+    requireAuth: true,
+  },
+  {
+    name: 'Profile Settings',
+    path: '/profile',
+    element: (
+      <ProtectedRoute>
+        <ProfileSettingsPage />
       </ProtectedRoute>
     ),
     visible: false,

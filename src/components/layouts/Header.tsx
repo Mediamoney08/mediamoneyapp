@@ -121,6 +121,10 @@ export default function Header() {
                     </svg>
                     My Orders
                   </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/profile')}>
+                    <User className="mr-2 h-4 w-4" />
+                    Profile Settings
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/security')}>
                     <Shield className="mr-2 h-4 w-4" />
                     Security
