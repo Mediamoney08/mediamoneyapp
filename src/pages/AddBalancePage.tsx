@@ -228,29 +228,39 @@ export default function AddBalancePage() {
       </div>
 
       {/* Payment Methods Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+      <div className="grid grid-cols-3 xl:grid-cols-5 gap-4 mb-12">
         {paymentMethods.map((method) => (
           <Card
             key={method.id}
-            className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-primary"
+            className="cursor-pointer hover:shadow-lg transition-all border-2 hover:border-primary hover:scale-105 group"
             onClick={() => handleMethodSelect(method)}
           >
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CreditCard className="w-8 h-8 text-primary" />
-                {method.account_details?.commission > 0 && (
-                  <Badge variant="secondary">{method.account_details.commission}% fee</Badge>
-                )}
-              </div>
-              <CardTitle className="text-xl mt-2">{method.name}</CardTitle>
-              <CardDescription className="text-sm">
-                {method.description}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-sm text-muted-foreground">
-                <p>Min: ${method.account_details?.min_amount || 1}</p>
-                <p>Max: ${method.account_details?.max_amount || 10000}</p>
+            <CardContent className="p-4">
+              <div className="flex flex-col items-center text-center space-y-3">
+                {/* Payment Method Image */}
+                <div className="w-full aspect-square rounded-lg overflow-hidden bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
+                  {method.icon_url ? (
+                    <img
+                      src={method.icon_url}
+                      alt={method.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <CreditCard className="w-12 h-12 text-primary" />
+                  )}
+                </div>
+                
+                {/* Method Name */}
+                <div className="w-full">
+                  <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition-colors">
+                    {method.name}
+                  </h3>
+                  {method.account_details?.commission > 0 && (
+                    <Badge variant="secondary" className="mt-1 text-xs">
+                      {method.account_details.commission}% fee
+                    </Badge>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>
