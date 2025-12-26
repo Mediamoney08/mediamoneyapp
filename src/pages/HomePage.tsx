@@ -291,7 +291,7 @@ export default function HomePage() {
                       </CardContent>
                     </Card>
                   ) : (
-                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    <div className="grid gap-6 grid-cols-3 lg:grid-cols-5">
                       {filteredProducts.map((product) => (
                         <Card
                           key={product.id}
@@ -322,11 +322,11 @@ export default function HomePage() {
                             )}
                           </CardHeader>
                           <CardContent>
-                            <div className="flex items-center justify-between">
-                              <div className="flex-1">
+                            <div className="flex items-center justify-center">
+                              <div className="w-full">
                                 {user && userPrices[product.id] ? (
                                   <div>
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-2 justify-center flex-wrap">
                                       <div className="text-2xl font-bold text-primary">
                                         ${userPrices[product.id].final_price.toFixed(2)}
                                       </div>
@@ -338,38 +338,32 @@ export default function HomePage() {
                                       )}
                                     </div>
                                     {userPrices[product.id].discount_percentage > 0 && (
-                                      <div className="text-sm text-muted-foreground line-through">
+                                      <div className="text-sm text-muted-foreground line-through text-center">
                                         ${userPrices[product.id].base_price.toFixed(2)}
                                       </div>
                                     )}
                                     {userPrices[product.id].discount_reason && (
-                                      <div className="text-xs text-muted-foreground mt-1">
+                                      <div className="text-xs text-muted-foreground mt-1 text-center">
                                         {userPrices[product.id].discount_reason}
                                       </div>
                                     )}
                                   </div>
                                 ) : (
-                                  <div className="text-2xl font-bold text-primary">
+                                  <div className="text-2xl font-bold text-primary text-center">
                                     ${product.price.toFixed(2)}
                                   </div>
                                 )}
-                                <div className="text-sm text-muted-foreground mt-1">
-                                  Stock: {product.stock_quantity}
-                                </div>
                                 {/* Custom Fields */}
                                 {productFields[product.id] && productFields[product.id].length > 0 && (
                                   <div className="mt-2 space-y-1">
                                     {productFields[product.id].map((field) => (
-                                      <div key={field.id} className="text-xs text-muted-foreground">
+                                      <div key={field.id} className="text-xs text-muted-foreground text-center">
                                         <span className="font-medium">{field.field_name}:</span> {field.field_value}
                                       </div>
                                     ))}
                                   </div>
                                 )}
                               </div>
-                              <Button size="sm">
-                                Buy Now
-                              </Button>
                             </div>
                           </CardContent>
                         </Card>
