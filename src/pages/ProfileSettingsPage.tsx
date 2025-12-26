@@ -228,8 +228,10 @@ export default function ProfileSettingsPage() {
         setSelectedCurrency(data.currency || 'USD');
         
         // Apply language
-        if (data.language) {
-          await i18n.changeLanguage(data.language);
+        if (data.language && i18n) {
+          i18n.changeLanguage(data.language).catch(err => {
+            console.error('Error changing language:', err);
+          });
           document.documentElement.dir = ['ar', 'he'].includes(data.language) ? 'rtl' : 'ltr';
         }
         
@@ -249,7 +251,9 @@ export default function ProfileSettingsPage() {
       if (!user) return;
 
       // Update i18n
-      await i18n.changeLanguage(languageCode);
+      if (i18n) {
+        await i18n.changeLanguage(languageCode);
+      }
       setSelectedLanguage(languageCode);
       
       // Update HTML dir for RTL
@@ -270,9 +274,10 @@ export default function ProfileSettingsPage() {
         description: 'Language updated successfully',
       });
     } catch (error: any) {
+      console.error('Error updating language:', error);
       toast({
         title: 'Error',
-        description: error.message,
+        description: error.message || 'Failed to update language',
         variant: 'destructive',
       });
     }

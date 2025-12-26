@@ -49,6 +49,9 @@
   - [x] Update wallet balance to show in selected currency
   - [x] Fix profile loading error (single to maybeSingle)
   - [x] Improve error handling and loading states
+  - [x] Fix i18n initialization errors in profile page
+  - [x] Add null checks for i18n object
+  - [x] Improve async error handling
 - [ ] Step 3: Connect user-facing pages to backend
   - [ ] HomePage - categories and products
   - [ ] CheckoutPage - order creation
