@@ -13,6 +13,7 @@ import CheckoutPage from './pages/CheckoutPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AdminManagementPage from './pages/AdminManagementPage';
 import AdminDashboard from './pages/AdminDashboard';
+import ProtectedRoute from './components/ProtectedRoute';
 import type { ReactNode } from 'react';
 
 interface RouteConfig {
@@ -20,6 +21,8 @@ interface RouteConfig {
   path: string;
   element: ReactNode;
   visible?: boolean;
+  requireAuth?: boolean;
+  requireAdmin?: boolean;
 }
 
 const routes: RouteConfig[] = [
@@ -38,56 +41,101 @@ const routes: RouteConfig[] = [
   {
     name: 'Checkout',
     path: '/checkout',
-    element: <CheckoutPage />,
+    element: (
+      <ProtectedRoute>
+        <CheckoutPage />
+      </ProtectedRoute>
+    ),
     visible: false,
+    requireAuth: true,
   },
   {
     name: 'Wallet',
     path: '/wallet',
-    element: <WalletPage />,
+    element: (
+      <ProtectedRoute>
+        <WalletPage />
+      </ProtectedRoute>
+    ),
     visible: false,
+    requireAuth: true,
   },
   {
     name: 'Add Balance',
     path: '/add-balance',
-    element: <AddBalancePage />,
+    element: (
+      <ProtectedRoute>
+        <AddBalancePage />
+      </ProtectedRoute>
+    ),
     visible: false,
+    requireAuth: true,
   },
   {
     name: 'My Orders',
     path: '/orders',
-    element: <OrdersPage />,
+    element: (
+      <ProtectedRoute>
+        <OrdersPage />
+      </ProtectedRoute>
+    ),
     visible: false,
+    requireAuth: true,
   },
   {
     name: 'Notifications',
     path: '/notifications',
-    element: <NotificationsPage />,
+    element: (
+      <ProtectedRoute>
+        <NotificationsPage />
+      </ProtectedRoute>
+    ),
     visible: false,
+    requireAuth: true,
   },
   {
     name: 'Security',
     path: '/security',
-    element: <SecurityPage />,
+    element: (
+      <ProtectedRoute>
+        <SecurityPage />
+      </ProtectedRoute>
+    ),
     visible: false,
+    requireAuth: true,
   },
   {
     name: 'Admin Dashboard',
     path: '/admin',
-    element: <AdminDashboard />,
+    element: (
+      <ProtectedRoute requireAdmin={true}>
+        <AdminDashboard />
+      </ProtectedRoute>
+    ),
     visible: false,
+    requireAdmin: true,
   },
   {
     name: 'Admin Dashboard Old',
     path: '/admin/old',
-    element: <AdminDashboardPage />,
+    element: (
+      <ProtectedRoute requireAdmin={true}>
+        <AdminDashboardPage />
+      </ProtectedRoute>
+    ),
     visible: false,
+    requireAdmin: true,
   },
   {
     name: 'Admin Management',
     path: '/admin/manage',
-    element: <AdminManagementPage />,
+    element: (
+      <ProtectedRoute requireAdmin={true}>
+        <AdminManagementPage />
+      </ProtectedRoute>
+    ),
     visible: false,
+    requireAdmin: true,
   },
   {
     name: 'About Us',
@@ -110,8 +158,13 @@ const routes: RouteConfig[] = [
   {
     name: 'Payment Success',
     path: '/payment-success',
-    element: <PaymentSuccessPage />,
+    element: (
+      <ProtectedRoute>
+        <PaymentSuccessPage />
+      </ProtectedRoute>
+    ),
     visible: false,
+    requireAuth: true,
   },
 ];
 
