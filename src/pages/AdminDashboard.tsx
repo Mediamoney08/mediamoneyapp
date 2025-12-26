@@ -28,7 +28,11 @@ import {
   BarChart3,
   Palette,
   Gift,
-  Zap
+  Zap,
+  Shield,
+  Activity,
+  Mail,
+  Server
 } from 'lucide-react';
 
 // Import admin components
@@ -62,6 +66,11 @@ import NotificationsManagement from '@/components/admin/NotificationsManagement'
 import BonusesManagement from '@/components/admin/BonusesManagement';
 import SignupFormSettings from '@/components/admin/SignupFormSettings';
 import TicketFormSettings from '@/components/admin/TicketFormSettings';
+import AdminUserManagement from '@/components/admin/AdminUserManagement';
+import ActivityLogsManagement from '@/components/admin/ActivityLogsManagement';
+import SecurityDashboard from '@/components/admin/SecurityDashboard';
+import SystemMonitoring from '@/components/admin/SystemMonitoring';
+import EmailTemplatesManagement from '@/components/admin/EmailTemplatesManagement';
 
 export default function AdminDashboard() {
   const { user } = useAuth();
@@ -181,6 +190,14 @@ export default function AdminDashboard() {
               <Layers className="h-4 w-4" />
               <span className="hidden sm:inline">Child Panels</span>
             </TabsTrigger>
+            <TabsTrigger value="security" className="flex items-center gap-2">
+              <Shield className="h-4 w-4" />
+              <span className="hidden sm:inline">Security</span>
+            </TabsTrigger>
+            <TabsTrigger value="system" className="flex items-center gap-2">
+              <Server className="h-4 w-4" />
+              <span className="hidden sm:inline">System</span>
+            </TabsTrigger>
             <TabsTrigger value="updates" className="flex items-center gap-2">
               <Bell className="h-4 w-4" />
               <span className="hidden sm:inline">Updates</span>
@@ -270,6 +287,31 @@ export default function AdminDashboard() {
           <ChildPanelsManagement />
         </TabsContent>
 
+        {/* Security Tab */}
+        <TabsContent value="security" className="space-y-6">
+          <Tabs defaultValue="dashboard" className="space-y-4">
+            <TabsList>
+              <TabsTrigger value="dashboard">Security Dashboard</TabsTrigger>
+              <TabsTrigger value="admins">Admin Users</TabsTrigger>
+              <TabsTrigger value="activity">Activity Logs</TabsTrigger>
+            </TabsList>
+            <TabsContent value="dashboard">
+              <SecurityDashboard />
+            </TabsContent>
+            <TabsContent value="admins">
+              <AdminUserManagement />
+            </TabsContent>
+            <TabsContent value="activity">
+              <ActivityLogsManagement />
+            </TabsContent>
+          </Tabs>
+        </TabsContent>
+
+        {/* System Tab */}
+        <TabsContent value="system" className="space-y-6">
+          <SystemMonitoring />
+        </TabsContent>
+
         {/* Updates Tab */}
         <TabsContent value="updates" className="space-y-6">
           <UpdatesManagement />
@@ -295,8 +337,9 @@ export default function AdminDashboard() {
               <TabsTrigger value="modules">Modules</TabsTrigger>
               <TabsTrigger value="integrations">Integrations</TabsTrigger>
             </TabsList>
-            <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
+            <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5">
               <TabsTrigger value="notifications">Notifications</TabsTrigger>
+              <TabsTrigger value="email-templates">Email Templates</TabsTrigger>
               <TabsTrigger value="bonuses">Bonuses</TabsTrigger>
               <TabsTrigger value="signup-form">Signup Form</TabsTrigger>
               <TabsTrigger value="ticket-form">Ticket Form</TabsTrigger>
@@ -342,6 +385,9 @@ export default function AdminDashboard() {
             </TabsContent>
             <TabsContent value="notifications">
               <NotificationsManagement />
+            </TabsContent>
+            <TabsContent value="email-templates">
+              <EmailTemplatesManagement />
             </TabsContent>
             <TabsContent value="bonuses">
               <BonusesManagement />

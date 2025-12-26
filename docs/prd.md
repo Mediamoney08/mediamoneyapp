@@ -7,12 +7,10 @@ MediaMoney\n
 ### 1.2 Website Description
 A comprehensive online platform for digital recharge services, offering game top-ups, app subscriptions, streaming service subscriptions (Netflix, Shahid, etc.), and gift cards. Users can recharge through player IDs and manage transactions via personal wallets.
 
-### 1.3 Reference Website
-play4cards.com
+### 1.3 Reference Website\nplay4cards.com
 
 ### 1.4 Reference Images
-- Screenshot2025-12-25195356.png: Category layout reference
-- Screenshot 2025-12-25 195350.png: Service card design reference
+- Screenshot2025-12-25195356.png: Category layout reference\n- Screenshot 2025-12-25 195350.png: Service card design reference
 - Screenshot 2025-12-25 195327.png: Main category structure reference
 - Screenshot 2025-12-26 133441.png: Admin dashboard navigation menu reference
 - Screenshot 2025-12-26 133448.png: Admin settings sidebar reference
@@ -25,14 +23,14 @@ play4cards.com
 - **Game Recharge**\n  - 50+ game categories (e.g., Action Games, RPG Games, Battle Royale, etc.)
   - Each category contains multiple service options with the same game name
   - Some categories include subcategories with their own services
-  - Recharge via player ID\n
-- **App Recharge**
+  - Recharge via player ID\n\n- **App Recharge**
   - Multiple app categories\n  - Each category contains service options grouped by app name
   - Some categories include subcategories\n  - Recharge via player ID
 
 - **Streaming Subscriptions**
   - Multiple streaming platform categories (Netflix, Shahid, etc.)
-  - Each category contains subscription service options\n  - Some categories include subcategories (e.g., plan types, regions)
+  - Each category contains subscription service options
+  - Some categories include subcategories (e.g., plan types, regions)
 \n- **Gift Cards**
   - Multiple gift card categories
   - Each category contains card service options
@@ -43,8 +41,7 @@ play4cards.com
 - Balance top-up functionality
 - Order history tracking
 - **Invoice generation for orders**
-- Security settings
-- **Wallet-only purchase requirement: All purchases must be made using wallet balance**
+- Security settings\n- **Wallet-only purchase requirement: All purchases must be made using wallet balance**
 
 ### 2.3 User Level System
 - **User Level Tiers**: Admin can create and manage multiple user levels\n- **Custom Discount Rates**: Admin can assign custom discount percentages to each user level
@@ -54,23 +51,24 @@ play4cards.com
 
 ### 2.4 Transaction Features
 - **Automatic order fulfillment from stock inventory**: When customers purchase gift cards, Netflix codes, Shahid codes, or PUBG codes, orders are fulfilled directly from stock and delivered immediately
-- Real-time stock management
-- Multi-currency support
+- Real-time stock management\n- Multi-currency support
 - **Wallet-based payment processing only**
 - **Invoice Generation**: Customers can generate and download invoices for their orders from the order page
 \n### 2.5 Stock Management System
 - **Stock Manager Role**: Dedicated role for managing inventory of gift cards and digital codes
 - **Direct Order Fulfillment**: Customers receive orders immediately upon purchase from available stock
-- **Stock Categories**: Gift cards, Netflix codes, Shahid codes, PUBG codes, and other digital products
-- **Real-time Inventory Tracking**: Automatic stock level updates after each purchase
+- **Stock Categories**: Gift cards, Netflix codes, Shahid codes, PUBG codes, and other digital products\n- **Real-time Inventory Tracking**: Automatic stock level updates after each purchase
 - **Stock Alerts**: Notifications when stock levels are low
-- **Stock Manager Permissions**:\n  - Add new stock items
+- **Stock Manager Permissions**:
+  - Add new stock items
   - Update stock quantities
   - View stock history
   - Manage stock categories
   - Set stock alerts and thresholds
-\n### 2.6 Notification System
-- **Order Status Notifications**:\n  - Order completion alerts
+
+### 2.6 Notification System
+- **Order Status Notifications**:
+  - Order completion alerts
   - Order cancellation notifications
 - **Wallet Notifications**:
   - Balance added to wallet confirmation
@@ -106,18 +104,20 @@ play4cards.com
   - View provider response
   - View provider URL instead of alias
   - Change status
-  - Cancel and refund\n  - Set partial\n  - Pull orders
+  - Cancel and refund
+  - Set partial\n  - Pull orders
   - Update orders
-\n- **Cancel Permissions**:
+
+- **Cancel Permissions**:
   - Request cancel
   - Pull cancel tasks
-  - Reject cancel
-\n- **Refill Permissions**:
+  - Reject cancel\n\n- **Refill Permissions**:
   - Pull refill tasks
   - Change refill status
 
 - **Payments Permissions**:
-  - Add payment\n  - Get payment list
+  - Add payment
+  - Get payment list
   - View user details
 \n- **Users Permissions**:
   - Add user
@@ -128,65 +128,107 @@ play4cards.com
   - View user details
 \n- **Tickets Permissions**:
   - Get ticket list
-  - Get ticket\n  - Reply to a ticket
+  - Get ticket
+  - Reply to a ticket
   - Add ticket
 \n### 2.9 Interface Features
 - **Advertisement Banner**: Reduced height moving banner at the top of screen displaying promotional photos and ads
 - **Search Field**: Positioned below the advertisement banner\n- Dark mode and light mode toggle
 - Multi-language support
-- Slide bar navigation\n- Navigation bar\n- Header section
-- Attractive animations\n\n### 2.10 Admin Management System
-- **Admin Login Page**: Dedicated secure login page exclusively for administrators
-- **Comprehensive Dashboard Navigation**: Full navigation menu with the following modules:
-  - **Users**: Manage user accounts, permissions, wallet balances, activity, and user level assignments
-  - **Orders**: View, process, update, edit links, resend orders, cancel and refund, set partial, pull and update orders
-  - **Subscriptions**: Manage recurring subscription services and billing cycles
-  - **Drip-feed**: Configure and manage drip-feed order delivery settings
-  - **Refill**: Handle refill requests, pull refill tasks, and change refill status
-  - **Cancel**: Manage cancellation requests, pull cancel tasks, and reject cancellations
-  - **Services**: Add, edit, delete services and categories; update pricing and availability; import services via API with profit markup
-  - **Payments**: Review and approve/reject balance top-up requests; add payments; view payment lists and user details
-  - **Tickets**: View and respond to customer support tickets; manage ticket workflow
-  - **Affiliates**: Manage affiliate program, track referrals, and commission payouts
-  - **Child panels**: Manage sub-panel accounts and permissions for resellers
-  - **Updates**: View system updates, changelog, and version information
-  - **Reports**: Access analytics dashboard with site statistics, revenue reports, popular services, and user activity
-  - **Appearance**: Customize site theme, colors, logos, and visual elements
-  - **Settings**: Configure all site parameters through comprehensive settings sidebar
+- Slide bar navigation
+- Navigation bar\n- Header section
+- Attractive animations
+\n### 2.10 Admin Management System
+\n#### 2.10.1 Admin Access & Security
+- **Multi-Level Admin Roles**: Super Admin, Admin, Manager, Support Staff, Stock Manager with customizable permission sets
+- **Role-Based Access Control (RBAC)**: Granular permissions for each admin role with ability to create custom roles
+- **Admin Login Page**: Dedicated secure login page exclusively for administrators with CAPTCHA protection
+- **Two-Factor Authentication (2FA)**: Mandatory 2FA for Super Admin, optional for other roles using authenticator apps or SMS
+- **Session Management**: \n  - Configurable session timeout (15-120 minutes)
+  - Automatic logout on inactivity
+  - Single session enforcement option
+  - Session hijacking prevention
+- **IP Whitelisting**: Restrict admin access to specific IP addresses or ranges
+- **Login Attempt Monitoring**: Track and block suspicious login attempts after configurable failed attempts
+- **Password Policy Enforcement**:
+  - Minimum password length (12+ characters)
+  - Complexity requirements (uppercase, lowercase, numbers, special characters)
+  - Password expiration (30/60/90 days)
+  - Password history (prevent reuse of last 5 passwords)
+- **Admin Activity Audit Log**: Comprehensive logging of all admin actions with timestamps, IP addresses, and user agents
+- **Security Alerts**: Real-time notifications for suspicious activities, unauthorized access attempts, and security events
+- **Data Encryption**: End-to-end encryption for sensitive admin data and communications
+- **Backup Admin Access**: Emergency access recovery system for Super Admin
 
-- **Settings Sidebar Modules**:
-  - **General**: Basic site configuration, site name, URL, timezone, and general preferences
-  - **Providers**: Configure service provider API connections and manage provider settings
-  - **Payments Modules**: Set up and manage payment gateway integrations for balance top-ups
-  - **Integrations**: Connect third-party services and tools (analytics, CRM, etc.)
-  - **Notifications**: Configure notification settings, templates, and delivery methods
-  - **Bonuses**: Set up bonus programs, promotional offers, and reward systems
-  - **Signup form**: Customize user registration form fields and validation rules
-  - **Ticket form**: Configure support ticket form fields and categories
-\n- **Additional Admin Features**:
-  - **User Level Management**: Create, edit, and delete user levels; assign custom discount rates to each level
-  - **Custom Rate Configuration**: Set custom pricing rates for users based on their level and discount settings
-  - **Service Import with Profit Markup**: Import services via API from providers with automatic profit percentage addition
-  - **Stock Inventory Control**: Manage gift card stock, track inventory levels, add new stock for digital products
-  - **Stock Manager Assignment**: Assign and manage stock manager roles and permissions
-  - **Category & Image Management**: Upload and assign main images for each category; organize service groupings
-  - **Advertisement Management**: Upload and manage promotional photos for top banner; control banner rotation and display\n  - **Admin API v2 Management**: Create and edit API keys, set granular permissions, and monitor API usage
-  - **Customer API Management**: Configure customer API settings and monitor usage
-  - **Activity Logging**: Track all admin actions for audit purposes
-  - **Two-factor Authentication**: Optional 2FA for enhanced admin account security
-
-## 3. Website Pages
+#### 2.10.2 Comprehensive Dashboard Navigation
+Full navigation menu with the following modules:\n- **Dashboard Home**: Overview with key metrics, recent activities, and quick action buttons
+- **Users**: Manage user accounts, permissions, wallet balances, activity, user level assignments, and bulk user operations
+- **Orders**: View, process, update, edit links, resend orders, cancel and refund, set partial, pull and update orders, export order data
+- **Subscriptions**: Manage recurring subscription services, billing cycles, renewal settings, and subscription analytics
+- **Drip-feed**: Configure and manage drip-feed order delivery settings, scheduling, and automation rules
+- **Refill**: Handle refill requests, pull refill tasks, change refill status, and refill history tracking
+- **Cancel**: Manage cancellation requests, pull cancel tasks, reject cancellations, and cancellation analytics
+- **Services**: Add, edit, delete services and categories; update pricing and availability; import services via API with profit markup; bulk service management
+- **Payments**: Review and approve/reject balance top-up requests; add payments; view payment lists and user details; payment gateway configuration; transaction monitoring
+- **Tickets**: View and respond to customer support tickets; manage ticket workflow; ticket categorization; SLA tracking; canned responses
+- **Affiliates**: Manage affiliate program, track referrals, commission payouts, affiliate performance analytics, and commission rules
+- **Child panels**: Manage sub-panel accounts and permissions for resellers; revenue sharing configuration; child panel analytics
+- **Updates**: View system updates, changelog, version information, and schedule maintenance windows
+- **Reports**: Access analytics dashboard with site statistics, revenue reports, popular services, user activity, financial reports, and custom report builder
+- **Appearance**: Customize site theme, colors, logos, visual elements, and frontend layout options
+- **Settings**: Configure all site parameters through comprehensive settings sidebar
+- **Logs & Monitoring**: System logs, error logs, API logs, admin activity logs, and real-time monitoring dashboard
+- **Backup & Restore**: Database backup scheduling, backup history, one-click restore, and export/import functionality
+- **Email Templates**: Manage email notification templates for all system events with WYSIWYG editor
+- **SMS Gateway**: Configure SMS notification settings and manage SMS templates
+- **Security Center**: Centralized security management, firewall rules, DDoS protection settings, and security scan reports
+\n#### 2.10.3 Settings Sidebar Modules
+- **General**: Basic site configuration, site name, URL, timezone, general preferences, maintenance mode, and site status
+- **Providers**: Configure service provider API connections, manage provider settings, provider priority, and failover rules
+- **Payments Modules**: Set up and manage payment gateway integrations for balance top-ups, payment method ordering, and fee configuration
+- **Integrations**: Connect third-party services and tools (analytics, CRM, marketing automation, etc.)
+- **Notifications**: Configure notification settings, templates, delivery methods, and notification scheduling
+- **Bonuses**: Set up bonus programs, promotional offers, reward systems, and loyalty programs
+- **Signup form**: Customize user registration form fields, validation rules, and email verification settings
+- **Ticket form**: Configure support ticket form fields, categories, priority levels, and auto-assignment rules
+- **Currency Settings**: Manage supported currencies, exchange rates, and automatic rate updates
+- **Language Settings**: Add/edit language packs, set default language, and manage translations
+- **Tax Configuration**: Set up tax rules, VAT settings, and regional tax compliance
+- **Terms & Policies**: Manage Terms of Service, Privacy Policy, Refund Policy, and legal documents
+- **GDPR Compliance**: Configure data retention policies, user data export, and right to be forgotten features
+- **Rate Limiting**: Configure API rate limits, request throttling, and abuse prevention
+- **Cache Management**: Configure caching settings, clear cache, and optimize performance
+\n#### 2.10.4 Additional Admin Features
+- **User Level Management**: Create, edit, and delete user levels; assign custom discount rates to each level
+- **Custom Rate Configuration**: Set custom pricing rates for users based on their level and discount settings
+- **Service Import with Profit Markup**: Import services via API from providers with automatic profit percentage addition
+- **Stock Inventory Control**: Manage gift card stock, track inventory levels, add new stock for digital products
+- **Stock Manager Assignment**: Assign and manage stock manager roles and permissions
+- **Category & Image Management**: Upload and assign main images for each category; organize service groupings
+- **Advertisement Management**: Upload and manage promotional photos for top banner; control banner rotation and display
+- **Admin API v2 Management**: Create and edit API keys, set granular permissions, and monitor API usage
+- **Customer API Management**: Configure customer API settings and monitor usage
+- **Bulk Operations**: Bulk user management, bulk order processing, bulk service updates, and bulk email sending
+- **Advanced Search & Filtering**: Powerful search across all modules with multiple filter criteria
+- **Data Export**: Export data to CSV, Excel, PDF formats for all major modules
+- **Scheduled Tasks**: Configure automated tasks (reports, backups, notifications, cleanups)
+- **Webhook Management**: Configure webhooks for external integrations and event notifications
+- **Custom Fields**: Add custom fields to users, orders, and services for extended data collection
+- **Fraud Detection**: Automated fraud detection rules, suspicious activity alerts, and blacklist management
+- **Performance Monitoring**: Real-time server performance metrics, database optimization tools, and bottleneck identification
+- **Multi-Admin Collaboration**: Admin notes, task assignment, internal messaging, and collaboration tools
+- **Version Control**: Track changes to services, prices, and configurations with rollback capability
+\n## 3. Website Pages
 
 ### 3.1 Customer-Facing Pages
 1. **Home** - Main landing page with reduced-height advertisement banner at top, search field below banner, and service categories
 2. **Wallet** - User wallet management and balance display
 3. **Add Balance** - Wallet recharge page with multiple payment methods
 4. **My Orders** - Order history and status tracking with invoice generation option
-5. **Security** - Account security settings\n6. **API** - Customer API documentation and access
-7. **About Us** - Company information and contact details
+5. **Security** - Account security settings\n6. **API** - Customer API documentation and access\n7. **About Us** - Company information and contact details
 8. **Service Category Pages** - Dedicated pages for each main service type (Games, Apps, Streaming, Gift Cards) with category/subcategory navigation and unified category images
 \n### 3.2 Admin-Only Pages
-1. **Admin Login** - Secure authentication page for administrators only
+1. **Admin Login** - Secure authentication page with 2FA for administrators only
 2. **Admin Dashboard** - Overview of site statistics and quick access to all management modules
 3. **Users Management** - Interface for managing user accounts, permissions, levels, and activity
 4. **Orders Management** - Interface for managing all customer orders with full control options
@@ -197,28 +239,33 @@ play4cards.com
 10. **Payments Management** - Interface for reviewing balance top-up requests and payment verification
 11. **Tickets Management** - Interface for handling customer support tickets
 12. **Affiliates Management** - Interface for managing affiliate program and commissions
-13. **Child Panels Management** - Interface for managing reseller sub-panels
-14. **Updates** - Interface for viewing system updates and changelog
+13. **Child Panels Management** - Interface for managing reseller sub-panels\n14. **Updates** - Interface for viewing system updates and changelog
 15. **Reports & Analytics** - Interface for viewing site statistics and performance data
-16. **Appearance Settings** - Interface for customizing site visual design
-17. **General Settings** - Interface for basic site configuration\n18. **Providers Settings** - Interface for managing service provider API connections
+16. **Appearance Settings** - Interface for customizing site visual design\n17. **General Settings** - Interface for basic site configuration
+18. **Providers Settings** - Interface for managing service provider API connections
 19. **Payments Modules Settings** - Interface for configuring payment gateway integrations
-20. **Integrations Settings** - Interface for connecting third-party services\n21. **Notifications Settings** - Interface for configuring notification system
-22. **Bonuses Settings** - Interface for setting up bonus programs
-23. **Signup Form Settings** - Interface for customizing registration form\n24. **Ticket Form Settings** - Interface for configuring support ticket form\n25. **User Level Management** - Interface for creating and managing user levels with custom discount rates
+20. **Integrations Settings** - Interface for connecting third-party services\n21. **Notifications Settings** - Interface for configuring notification system\n22. **Bonuses Settings** - Interface for setting up bonus programs
+23. **Signup Form Settings** - Interface for customizing registration form\n24. **Ticket Form Settings** - Interface for configuring support ticket form
+25. **User Level Management** - Interface for creating and managing user levels with custom discount rates
 26. **Stock Management** - Interface for inventory control of digital products
-27. **Stock Manager Management** - Interface for assigning and managing stock manager roles
-28. **Category Management** - Interface for organizing services and uploading category main images
+27. **Stock Manager Management** - Interface for assigning and managing stock manager roles\n28. **Category Management** - Interface for organizing services and uploading category main images
 29. **Advertisement Management** - Interface for uploading and managing top banner promotional content
 30. **Admin API v2 Management** - Interface for creating, editing, and managing API keys with granular permission settings
-31. **Customer API Management** - Interface for managing customer API settings\n\n## 4. Add Balance Payment System
+31. **Customer API Management** - Interface for managing customer API settings\n32. **Admin Roles & Permissions** - Interface for creating custom admin roles and assigning granular permissions
+33. **Security Center** - Interface for managing security settings, viewing security logs, and configuring protection rules
+34. **Logs & Monitoring** - Interface for viewing system logs, admin activity logs, and real-time monitoring\n35. **Backup & Restore** - Interface for managing database backups and restoration
+36. **Email Templates** - Interface for managing email notification templates\n37. **SMS Gateway** - Interface for configuring SMS settings\n38. **Bulk Operations** - Interface for performing bulk actions across multiple records
+39. **Scheduled Tasks** - Interface for configuring automated tasks and cron jobs
+40. **Webhook Management** - Interface for managing webhook integrations\n41. **Fraud Detection** - Interface for configuring fraud rules and viewing suspicious activities
+42. **Performance Dashboard** - Interface for monitoring system performance and optimization
+\n## 4. Add Balance Payment System
 
 ### 4.1 Payment Methods
 - Support for 15+ payment methods including:
   - Credit/Debit Cards\n  - PayPal
   - Bank Transfer
-  - Mobile Wallets
-  - Cryptocurrency\n  - Local payment gateways
+  - Mobile Wallets\n  - Cryptocurrency
+  - Local payment gateways
   - Other regional payment options
 
 ### 4.2 Payment Submission Process
@@ -248,29 +295,45 @@ For each balance top-up request, customers must:
 - **Drip-feed order processing system** for scheduled delivery
 - **Affiliate tracking system** for referral management and commission calculation
 - **Child panel management system** for reseller account hierarchy
-\n### 5.2 Stock Inventory System
+- **Comprehensive audit logging system** for all admin and user actions
+- **Backup and disaster recovery system** with automated scheduling
+- **Redis caching layer** for improved performance\n- **Queue management system** for background job processing
+\n### 5.2 Security Infrastructure
+- **SSL/TLS Encryption**: HTTPS enforcement across entire platform
+- **Database Encryption**: Encryption at rest for sensitive data
+- **Password Hashing**: Bcrypt or Argon2 for secure password storage
+- **SQL Injection Prevention**: Parameterized queries and input sanitization
+- **XSS Protection**: Content Security Policy and output encoding
+- **CSRF Protection**: Token-based CSRF prevention
+- **Rate Limiting**: API and login rate limiting to prevent abuse
+- **DDoS Protection**: Integration with DDoS mitigation services
+- **Firewall Rules**: Web Application Firewall (WAF) configuration
+- **Security Headers**: Implementation of security headers (HSTS, X-Frame-Options, etc.)\n- **Vulnerability Scanning**: Regular automated security scans
+- **Penetration Testing**: Periodic security audits and penetration testing
+- **Data Backup Encryption**: Encrypted backup storage\n- **Secure File Upload**: File type validation and malware scanning
+- **Admin Session Security**: Secure session management with token rotation
+\n### 5.3 Stock Inventory System
 - Automated gift card and digital code delivery from stock upon purchase
 - Real-time inventory tracking and management
 - Stock management across categories and subcategories
 - Admin and stock manager interface for stock updates and monitoring
 - Direct order fulfillment for customers
 - Low stock alerts and notifications
-\n### 5.3 Category Management
-- Hierarchical category structure (Category → Subcategory → Service)\n- Unified service grouping by name within categories
-- Dynamic category display based on service type\n- Category filtering and search functionality
+\n### 5.4 Category Management
+- Hierarchical category structure (Category → Subcategory → Service)
+- Unified service grouping by name within categories
+- Dynamic category display based on service type
+- Category filtering and search functionality
 - Main image assignment for each category
 - Admin tools for category organization and image uploads
-\n### 5.4 Pricing & Profit System
-- **Provider API Integration**: Import services from external provider APIs\n- **Automatic Profit Markup**: Apply configurable profit percentage (e.g., 10%) on provider prices
-- **Custom Rate Engine**: Calculate final user prices based on user level discounts\n- **Dynamic Price Updates**: Real-time price adjustments when provider prices or profit margins change
+\n### 5.5 Pricing & Profit System
+- **Provider API Integration**: Import services from external provider APIs
+- **Automatic Profit Markup**: Apply configurable profit percentage (e.g., 10%) on provider prices
+- **Custom Rate Engine**: Calculate final user prices based on user level discounts
+- **Dynamic Price Updates**: Real-time price adjustments when provider prices or profit margins change
 - **Price History Tracking**: Log all pricing changes for audit purposes
-\n### 5.5 Currency & Language\n- Multi-currency payment support
+\n### 5.6 Currency & Language\n- Multi-currency payment support
 - Multi-language interface options
-\n### 5.6 Admin System Security
-- Secure admin login with encryption
-- Session management and timeout controls
-- Activity logging for admin actions
-- Two-factor authentication option for admin accounts
 \n### 5.7 Advertisement System
 - Image storage for promotional banners
 - Automatic rotation mechanism for multiple ads
@@ -313,7 +376,16 @@ For each balance top-up request, customers must:
 - **Child Panel Management**: Create and manage reseller sub-accounts
 - **Hierarchical Permissions**: Set different permission levels for child panels
 - **Revenue Sharing**: Configure revenue sharing models for resellers
-\n## 6. Design Style\n
+\n### 5.13 Monitoring & Analytics
+- **Real-time Dashboard**: Live metrics for orders, revenue, and user activity
+- **Custom Reports**: Build custom reports with flexible date ranges and filters
+- **Revenue Analytics**: Detailed financial reports with profit margins and trends
+- **User Behavior Analytics**: Track user engagement and conversion funnels
+- **Service Performance**: Monitor popular services and identify trends
+- **System Health Monitoring**: Server uptime, response times, and error rates
+- **Alert System**: Configurable alerts for critical events and thresholds
+
+## 6. Design Style\n
 ### 6.1 Visual Design\n- **Top Advertisement Banner**: Reduced-height horizontal moving banner displaying promotional photos with smooth scrolling animation
 - **Search Field**: Positioned directly below the advertisement banner for easy access
 - Card-based layout for categories with unified main images representing each service group
@@ -321,8 +393,7 @@ For each balance top-up request, customers must:
 - Smooth animations for category navigation and transitions
 - Professional admin panel interface with clear data visualization and comprehensive navigation menu
 - Organized settings sidebar with grouped configuration modules
-
-### 6.2 Interactive Elements
+\n### 6.2 Interactive Elements
 - **Advertisement Banner**: Auto-scrolling promotional photos with pause-on-hover functionality
 - **Search Field**: Instant search with autocomplete suggestions
 - Expandable category menus with service option selection
@@ -337,6 +408,8 @@ For each balance top-up request, customers must:
 - **Collapsible admin navigation menu** for better space management
 - **Quick action buttons** in admin dashboard for common tasks
 - **Data tables with sorting and filtering** in admin management pages
+- **Contextual tooltips** for admin features and settings
+- **Keyboard shortcuts** for common admin actions
 
 ### 6.3 Theme Options
 - Light mode: White background with soft shadows and colorful category cards with main images
