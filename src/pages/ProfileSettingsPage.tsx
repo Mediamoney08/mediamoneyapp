@@ -131,22 +131,38 @@ export default function ProfileSettingsPage() {
 
       console.log('Loading profile for user:', user.id);
 
-      // Try to load existing profile
+      // Try to load existing profile using RPC function
       const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
+        .rpc('get_current_user_profile')
         .maybeSingle();
 
       if (error) {
-        console.error('Error loading profile:', error);
+        console.error('Error loading profile via RPC:', error);
+        // Fallback to direct query
+        const { data: directData, error: directError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle();
+        
+        if (directError) {
+          console.error('Error loading profile via direct query:', directError);
+        } else if (directData) {
+          console.log('Profile loaded via direct query:', directData);
+          setProfile(directData as Profile);
+          setUsername(directData.username || '');
+          setNewEmail(directData.email || '');
+          setLoading(false);
+          return;
+        }
       }
       
       if (data) {
-        console.log('Profile loaded successfully:', data);
-        setProfile(data);
-        setUsername(data.username || '');
-        setNewEmail(data.email || '');
+        console.log('Profile loaded successfully via RPC:', data);
+        const profileData = data as Profile;
+        setProfile(profileData);
+        setUsername(profileData.username || '');
+        setNewEmail(profileData.email || '');
         setLoading(false);
         return;
       }
@@ -169,22 +185,21 @@ export default function ProfileSettingsPage() {
       if (createError) {
         console.error('Error creating profile:', createError);
         
-        // Maybe it was created by trigger, try loading again
+        // Maybe it was created by trigger, try loading again via RPC
         const { data: retryData, error: retryError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
+          .rpc('get_current_user_profile')
           .maybeSingle();
         
         if (retryError) {
-          console.error('Error on retry:', retryError);
+          console.error('Error on retry via RPC:', retryError);
         }
         
         if (retryData) {
           console.log('Profile found on retry:', retryData);
-          setProfile(retryData);
-          setUsername(retryData.username || '');
-          setNewEmail(retryData.email || '');
+          const profileData = retryData as Profile;
+          setProfile(profileData);
+          setUsername(profileData.username || '');
+          setNewEmail(profileData.email || '');
         } else {
           console.error('Failed to load or create profile');
           toast({
