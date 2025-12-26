@@ -40,12 +40,14 @@ export default function AddBalancePage() {
   const loadPaymentMethods = async () => {
     try {
       const { data, error } = await supabase
-        .from('payment_methods')
-        .select('*')
-        .eq('is_active', true)
-        .order('display_order');
+        .rpc('get_active_payment_methods');
       
-      if (error) throw error;
+      if (error) {
+        console.error('RPC error:', error);
+        throw error;
+      }
+      
+      console.log('Payment methods loaded:', data);
       setPaymentMethods(data || []);
     } catch (error) {
       console.error('Error loading payment methods:', error);
