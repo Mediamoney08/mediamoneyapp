@@ -142,6 +142,7 @@ export default function ProfileSettingsPage() {
         setProfile(data);
         setUsername(data.username || '');
         setNewEmail(data.email || '');
+        setLoading(false);
       } else {
         // Profile doesn't exist, create one
         console.log('Profile not found, creating one...');
@@ -160,24 +161,32 @@ export default function ProfileSettingsPage() {
 
         if (createError) {
           console.error('Error creating profile:', createError);
-          toast({
-            title: 'Error',
-            description: 'Failed to create profile. Please contact support.',
-            variant: 'destructive',
-          });
+          // Try one more time after a short delay
+          setTimeout(async () => {
+            const { data: retryData } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', user.id)
+              .maybeSingle();
+            
+            if (retryData) {
+              setProfile(retryData);
+              setUsername(retryData.username || '');
+              setNewEmail(retryData.email || '');
+            }
+            setLoading(false);
+          }, 1000);
         } else if (newProfile) {
           setProfile(newProfile);
           setUsername(newProfile.username || '');
           setNewEmail(newProfile.email || '');
-          toast({
-            title: 'Profile Created',
-            description: 'Your profile has been created successfully.',
-          });
+          setLoading(false);
+        } else {
+          setLoading(false);
         }
       }
     } catch (error: any) {
       console.error('Error loading profile:', error);
-    } finally {
       setLoading(false);
     }
   };
@@ -691,12 +700,12 @@ export default function ProfileSettingsPage() {
   if (!profile) {
     return (
       <div className="container mx-auto py-8 px-4">
-        <Alert variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>
-            Profile not found. Please try logging out and logging back in.
-          </AlertDescription>
-        </Alert>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Setting up your profile...</p>
+          </div>
+        </div>
       </div>
     );
   }
