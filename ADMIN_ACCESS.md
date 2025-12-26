@@ -9,18 +9,18 @@
 
 ## How to Access Admin Dashboard
 
-### Step 1: Login
-1. Go to the login page: `https://medo.dev/projects/app-8herke1wtngh/login`
+### Direct Access (Recommended)
+1. Go directly to the admin login page: `https://medo.dev/projects/app-8herke1wtngh/admin`
 2. Enter the admin email: `mediamoney01@gmail.com`
 3. Enter the password: `718191@@Aa`
+4. Click "Sign in as Admin"
+5. You will be automatically redirected to the admin dashboard
 
-### Step 2: Access Admin Dashboard
-Once logged in, navigate to:
-- **Main Admin Dashboard:** `https://medo.dev/projects/app-8herke1wtngh/admin`
+### Step 2: Admin Dashboard Pages
+Once logged in, you can access:
+- **Main Admin Dashboard:** `https://medo.dev/projects/app-8herke1wtngh/admin/dashboard`
 - **Admin Management:** `https://medo.dev/projects/app-8herke1wtngh/admin/manage`
 - **Old Dashboard:** `https://medo.dev/projects/app-8herke1wtngh/admin/old`
-
-Or click on your profile icon in the header and look for admin options.
 
 ## Admin Dashboard Features
 
@@ -65,12 +65,24 @@ If you need to reset the admin password:
 
 ## Admin Dashboard URL
 
-**Direct link:** `https://medo.dev/projects/app-8herke1wtngh/admin`
+**Admin Login Page:** `https://medo.dev/projects/app-8herke1wtngh/admin`
 
-**Quick Access:**
-1. Login at: `https://medo.dev/projects/app-8herke1wtngh/login`
-2. Use credentials: `mediamoney01@gmail.com` / `718191@@Aa`
-3. Navigate to: `https://medo.dev/projects/app-8herke1wtngh/admin`
+**Quick Access Steps:**
+1. Visit: `https://medo.dev/projects/app-8herke1wtngh/admin`
+2. Enter credentials: `mediamoney01@gmail.com` / `718191@@Aa`
+3. Click "Sign in as Admin"
+4. Dashboard opens automatically at: `https://medo.dev/projects/app-8herke1wtngh/admin/dashboard`
+
+## Security Features
+
+The admin login page includes:
+- ✅ Dedicated admin authentication
+- ✅ Role verification (only admin accounts can access)
+- ✅ Automatic non-admin account rejection
+- ✅ Secure password input with show/hide toggle
+- ✅ Login attempt monitoring and logging
+- ✅ Session management
+- ✅ Automatic redirect after successful login
 
 ---
 

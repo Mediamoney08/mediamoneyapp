@@ -11,6 +11,7 @@ import SupportPage from './pages/SupportPage';
 import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import NotificationsPage from './pages/NotificationsPage';
 import CheckoutPage from './pages/CheckoutPage';
+import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AdminManagementPage from './pages/AdminManagementPage';
 import AdminDashboard from './pages/AdminDashboard';
@@ -117,8 +118,14 @@ const routes: RouteConfig[] = [
     requireAuth: true,
   },
   {
-    name: 'Admin Dashboard',
+    name: 'Admin Login',
     path: '/admin',
+    element: <AdminLoginPage />,
+    visible: false,
+  },
+  {
+    name: 'Admin Dashboard',
+    path: '/admin/dashboard',
     element: (
       <ProtectedRoute requireAdmin={true}>
         <AdminDashboard />

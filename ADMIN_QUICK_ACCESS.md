@@ -7,8 +7,15 @@ Password: 718191@@Aa
 ```
 
 ## Direct Links
-- **Login:** https://medo.dev/projects/app-8herke1wtngh/login
-- **Admin Dashboard:** https://medo.dev/projects/app-8herke1wtngh/admin
+- **Admin Login:** https://medo.dev/projects/app-8herke1wtngh/admin
+- **Admin Dashboard:** https://medo.dev/projects/app-8herke1wtngh/admin/dashboard
+
+## How to Login
+1. Visit: https://medo.dev/projects/app-8herke1wtngh/admin
+2. Enter email: mediamoney01@gmail.com
+3. Enter password: 718191@@Aa
+4. Click "Sign in as Admin"
+5. ✅ Automatically redirected to dashboard
 
 ## Admin Features Available
 ✅ Dashboard Overview - Statistics and analytics  
