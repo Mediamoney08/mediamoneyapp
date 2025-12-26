@@ -9,12 +9,15 @@
 
 ## How to Access Admin Dashboard
 
-### Direct Access (Recommended)
+### ✅ Direct Access (Recommended)
 1. Go directly to the admin login page: `https://medo.dev/projects/app-8herke1wtngh/admin`
-2. Enter the admin email: `mediamoney01@gmail.com`
-3. Enter the password: `718191@@Aa`
-4. Click "Sign in as Admin"
-5. You will be automatically redirected to the admin dashboard
+2. You will see a clean admin login interface (no header/footer)
+3. Enter the admin email: `mediamoney01@gmail.com`
+4. Enter the password: `718191@@Aa`
+5. Click "Sign in as Admin"
+6. You will be automatically redirected to the admin dashboard
+
+**Note:** The `/admin` route is now publicly accessible (no login required to view the page). You only need to authenticate to access the dashboard.
 
 ### Step 2: Admin Dashboard Pages
 Once logged in, you can access:

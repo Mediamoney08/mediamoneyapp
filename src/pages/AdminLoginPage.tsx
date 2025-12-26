@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Shield, Lock, Mail, Eye, EyeOff } from 'lucide-react';
 import { getProfile } from '@/db/api';
+import { supabase } from '@/db/supabase';
 
 export default function AdminLoginPage() {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ export default function AdminLoginPage() {
     if (user) {
       checkAdminAndRedirect();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const checkAdminAndRedirect = async () => {
@@ -71,7 +73,7 @@ export default function AdminLoginPage() {
       await new Promise(resolve => setTimeout(resolve, 500));
 
       // Check if user is admin
-      const { data: { user: currentUser } } = await (await import('@/db/supabase')).supabase.auth.getUser();
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
       
       if (!currentUser) {
         throw new Error('Failed to get user information');
@@ -81,7 +83,7 @@ export default function AdminLoginPage() {
       
       if (!profile || profile.role !== 'admin') {
         // Sign out non-admin user
-        await (await import('@/db/supabase')).supabase.auth.signOut();
+        await supabase.auth.signOut();
         
         toast({
           title: 'Access Denied',
