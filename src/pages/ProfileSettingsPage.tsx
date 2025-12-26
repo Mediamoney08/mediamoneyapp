@@ -18,11 +18,21 @@ import {
   AlertTriangle,
   Check,
   Copy,
-  Download
+  Download,
+  Globe,
+  DollarSign
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/lib/supabase';
 import QRCode from 'qrcode';
+import { useTranslation } from 'react-i18next';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface Profile {
   id: string;
@@ -48,14 +58,50 @@ interface LoginHistory {
   created_at: string;
 }
 
+interface Currency {
+  code: string;
+  name: string;
+  symbol: string;
+  exchange_rate: number;
+}
+
+const LANGUAGES = [
+  { code: 'en', name: 'English', nativeName: 'English' },
+  { code: 'ar', name: 'Arabic', nativeName: 'العربية' },
+  { code: 'es', name: 'Spanish', nativeName: 'Español' },
+  { code: 'fr', name: 'French', nativeName: 'Français' },
+  { code: 'de', name: 'German', nativeName: 'Deutsch' },
+  { code: 'it', name: 'Italian', nativeName: 'Italiano' },
+  { code: 'pt', name: 'Portuguese', nativeName: 'Português' },
+  { code: 'ru', name: 'Russian', nativeName: 'Русский' },
+  { code: 'zh', name: 'Chinese', nativeName: '中文' },
+  { code: 'ja', name: 'Japanese', nativeName: '日本語' },
+  { code: 'ko', name: 'Korean', nativeName: '한국어' },
+  { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी' },
+  { code: 'tr', name: 'Turkish', nativeName: 'Türkçe' },
+  { code: 'nl', name: 'Dutch', nativeName: 'Nederlands' },
+  { code: 'pl', name: 'Polish', nativeName: 'Polski' },
+  { code: 'sv', name: 'Swedish', nativeName: 'Svenska' },
+  { code: 'id', name: 'Indonesian', nativeName: 'Bahasa Indonesia' },
+  { code: 'th', name: 'Thai', nativeName: 'ไทย' },
+  { code: 'vi', name: 'Vietnamese', nativeName: 'Tiếng Việt' },
+  { code: 'he', name: 'Hebrew', nativeName: 'עברית' },
+];
+
 export default function ProfileSettingsPage() {
+  const { i18n } = useTranslation();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [twoFactorAuth, setTwoFactorAuth] = useState<TwoFactorAuth>({ is_enabled: false });
   const [loginHistory, setLoginHistory] = useState<LoginHistory[]>([]);
+  const [currencies, setCurrencies] = useState<Currency[]>([]);
   const [loading, setLoading] = useState(true);
   const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const [showBackupCodes, setShowBackupCodes] = useState(false);
+  
+  // Preferences
+  const [selectedLanguage, setSelectedLanguage] = useState('en');
+  const [selectedCurrency, setSelectedCurrency] = useState('USD');
   
   // Form states
   const [username, setUsername] = useState('');
@@ -70,6 +116,8 @@ export default function ProfileSettingsPage() {
     loadProfile();
     load2FAStatus();
     loadLoginHistory();
+    loadCurrencies();
+    loadUserPreferences();
   }, []);
 
   const loadProfile = async () => {
@@ -139,6 +187,123 @@ export default function ProfileSettingsPage() {
       setLoginHistory(data || []);
     } catch (error: any) {
       console.error('Error loading login history:', error);
+    }
+  };
+
+  const loadCurrencies = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('currencies')
+        .select('*')
+        .eq('is_active', true)
+        .order('code');
+
+      if (error) throw error;
+      setCurrencies(data || []);
+    } catch (error: any) {
+      console.error('Error loading currencies:', error);
+    }
+  };
+
+  const loadUserPreferences = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from('user_preferences')
+        .select('language, currency')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (!error && data) {
+        setSelectedLanguage(data.language || 'en');
+        setSelectedCurrency(data.currency || 'USD');
+        
+        // Apply language
+        if (data.language) {
+          await i18n.changeLanguage(data.language);
+          document.documentElement.dir = ['ar', 'he'].includes(data.language) ? 'rtl' : 'ltr';
+        }
+        
+        // Apply currency
+        if (data.currency) {
+          localStorage.setItem('preferred_currency', data.currency);
+        }
+      }
+    } catch (error: any) {
+      console.error('Error loading user preferences:', error);
+    }
+  };
+
+  const updateLanguage = async (languageCode: string) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Update i18n
+      await i18n.changeLanguage(languageCode);
+      setSelectedLanguage(languageCode);
+      
+      // Update HTML dir for RTL
+      document.documentElement.dir = ['ar', 'he'].includes(languageCode) ? 'rtl' : 'ltr';
+
+      // Save to database
+      const { error } = await supabase
+        .from('user_preferences')
+        .upsert({
+          user_id: user.id,
+          language: languageCode
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: 'Success',
+        description: 'Language updated successfully',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const updateCurrency = async (currencyCode: string) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      setSelectedCurrency(currencyCode);
+      
+      // Save to localStorage
+      localStorage.setItem('preferred_currency', currencyCode);
+
+      // Save to database
+      const { error } = await supabase
+        .from('user_preferences')
+        .upsert({
+          user_id: user.id,
+          currency: currencyCode
+        });
+
+      if (error) throw error;
+
+      // Dispatch event to notify other components
+      window.dispatchEvent(new CustomEvent('currencyChanged', { detail: currencyCode }));
+
+      toast({
+        title: 'Success',
+        description: 'Currency updated successfully',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive',
+      });
     }
   };
 
@@ -487,13 +652,17 @@ export default function ProfileSettingsPage() {
         </p>
       </div>
       <Tabs defaultValue="profile" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="profile" className="text-[12px]">
             <User className="h-4 w-4 mr-2" />
             Profile
           </TabsTrigger>
+          <TabsTrigger value="preferences" className="text-[12px]">
+            <Globe className="h-4 w-4 mr-2" />
+            Preferences
+          </TabsTrigger>
           <TabsTrigger value="security">
-            <Lock className="text-[12px]" />
+            <Lock className="h-4 w-4 mr-2" />
             Security
           </TabsTrigger>
           <TabsTrigger value="2fa">
@@ -551,6 +720,96 @@ export default function ProfileSettingsPage() {
                   {profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A'}
                 </p>
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Preferences Tab */}
+        <TabsContent value="preferences" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Globe className="h-5 w-5" />
+                Language & Currency
+              </CardTitle>
+              <CardDescription>
+                Choose your preferred language and currency
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Language Selection */}
+              <div className="space-y-3">
+                <Label htmlFor="language" className="flex items-center gap-2">
+                  <Globe className="h-4 w-4" />
+                  Language
+                </Label>
+                <Select value={selectedLanguage} onValueChange={updateLanguage}>
+                  <SelectTrigger id="language">
+                    <SelectValue placeholder="Select language" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[300px]">
+                    {LANGUAGES.map((lang) => (
+                      <SelectItem key={lang.code} value={lang.code}>
+                        {lang.nativeName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-sm text-muted-foreground">
+                  Select your preferred language for the interface
+                </p>
+              </div>
+
+              <Separator />
+
+              {/* Currency Selection */}
+              <div className="space-y-3">
+                <Label htmlFor="currency" className="flex items-center gap-2">
+                  <DollarSign className="h-4 w-4" />
+                  Currency
+                </Label>
+                <Select value={selectedCurrency} onValueChange={updateCurrency}>
+                  <SelectTrigger id="currency">
+                    <SelectValue placeholder="Select currency" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[300px]">
+                    {currencies.map((currency) => (
+                      <SelectItem key={currency.code} value={currency.code}>
+                        {currency.symbol} {currency.code} - {currency.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-sm text-muted-foreground">
+                  All prices will be displayed in your selected currency
+                </p>
+              </div>
+
+              {/* Current Settings Display */}
+              <div className="rounded-lg border border-border bg-muted/50 p-4 space-y-2">
+                <h4 className="text-sm font-medium">Current Settings</h4>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-muted-foreground">Language</p>
+                    <p className="font-medium">
+                      {LANGUAGES.find(l => l.code === selectedLanguage)?.nativeName || 'English'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Currency</p>
+                    <p className="font-medium">
+                      {currencies.find(c => c.code === selectedCurrency)?.symbol || '$'} {selectedCurrency}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <Alert>
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>
+                  Your language and currency preferences are saved automatically and will be applied across all your devices.
+                </AlertDescription>
+              </Alert>
             </CardContent>
           </Card>
         </TabsContent>

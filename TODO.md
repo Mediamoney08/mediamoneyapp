@@ -40,6 +40,9 @@
   - [x] Support 20+ major currencies
   - [x] Create language/currency preferences
   - [x] Update all UI text for translation
+  - [x] Move language/currency to profile settings
+  - [x] Fix currency loading from database
+  - [x] Add Preferences tab to profile page
 - [ ] Step 3: Connect user-facing pages to backend
   - [ ] HomePage - categories and products
   - [ ] CheckoutPage - order creation
