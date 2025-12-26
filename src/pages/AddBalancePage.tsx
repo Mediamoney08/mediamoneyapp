@@ -61,7 +61,7 @@ export default function AddBalancePage() {
     if (!user) return;
     try {
       const { data, error } = await supabase
-        .from('payment_requests')
+        .from('payment_proofs')
         .select(`
           *,
           payment_methods (name, description)
@@ -113,13 +113,13 @@ export default function AddBalancePage() {
     const fileName = `${user!.id}/${Date.now()}.${fileExt}`;
     
     const { error: uploadError } = await supabase.storage
-      .from('payment_proofs')
+      .from('app-8herke1wtngh_payment_proofs')
       .upload(fileName, file);
 
     if (uploadError) throw uploadError;
 
     const { data: { publicUrl } } = supabase.storage
-      .from('payment_proofs')
+      .from('app-8herke1wtngh_payment_proofs')
       .getPublicUrl(fileName);
 
     return publicUrl;
@@ -168,14 +168,15 @@ export default function AddBalancePage() {
       }
 
       const { error } = await supabase
-        .from('payment_requests')
+        .from('payment_proofs')
         .insert({
           user_id: user.id,
           payment_method_id: selectedMethod.id,
           amount: amountNum,
+          currency: 'USD',
           transaction_id: transactionId || null,
-          payment_proof_url: proofUrl || null,
-          notes: notes || null,
+          proof_image_url: proofUrl || null,
+          transaction_details: notes || null,
           status: 'pending',
         });
 
@@ -422,11 +423,11 @@ export default function AddBalancePage() {
                         )}
                       </div>
                     </div>
-                    {request.payment_proof_url && (
+                    {request.proof_image_url && (
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => window.open(request.payment_proof_url, '_blank')}
+                        onClick={() => window.open(request.proof_image_url, '_blank')}
                       >
                         View Proof
                       </Button>
