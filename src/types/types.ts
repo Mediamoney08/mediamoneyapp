@@ -89,6 +89,12 @@ export interface Profile {
   id: string;
   email: string | null;
   username: string | null;
+  full_name: string | null;
+  phone: string | null;
+  avatar_url: string | null;
+  date_of_birth: string | null;
+  country: string | null;
+  city: string | null;
   role: UserRole;
   wallet_balance: number;
   currency: string;

@@ -154,7 +154,7 @@ export default function OrdersPage() {
             variant="outline"
             onClick={loadOrders}
             disabled={loading}
-            className="bg-[#bb41ff] bg-none text-[10px] font-['BlinkMacSystemFont'] font-['SF Pro SC']">
+            className="text-[10px] font-['SF Pro SC'] bg-[#7227ce] bg-none">
             <RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
             Refresh
           </Button>

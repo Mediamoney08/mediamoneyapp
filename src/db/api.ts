@@ -610,8 +610,8 @@ export const getAllUsers = async (): Promise<Profile[]> => {
   return Array.isArray(data) ? data : [];
 };
 
-export const updateUserProfile = async (id: string, updates: Partial<Profile>): Promise<Profile> => {
-  const { data, error } = await supabase
+export const updateUserProfileAdmin = async (id: string, updates: Partial<Profile>): Promise<Profile> => {
+  const { data, error} = await supabase
     .from('profiles')
     .update(updates)
     .eq('id', id)
@@ -1716,4 +1716,129 @@ export const getAllNotifications = async (): Promise<Notification[]> => {
 
   if (error) throw error;
   return Array.isArray(data) ? data : [];
+};
+
+/**
+ * Update user profile
+ */
+export const updateUserProfile = async (profileData: {
+  full_name?: string;
+  username?: string;
+  phone?: string;
+  avatar_url?: string;
+  date_of_birth?: string;
+  country?: string;
+  city?: string;
+}): Promise<Profile> => {
+  const { data, error } = await supabase.rpc('update_user_profile', {
+    p_full_name: profileData.full_name || null,
+    p_username: profileData.username || null,
+    p_phone: profileData.phone || null,
+    p_avatar_url: profileData.avatar_url || null,
+    p_date_of_birth: profileData.date_of_birth || null,
+    p_country: profileData.country || null,
+    p_city: profileData.city || null,
+  });
+
+  if (error) throw error;
+  return data as Profile;
+};
+
+/**
+ * Enable Two-Factor Authentication
+ */
+export const enable2FA = async (
+  secret: string,
+  verificationCode: string
+): Promise<{ success: boolean; backup_codes: string[]; message: string }> => {
+  const { data, error } = await supabase.rpc('enable_two_factor_auth', {
+    p_secret: secret,
+    p_verification_code: verificationCode,
+  });
+
+  if (error) throw error;
+  return data;
+};
+
+/**
+ * Disable Two-Factor Authentication
+ */
+export const disable2FA = async (
+  password: string
+): Promise<{ success: boolean; message: string }> => {
+  const { data, error } = await supabase.rpc('disable_two_factor_auth', {
+    p_password: password,
+  });
+
+  if (error) throw error;
+  return data;
+};
+
+/**
+ * Verify 2FA code
+ */
+export const verify2FACode = async (
+  code: string
+): Promise<{
+  success: boolean;
+  is_backup_code: boolean;
+  remaining_backup_codes: number;
+  message: string;
+}> => {
+  const { data, error } = await supabase.rpc('verify_two_factor_code', {
+    p_code: code,
+  });
+
+  if (error) throw error;
+  return data;
+};
+
+/**
+ * Regenerate backup codes for 2FA
+ */
+export const regenerateBackupCodes = async (): Promise<{
+  success: boolean;
+  backup_codes: string[];
+  message: string;
+}> => {
+  const { data, error } = await supabase.rpc('regenerate_backup_codes');
+
+  if (error) throw error;
+  return data;
+};
+
+/**
+ * Get 2FA status for current user
+ */
+export const get2FAStatus = async (): Promise<{
+  is_enabled: boolean;
+  backup_codes?: string[];
+}> => {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { data, error } = await supabase
+    .from('two_factor_auth')
+    .select('is_enabled, backup_codes')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  if (error && error.code !== 'PGRST116') throw error;
+
+  return data || { is_enabled: false };
+};
+
+/**
+ * Generate 2FA secret (for QR code)
+ */
+export const generate2FASecret = (): string => {
+  // Generate a base32 secret (32 characters)
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+  let secret = '';
+  for (let i = 0; i < 32; i++) {
+    secret += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return secret;
 };

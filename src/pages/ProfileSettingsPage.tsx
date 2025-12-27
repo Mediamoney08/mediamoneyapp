@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -7,432 +8,175 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { 
-  User, 
-  Mail, 
-  Lock, 
-  Shield, 
-  Smartphone, 
-  Key, 
-  History,
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  User,
+  Mail,
+  Lock,
+  Shield,
+  Smartphone,
+  Key,
   AlertTriangle,
   Check,
   Copy,
   Download,
-  Globe,
-  DollarSign
+  RefreshCw,
+  Camera,
+  Phone,
+  MapPin,
+  Calendar,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/lib/supabase';
 import QRCode from 'qrcode';
-import { useTranslation } from 'react-i18next';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-
-interface Profile {
-  id: string;
-  username: string;
-  email: string;
-  wallet_balance: number;
-  currency: string;
-  role: string;
-  created_at: string;
-}
-
-interface TwoFactorAuth {
-  is_enabled: boolean;
-  secret?: string;
-  backup_codes?: string[];
-}
-
-interface LoginHistory {
-  id: string;
-  ip_address: string;
-  user_agent: string;
-  success: boolean;
-  created_at: string;
-}
-
-interface Currency {
-  code: string;
-  name: string;
-  symbol: string;
-  exchange_rate: number;
-}
-
-const LANGUAGES = [
-  { code: 'en', name: 'English', nativeName: 'English' },
-  { code: 'ar', name: 'Arabic', nativeName: 'العربية' },
-  { code: 'es', name: 'Spanish', nativeName: 'Español' },
-  { code: 'fr', name: 'French', nativeName: 'Français' },
-  { code: 'de', name: 'German', nativeName: 'Deutsch' },
-  { code: 'it', name: 'Italian', nativeName: 'Italiano' },
-  { code: 'pt', name: 'Portuguese', nativeName: 'Português' },
-  { code: 'ru', name: 'Russian', nativeName: 'Русский' },
-  { code: 'zh', name: 'Chinese', nativeName: '中文' },
-  { code: 'ja', name: 'Japanese', nativeName: '日本語' },
-  { code: 'ko', name: 'Korean', nativeName: '한국어' },
-  { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी' },
-  { code: 'tr', name: 'Turkish', nativeName: 'Türkçe' },
-  { code: 'nl', name: 'Dutch', nativeName: 'Nederlands' },
-  { code: 'pl', name: 'Polish', nativeName: 'Polski' },
-  { code: 'sv', name: 'Swedish', nativeName: 'Svenska' },
-  { code: 'id', name: 'Indonesian', nativeName: 'Bahasa Indonesia' },
-  { code: 'th', name: 'Thai', nativeName: 'ไทย' },
-  { code: 'vi', name: 'Vietnamese', nativeName: 'Tiếng Việt' },
-  { code: 'he', name: 'Hebrew', nativeName: 'עברית' },
-];
+  updateUserProfile,
+  enable2FA,
+  disable2FA,
+  get2FAStatus,
+  generate2FASecret,
+  regenerateBackupCodes,
+} from '@/db/api';
+import type { Profile } from '@/types/types';
 
 export default function ProfileSettingsPage() {
-  const { i18n } = useTranslation();
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [twoFactorAuth, setTwoFactorAuth] = useState<TwoFactorAuth>({ is_enabled: false });
-  const [loginHistory, setLoginHistory] = useState<LoginHistory[]>([]);
-  const [currencies, setCurrencies] = useState<Currency[]>([]);
+  const { user } = useAuth();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(true);
-  const [qrCodeUrl, setQrCodeUrl] = useState('');
-  const [verificationCode, setVerificationCode] = useState('');
-  const [showBackupCodes, setShowBackupCodes] = useState(false);
-  
-  // Preferences
-  const [selectedLanguage, setSelectedLanguage] = useState('en');
-  const [selectedCurrency, setSelectedCurrency] = useState('USD');
-  
-  // Form states
+  const [profile, setProfile] = useState<Profile | null>(null);
+
+  // Profile form states
+  const [fullName, setFullName] = useState('');
   const [username, setUsername] = useState('');
+  const [phone, setPhone] = useState('');
+  const [country, setCountry] = useState('');
+  const [city, setCity] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [savingProfile, setSavingProfile] = useState(false);
+
+  // Password change states
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [newEmail, setNewEmail] = useState('');
-  
-  const { toast } = useToast();
+  const [changingPassword, setChangingPassword] = useState(false);
+
+  // 2FA states
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [qrCodeUrl, setQrCodeUrl] = useState('');
+  const [twoFactorSecret, setTwoFactorSecret] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
+  const [backupCodes, setBackupCodes] = useState<string[]>([]);
+  const [showBackupCodes, setShowBackupCodes] = useState(false);
+  const [enabling2FA, setEnabling2FA] = useState(false);
+  const [disabling2FA, setDisabling2FA] = useState(false);
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   useEffect(() => {
-    loadProfile();
-    load2FAStatus();
-    loadLoginHistory();
-    loadCurrencies();
-    loadUserPreferences();
-  }, []);
+    if (user) {
+      loadProfile();
+      load2FAStatus();
+    }
+  }, [user]);
 
   const loadProfile = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        console.error('No authenticated user found');
-        setLoading(false);
-        return;
-      }
+      setLoading(true);
+      const {
+        data: { user: authUser },
+      } = await supabase.auth.getUser();
+      if (!authUser) return;
 
-      console.log('Loading profile for user:', user.id);
-
-      // Try to load existing profile using RPC function
       const { data, error } = await supabase
-        .rpc('get_current_user_profile')
+        .from('profiles')
+        .select('*')
+        .eq('id', authUser.id)
         .maybeSingle();
 
-      if (error) {
-        console.error('Error loading profile via RPC:', error);
-        // Fallback to direct query
-        const { data: directData, error: directError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .maybeSingle();
-        
-        if (directError) {
-          console.error('Error loading profile via direct query:', directError);
-        } else if (directData) {
-          console.log('Profile loaded via direct query:', directData);
-          setProfile(directData as Profile);
-          setUsername(directData.username || '');
-          setNewEmail(directData.email || '');
-          setLoading(false);
-          return;
-        }
-      }
-      
+      if (error) throw error;
+
       if (data) {
-        console.log('Profile loaded successfully via RPC:', data);
-        const profileData = data as Profile;
-        setProfile(profileData);
-        setUsername(profileData.username || '');
-        setNewEmail(profileData.email || '');
-        setLoading(false);
-        return;
+        setProfile(data as Profile);
+        setFullName(data.full_name || '');
+        setUsername(data.username || '');
+        setPhone(data.phone || '');
+        setCountry(data.country || '');
+        setCity(data.city || '');
+        setDateOfBirth(data.date_of_birth || '');
+        setAvatarUrl(data.avatar_url || '');
       }
-
-      // Profile doesn't exist, try to create one
-      console.log('Profile not found, attempting to create...');
-      const { data: newProfile, error: createError } = await supabase
-        .from('profiles')
-        .insert({
-          id: user.id,
-          email: user.email,
-          username: user.email?.split('@')[0] || 'user',
-          role: 'user',
-          wallet_balance: 0,
-          currency: 'USD'
-        })
-        .select()
-        .single();
-
-      if (createError) {
-        console.error('Error creating profile:', createError);
-        
-        // Maybe it was created by trigger, try loading again via RPC
-        const { data: retryData, error: retryError } = await supabase
-          .rpc('get_current_user_profile')
-          .maybeSingle();
-        
-        if (retryError) {
-          console.error('Error on retry via RPC:', retryError);
-        }
-        
-        if (retryData) {
-          console.log('Profile found on retry:', retryData);
-          const profileData = retryData as Profile;
-          setProfile(profileData);
-          setUsername(profileData.username || '');
-          setNewEmail(profileData.email || '');
-        } else {
-          console.error('Failed to load or create profile');
-          toast({
-            title: 'Error',
-            description: 'Unable to load profile. Please refresh the page.',
-            variant: 'destructive',
-          });
-        }
-        setLoading(false);
-        return;
-      }
-
-      if (newProfile) {
-        console.log('Profile created successfully:', newProfile);
-        setProfile(newProfile);
-        setUsername(newProfile.username || '');
-        setNewEmail(newProfile.email || '');
-      }
-      
-      setLoading(false);
     } catch (error: any) {
-      console.error('Unexpected error loading profile:', error);
+      console.error('Error loading profile:', error);
       toast({
         title: 'Error',
-        description: 'An unexpected error occurred. Please refresh the page.',
+        description: 'Failed to load profile',
         variant: 'destructive',
       });
+    } finally {
       setLoading(false);
     }
   };
 
   const load2FAStatus = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data, error } = await supabase
-        .from('two_factor_auth')
-        .select('is_enabled, backup_codes')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (error && error.code !== 'PGRST116') throw error;
-      
-      if (data) {
-        setTwoFactorAuth({
-          is_enabled: data.is_enabled,
-          backup_codes: data.backup_codes
-        });
+      const status = await get2FAStatus();
+      setTwoFactorEnabled(status.is_enabled);
+      if (status.backup_codes) {
+        setBackupCodes(status.backup_codes);
       }
     } catch (error: any) {
       console.error('Error loading 2FA status:', error);
     }
   };
 
-  const loadLoginHistory = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data, error } = await supabase
-        .from('login_history')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (error) throw error;
-      setLoginHistory(data || []);
-    } catch (error: any) {
-      console.error('Error loading login history:', error);
-    }
-  };
-
-  const loadCurrencies = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('currencies')
-        .select('*')
-        .eq('is_active', true)
-        .order('code');
-
-      if (error) throw error;
-      setCurrencies(data || []);
-    } catch (error: any) {
-      console.error('Error loading currencies:', error);
-    }
-  };
-
-  const loadUserPreferences = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data, error } = await supabase
-        .from('user_preferences')
-        .select('language, currency')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (!error && data) {
-        setSelectedLanguage(data.language || 'en');
-        setSelectedCurrency(data.currency || 'USD');
-        
-        // Apply language
-        if (data.language && i18n) {
-          i18n.changeLanguage(data.language).catch(err => {
-            console.error('Error changing language:', err);
-          });
-          document.documentElement.dir = ['ar', 'he'].includes(data.language) ? 'rtl' : 'ltr';
-        }
-        
-        // Apply currency
-        if (data.currency) {
-          localStorage.setItem('preferred_currency', data.currency);
-        }
-      }
-    } catch (error: any) {
-      console.error('Error loading user preferences:', error);
-    }
-  };
-
-  const updateLanguage = async (languageCode: string) => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      // Update i18n
-      if (i18n) {
-        await i18n.changeLanguage(languageCode);
-      }
-      setSelectedLanguage(languageCode);
-      
-      // Update HTML dir for RTL
-      document.documentElement.dir = ['ar', 'he'].includes(languageCode) ? 'rtl' : 'ltr';
-
-      // Save to database
-      const { error } = await supabase
-        .from('user_preferences')
-        .upsert({
-          user_id: user.id,
-          language: languageCode
-        });
-
-      if (error) throw error;
-
-      toast({
-        title: 'Success',
-        description: 'Language updated successfully',
-      });
-    } catch (error: any) {
-      console.error('Error updating language:', error);
-      toast({
-        title: 'Error',
-        description: error.message || 'Failed to update language',
-        variant: 'destructive',
-      });
-    }
-  };
-
-  const updateCurrency = async (currencyCode: string) => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      setSelectedCurrency(currencyCode);
-      
-      // Save to localStorage
-      localStorage.setItem('preferred_currency', currencyCode);
-
-      // Save to database
-      const { error } = await supabase
-        .from('user_preferences')
-        .upsert({
-          user_id: user.id,
-          currency: currencyCode
-        });
-
-      if (error) throw error;
-
-      // Dispatch event to notify other components
-      window.dispatchEvent(new CustomEvent('currencyChanged', { detail: currencyCode }));
-
-      toast({
-        title: 'Success',
-        description: 'Currency updated successfully',
-      });
-    } catch (error: any) {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      });
-    }
-  };
-
-  const updateUsername = async () => {
+  const handleUpdateProfile = async () => {
     if (!username.trim()) {
       toast({
         title: 'Error',
-        description: 'Username cannot be empty',
+        description: 'Username is required',
         variant: 'destructive',
       });
       return;
     }
 
+    setSavingProfile(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      const updatedProfile = await updateUserProfile({
+        full_name: fullName || undefined,
+        username: username || undefined,
+        phone: phone || undefined,
+        country: country || undefined,
+        city: city || undefined,
+        date_of_birth: dateOfBirth || undefined,
+        avatar_url: avatarUrl || undefined,
+      });
 
-      const { error } = await supabase
-        .from('profiles')
-        .update({ username: username.trim() })
-        .eq('id', user.id);
-
-      if (error) throw error;
-
+      setProfile(updatedProfile);
       toast({
         title: 'Success',
-        description: 'Username updated successfully',
+        description: 'Profile updated successfully',
       });
-
-      await loadProfile();
     } catch (error: any) {
+      console.error('Error updating profile:', error);
       toast({
         title: 'Error',
-        description: error.message,
+        description: error.message || 'Failed to update profile',
         variant: 'destructive',
       });
+    } finally {
+      setSavingProfile(false);
     }
   };
 
-  const updatePassword = async () => {
+  const handleChangePassword = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
       toast({
         title: 'Error',
@@ -454,155 +198,63 @@ export default function ProfileSettingsPage() {
     if (newPassword.length < 8) {
       toast({
         title: 'Error',
-        description: 'Password must be at least 8 characters',
+        description: 'Password must be at least 8 characters long',
         variant: 'destructive',
       });
       return;
     }
 
-    // Password strength validation
-    const hasUpperCase = /[A-Z]/.test(newPassword);
-    const hasLowerCase = /[a-z]/.test(newPassword);
-    const hasNumbers = /\d/.test(newPassword);
-
-    if (!hasUpperCase || !hasLowerCase || !hasNumbers) {
-      toast({
-        title: 'Error',
-        description: 'Password must contain uppercase, lowercase, and numbers',
-        variant: 'destructive',
-      });
-      return;
-    }
-
+    setChangingPassword(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        toast({
-          title: 'Error',
-          description: 'You must be logged in',
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      // Call secure Edge Function to change password
-      const { data, error } = await supabase.functions.invoke('change-password', {
-        body: {
-          current_password: currentPassword,
-          new_password: newPassword
-        },
-        headers: {
-          Authorization: `Bearer ${session.access_token}`
-        }
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
       });
 
       if (error) throw error;
 
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to change password');
-      }
-
       toast({
         title: 'Success',
-        description: 'Password updated successfully',
+        description: 'Password changed successfully',
       });
 
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
     } catch (error: any) {
-      console.error('Password change error:', error);
+      console.error('Error changing password:', error);
       toast({
         title: 'Error',
-        description: error.message || 'Failed to update password',
+        description: error.message || 'Failed to change password',
         variant: 'destructive',
       });
+    } finally {
+      setChangingPassword(false);
     }
   };
 
-  const requestEmailChange = async () => {
-    if (!newEmail || newEmail === profile?.email) {
-      toast({
-        title: 'Error',
-        description: 'Please enter a new email address',
-        variant: 'destructive',
-      });
-      return;
-    }
-
+  const handleSetup2FA = async () => {
     try {
-      const { error } = await supabase.auth.updateUser({
-        email: newEmail
-      });
+      // Generate secret
+      const secret = generate2FASecret();
+      setTwoFactorSecret(secret);
 
-      if (error) throw error;
+      // Generate QR code
+      const email = user?.email || 'user@rechargehub.com';
+      const otpauthUrl = `otpauth://totp/RechargeHub:${email}?secret=${secret}&issuer=RechargeHub`;
 
-      toast({
-        title: 'Verification Email Sent',
-        description: 'Please check your new email address to confirm the change',
-      });
-    } catch (error: any) {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      });
-    }
-  };
-
-  const setup2FA = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        toast({
-          title: 'Error',
-          description: 'You must be logged in',
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      // Call secure Edge Function to generate 2FA secret
-      const { data, error } = await supabase.functions.invoke('two-factor-auth', {
-        body: { action: 'setup' },
-        headers: {
-          Authorization: `Bearer ${session.access_token}`
-        }
-      });
-
-      if (error) throw error;
-
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to setup 2FA');
-      }
-
-      // Generate QR code from the URL
-      const qrUrl = await QRCode.toDataURL(data.data.qr_url);
+      const qrUrl = await QRCode.toDataURL(otpauthUrl);
       setQrCodeUrl(qrUrl);
-
-      setTwoFactorAuth({
-        is_enabled: false,
-        secret: data.data.secret,
-        backup_codes: data.data.backup_codes
-      });
-
-      setShowBackupCodes(true);
-
-      toast({
-        title: 'Setup Started',
-        description: 'Scan the QR code with your authenticator app',
-      });
     } catch (error: any) {
-      console.error('2FA setup error:', error);
+      console.error('Error setting up 2FA:', error);
       toast({
         title: 'Error',
-        description: error.message || 'Failed to setup 2FA',
+        description: 'Failed to generate 2FA QR code',
         variant: 'destructive',
       });
     }
   };
 
-  const verify2FA = async () => {
+  const handleEnable2FA = async () => {
     if (!verificationCode || verificationCode.length !== 6) {
       toast({
         title: 'Error',
@@ -612,110 +264,119 @@ export default function ProfileSettingsPage() {
       return;
     }
 
+    setEnabling2FA(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
+      const result = await enable2FA(twoFactorSecret, verificationCode);
+
+      if (result.success) {
+        setBackupCodes(result.backup_codes);
+        setShowBackupCodes(true);
+        setTwoFactorEnabled(true);
+        setQrCodeUrl('');
+        setVerificationCode('');
+
         toast({
-          title: 'Error',
-          description: 'You must be logged in',
-          variant: 'destructive',
+          title: 'Success',
+          description: '2FA enabled successfully. Please save your backup codes!',
         });
-        return;
       }
-
-      // Call secure Edge Function to verify code
-      const { data, error } = await supabase.functions.invoke('two-factor-auth', {
-        body: { 
-          action: 'verify',
-          code: verificationCode
-        },
-        headers: {
-          Authorization: `Bearer ${session.access_token}`
-        }
-      });
-
-      if (error) throw error;
-
-      if (!data.success) {
-        throw new Error(data.error || 'Verification failed');
-      }
-
-      toast({
-        title: 'Success',
-        description: '2FA has been enabled successfully',
-      });
-
-      setVerificationCode('');
-      setQrCodeUrl('');
-      await load2FAStatus();
     } catch (error: any) {
-      console.error('2FA verification error:', error);
+      console.error('Error enabling 2FA:', error);
       toast({
         title: 'Error',
-        description: error.message || 'Invalid verification code',
+        description: error.message || 'Failed to enable 2FA',
+        variant: 'destructive',
+      });
+    } finally {
+      setEnabling2FA(false);
+    }
+  };
+
+  const handleDisable2FA = async () => {
+    if (!confirm('Are you sure you want to disable 2FA? This will make your account less secure.')) {
+      return;
+    }
+
+    setDisabling2FA(true);
+    try {
+      const result = await disable2FA('');
+
+      if (result.success) {
+        setTwoFactorEnabled(false);
+        setBackupCodes([]);
+
+        toast({
+          title: 'Success',
+          description: '2FA disabled successfully',
+        });
+      }
+    } catch (error: any) {
+      console.error('Error disabling 2FA:', error);
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to disable 2FA',
+        variant: 'destructive',
+      });
+    } finally {
+      setDisabling2FA(false);
+    }
+  };
+
+  const handleRegenerateBackupCodes = async () => {
+    if (!confirm('Are you sure? This will invalidate all existing backup codes.')) {
+      return;
+    }
+
+    try {
+      const result = await regenerateBackupCodes();
+
+      if (result.success) {
+        setBackupCodes(result.backup_codes);
+        setShowBackupCodes(true);
+
+        toast({
+          title: 'Success',
+          description: 'Backup codes regenerated successfully',
+        });
+      }
+    } catch (error: any) {
+      console.error('Error regenerating backup codes:', error);
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to regenerate backup codes',
         variant: 'destructive',
       });
     }
   };
 
-  const disable2FA = async () => {
-    if (!confirm('Are you sure you want to disable 2FA? This will make your account less secure.')) {
-      return;
-    }
-
+  const copyToClipboard = async (text: string, id: string) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        toast({
-          title: 'Error',
-          description: 'You must be logged in',
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      // Call secure Edge Function to disable 2FA
-      const { data, error } = await supabase.functions.invoke('two-factor-auth', {
-        body: { action: 'disable' },
-        headers: {
-          Authorization: `Bearer ${session.access_token}`
-        }
-      });
-
-      if (error) throw error;
-
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to disable 2FA');
-      }
-
+      await navigator.clipboard.writeText(text);
+      setCopiedCode(id);
       toast({
-        title: 'Success',
-        description: '2FA has been disabled',
+        title: 'Copied!',
+        description: 'Code copied to clipboard',
       });
-
-      setTwoFactorAuth({ is_enabled: false });
-      setQrCodeUrl('');
-    } catch (error: any) {
-      console.error('2FA disable error:', error);
+      setTimeout(() => setCopiedCode(null), 2000);
+    } catch (error) {
       toast({
         title: 'Error',
-        description: error.message || 'Failed to disable 2FA',
+        description: 'Failed to copy code',
         variant: 'destructive',
       });
     }
   };
 
   const downloadBackupCodes = () => {
-    if (!twoFactorAuth.backup_codes) return;
-
-    const content = `Recharge Hub - Backup Codes\n\nGenerated: ${new Date().toLocaleString()}\n\nBackup Codes:\n${twoFactorAuth.backup_codes.join('\n')}\n\nKeep these codes safe. Each code can only be used once.`;
-    
-    const blob = new Blob([content], { type: 'text/plain' });
+    const text = backupCodes.join('\n');
+    const blob = new Blob([text], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = 'rechargehub-backup-codes.txt';
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
     toast({
@@ -726,494 +387,431 @@ export default function ProfileSettingsPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto py-8 px-4">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading profile...</p>
-          </div>
+      <div className="container py-8">
+        <div className="max-w-4xl mx-auto space-y-8">
+          <Skeleton className="h-12 w-64 bg-muted" />
+          <Skeleton className="h-96 w-full bg-muted" />
         </div>
       </div>
     );
   }
 
-  if (!profile) {
-    return (
-      <div className="container mx-auto py-8 px-4">
-        <Card className="max-w-md mx-auto mt-8">
-          <CardHeader>
-            <CardTitle>Profile Not Available</CardTitle>
-            <CardDescription>
-              We couldn't load your profile. This might be a temporary issue.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Please try one of the following:
-            </p>
-            <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
-              <li>Refresh the page</li>
-              <li>Log out and log back in</li>
-              <li>Clear your browser cache</li>
-            </ul>
-            <div className="flex gap-2">
-              <Button onClick={() => window.location.reload()} className="flex-1">
-                Refresh Page
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => {
-                  supabase.auth.signOut();
-                  window.location.href = '/login';
-                }}
-                className="flex-1"
-              >
-                Log Out
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
-    <div className="container mx-auto py-8 px-4 max-w-5xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Profile Settings</h1>
-        <p className="text-muted-foreground">
-          Manage your account settings and security preferences
-        </p>
-      </div>
-      <Tabs defaultValue="profile" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="profile" className="px-3">
-            <User className="h-5 w-5" />
-          </TabsTrigger>
-          <TabsTrigger value="preferences" className="px-3">
-            <Globe className="h-5 w-5" />
-          </TabsTrigger>
-          <TabsTrigger value="security" className="px-3">
-            <Lock className="h-5 w-5" />
-          </TabsTrigger>
-          <TabsTrigger value="2fa" className="px-3">
-            <Shield className="h-5 w-5" />
-          </TabsTrigger>
-          <TabsTrigger value="activity" className="px-3">
-            <History className="h-5 w-5" />
-          </TabsTrigger>
-        </TabsList>
+    <div className="container py-8">
+      <div className="max-w-4xl mx-auto space-y-8">
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl font-bold">Profile Settings</h1>
+          <p className="text-muted-foreground">Manage your account settings and security</p>
+        </div>
 
-        {/* Profile Tab */}
-        <TabsContent value="profile" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Profile Information</CardTitle>
-              <CardDescription>
-                Update your personal information
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Enter username"
-                  />
-                  <Button onClick={updateUsername}>
-                    Update
-                  </Button>
-                </div>
-              </div>
+        <Tabs defaultValue="profile" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="profile">
+              <User className="h-4 w-4 mr-2" />
+              Profile
+            </TabsTrigger>
+            <TabsTrigger value="security">
+              <Lock className="h-4 w-4 mr-2" />
+              Security
+            </TabsTrigger>
+            <TabsTrigger value="2fa">
+              <Shield className="h-4 w-4 mr-2" />
+              Two-Factor Auth
+            </TabsTrigger>
+          </TabsList>
 
-              <Separator />
-
-              <div className="space-y-2">
-                <Label>Email</Label>
-                <p className="text-sm text-muted-foreground">{profile?.email}</p>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Account Type</Label>
-                <Badge variant={profile?.role === 'admin' ? 'default' : 'secondary'}>
-                  {profile?.role}
-                </Badge>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Member Since</Label>
-                <p className="text-sm text-muted-foreground">
-                  {profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A'}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Preferences Tab */}
-        <TabsContent value="preferences" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Globe className="h-5 w-5" />
-                Language & Currency
-              </CardTitle>
-              <CardDescription>
-                Choose your preferred language and currency
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Language Selection */}
-              <div className="space-y-3">
-                <Label htmlFor="language" className="flex items-center gap-2">
-                  <Globe className="h-4 w-4" />
-                  Language
-                </Label>
-                <Select value={selectedLanguage} onValueChange={updateLanguage}>
-                  <SelectTrigger id="language">
-                    <SelectValue placeholder="Select language" />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-[300px]">
-                    {LANGUAGES.map((lang) => (
-                      <SelectItem key={lang.code} value={lang.code}>
-                        {lang.nativeName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-sm text-muted-foreground">
-                  Select your preferred language for the interface
-                </p>
-              </div>
-
-              <Separator />
-
-              {/* Currency Selection */}
-              <div className="space-y-3">
-                <Label htmlFor="currency" className="flex items-center gap-2">
-                  <DollarSign className="h-4 w-4" />
-                  Currency
-                </Label>
-                <Select value={selectedCurrency} onValueChange={updateCurrency}>
-                  <SelectTrigger id="currency">
-                    <SelectValue placeholder="Select currency" />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-[300px]">
-                    {currencies.map((currency) => (
-                      <SelectItem key={currency.code} value={currency.code}>
-                        {currency.symbol} {currency.code} - {currency.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-sm text-muted-foreground">
-                  All prices will be displayed in your selected currency
-                </p>
-              </div>
-
-              {/* Current Settings Display */}
-              <div className="rounded-lg border border-border bg-muted/50 p-4 space-y-2">
-                <h4 className="text-sm font-medium">Current Settings</h4>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <p className="text-muted-foreground">Language</p>
-                    <p className="font-medium">
-                      {LANGUAGES.find(l => l.code === selectedLanguage)?.nativeName || 'English'}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground">Currency</p>
-                    <p className="font-medium">
-                      {currencies.find(c => c.code === selectedCurrency)?.symbol || '$'} {selectedCurrency}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <Alert>
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
-                  Your language and currency preferences are saved automatically and will be applied across all your devices.
-                </AlertDescription>
-              </Alert>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Security Tab */}
-        <TabsContent value="security" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Change Password</CardTitle>
-              <CardDescription>
-                Update your password to keep your account secure
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="current-password">Current Password</Label>
-                <Input
-                  id="current-password"
-                  type="password"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  placeholder="Enter current password"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="new-password">New Password</Label>
-                <Input
-                  id="new-password"
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="Enter new password"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="confirm-password">Confirm New Password</Label>
-                <Input
-                  id="confirm-password"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirm new password"
-                />
-              </div>
-
-              <Alert>
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
-                  Password must be at least 8 characters long
-                </AlertDescription>
-              </Alert>
-
-              <Button onClick={updatePassword} className="w-full">
-                <Lock className="h-4 w-4 mr-2" />
-                Update Password
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Change Email</CardTitle>
-              <CardDescription>
-                Update your email address
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="new-email">New Email Address</Label>
-                <Input
-                  id="new-email"
-                  type="email"
-                  value={newEmail}
-                  onChange={(e) => setNewEmail(e.target.value)}
-                  placeholder="Enter new email"
-                />
-              </div>
-
-              <Alert>
-                <Mail className="h-4 w-4" />
-                <AlertDescription>
-                  You will receive a verification email at your new address
-                </AlertDescription>
-              </Alert>
-
-              <Button onClick={requestEmailChange} className="w-full">
-                <Mail className="h-4 w-4 mr-2" />
-                Request Email Change
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* 2FA Tab */}
-        <TabsContent value="2fa" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Two-Factor Authentication</CardTitle>
-              <CardDescription>
-                Add an extra layer of security to your account
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center gap-3">
-                  <Smartphone className="h-5 w-5" />
-                  <div>
-                    <p className="font-medium">Authenticator App</p>
-                    <p className="text-muted-foreground text-[12px]">
-                      Use an app like Google Authenticator or Authy
-                    </p>
-                  </div>
-                </div>
-                <Badge
-                  variant={twoFactorAuth.is_enabled ? 'default' : 'secondary'}
-                  className="bg-[#f80003] bg-none">
-                  {twoFactorAuth.is_enabled ? 'Enabled' : 'Disabled'}
-                </Badge>
-              </div>
-
-              {!twoFactorAuth.is_enabled && !qrCodeUrl && (
-                <Button onClick={setup2FA} className="w-full">
-                  <Shield className="h-4 w-4 mr-2" />
-                  Enable 2FA
-                </Button>
-              )}
-
-              {qrCodeUrl && !twoFactorAuth.is_enabled && (
-                <div className="space-y-4">
-                  <Alert>
-                    <AlertDescription>
-                      <strong>Step 1:</strong> Scan this QR code with your authenticator app
-                    </AlertDescription>
-                  </Alert>
-
-                  <div className="flex justify-center p-4 bg-white rounded-lg">
-                    <img src={qrCodeUrl} alt="2FA QR Code" className="w-48 h-48" />
-                  </div>
-
-                  <Alert>
-                    <AlertDescription>
-                      <strong>Step 2:</strong> Enter the 6-digit code from your app
-                    </AlertDescription>
-                  </Alert>
-
+          {/* Profile Tab */}
+          <TabsContent value="profile" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Personal Information</CardTitle>
+                <CardDescription>Update your personal details</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-4 xl:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="verification-code">Verification Code</Label>
+                    <Label htmlFor="fullName">
+                      <User className="h-4 w-4 inline mr-2" />
+                      Full Name
+                    </Label>
                     <Input
-                      id="verification-code"
-                      value={verificationCode}
-                      onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                      placeholder="000000"
-                      maxLength={6}
-                      className="text-center text-2xl tracking-widest"
+                      id="fullName"
+                      placeholder="Enter your full name"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
                     />
                   </div>
 
-                  <Button onClick={verify2FA} className="w-full">
-                    <Check className="h-4 w-4 mr-2" />
-                    Verify and Enable
-                  </Button>
+                  <div className="space-y-2">
+                    <Label htmlFor="username">
+                      <User className="h-4 w-4 inline mr-2" />
+                      Username *
+                    </Label>
+                    <Input
+                      id="username"
+                      placeholder="Enter your username"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="email">
+                      <Mail className="h-4 w-4 inline mr-2" />
+                      Email
+                    </Label>
+                    <Input id="email" value={profile?.email || ''} disabled />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">
+                      <Phone className="h-4 w-4 inline mr-2" />
+                      Phone Number
+                    </Label>
+                    <Input
+                      id="phone"
+                      placeholder="+1234567890"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="dateOfBirth">
+                      <Calendar className="h-4 w-4 inline mr-2" />
+                      Date of Birth
+                    </Label>
+                    <Input
+                      id="dateOfBirth"
+                      type="date"
+                      value={dateOfBirth}
+                      onChange={(e) => setDateOfBirth(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="country">
+                      <MapPin className="h-4 w-4 inline mr-2" />
+                      Country
+                    </Label>
+                    <Input
+                      id="country"
+                      placeholder="Enter your country"
+                      value={country}
+                      onChange={(e) => setCountry(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="city">
+                      <MapPin className="h-4 w-4 inline mr-2" />
+                      City
+                    </Label>
+                    <Input
+                      id="city"
+                      placeholder="Enter your city"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                    />
+                  </div>
                 </div>
-              )}
 
-              {twoFactorAuth.is_enabled && (
-                <div className="space-y-4">
-                  <Alert>
-                    <Check className="h-4 w-4" />
-                    <AlertDescription>
-                      Two-factor authentication is currently enabled
-                    </AlertDescription>
-                  </Alert>
+                <Separator />
 
-                  <Button onClick={disable2FA} variant="destructive" className="w-full">
-                    <AlertTriangle className="h-4 w-4 mr-2" />
-                    Disable 2FA
-                  </Button>
+                <Button onClick={handleUpdateProfile} disabled={savingProfile} className="w-full">
+                  {savingProfile ? (
+                    <>
+                      <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    'Save Changes'
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Security Tab */}
+          <TabsContent value="security" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Change Password</CardTitle>
+                <CardDescription>Update your account password</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="currentPassword">Current Password</Label>
+                  <Input
+                    id="currentPassword"
+                    type="password"
+                    placeholder="Enter current password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                  />
                 </div>
-              )}
 
-              {showBackupCodes && twoFactorAuth.backup_codes && (
-                <Card className="border-2 border-primary">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Backup Codes</CardTitle>
-                    <CardDescription>
-                      Save these codes in a safe place. Each can be used once if you lose access to your authenticator.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-2 p-4 bg-muted rounded font-mono text-sm">
-                      {twoFactorAuth.backup_codes.map((code, index) => (
-                        <div key={index} className="flex items-center gap-2">
-                          <Key className="h-3 w-3" />
-                          {code}
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword">New Password</Label>
+                  <Input
+                    id="newPassword"
+                    type="password"
+                    placeholder="Enter new password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="Confirm new password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                </div>
+
+                <Alert>
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertDescription>
+                    Password must be at least 8 characters long and include uppercase, lowercase, and numbers.
+                  </AlertDescription>
+                </Alert>
+
+                <Button onClick={handleChangePassword} disabled={changingPassword} className="w-full">
+                  {changingPassword ? (
+                    <>
+                      <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                      Changing Password...
+                    </>
+                  ) : (
+                    'Change Password'
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* 2FA Tab */}
+          <TabsContent value="2fa" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Two-Factor Authentication</CardTitle>
+                    <CardDescription>Add an extra layer of security to your account</CardDescription>
+                  </div>
+                  {twoFactorEnabled && (
+                    <Badge className="bg-green-500">
+                      <Check className="h-3 w-3 mr-1" />
+                      Enabled
+                    </Badge>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {!twoFactorEnabled ? (
+                  <>
+                    <Alert>
+                      <Shield className="h-4 w-4" />
+                      <AlertDescription>
+                        Two-factor authentication adds an extra layer of security to your account. You'll need to enter a code from your authenticator app when signing in.
+                      </AlertDescription>
+                    </Alert>
+
+                    {!qrCodeUrl ? (
+                      <Button onClick={handleSetup2FA} className="w-full">
+                        <Smartphone className="mr-2 h-4 w-4" />
+                        Setup Two-Factor Authentication
+                      </Button>
+                    ) : (
+                      <div className="space-y-4">
+                        <div className="text-center space-y-4">
+                          <p className="text-sm font-medium">Scan this QR code with your authenticator app:</p>
+                          <div className="flex justify-center">
+                            <img src={qrCodeUrl} alt="2FA QR Code" className="border border-border rounded-lg p-4 bg-white" />
+                          </div>
+                          <div className="space-y-2">
+                            <p className="text-xs text-muted-foreground">Or enter this code manually:</p>
+                            <div className="flex items-center justify-center gap-2">
+                              <code className="px-3 py-2 bg-muted rounded text-sm font-mono">{twoFactorSecret}</code>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => copyToClipboard(twoFactorSecret, 'secret')}
+                              >
+                                {copiedCode === 'secret' ? (
+                                  <Check className="h-4 w-4 text-green-500" />
+                                ) : (
+                                  <Copy className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </div>
+                          </div>
                         </div>
-                      ))}
-                    </div>
+
+                        <Separator />
+
+                        <div className="space-y-2">
+                          <Label htmlFor="verificationCode">Enter 6-digit code from your app:</Label>
+                          <Input
+                            id="verificationCode"
+                            placeholder="000000"
+                            maxLength={6}
+                            value={verificationCode}
+                            onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, ''))}
+                          />
+                        </div>
+
+                        <Button onClick={handleEnable2FA} disabled={enabling2FA} className="w-full">
+                          {enabling2FA ? (
+                            <>
+                              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                              Verifying...
+                            </>
+                          ) : (
+                            'Verify and Enable 2FA'
+                          )}
+                        </Button>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="space-y-4">
+                    <Alert>
+                      <Check className="h-4 w-4" />
+                      <AlertDescription>
+                        Two-factor authentication is currently enabled on your account. Your account is more secure!
+                      </AlertDescription>
+                    </Alert>
 
                     <div className="flex gap-2">
-                      <Button
-                        onClick={() => {
-                          navigator.clipboard.writeText(twoFactorAuth.backup_codes!.join('\n'));
-                          toast({ title: 'Copied', description: 'Backup codes copied to clipboard' });
-                        }}
-                        variant="outline"
-                        className="flex-1"
-                      >
-                        <Copy className="h-4 w-4 mr-2" />
-                        Copy
-                      </Button>
-                      <Button
-                        onClick={downloadBackupCodes}
-                        variant="outline"
-                        className="flex-1"
-                      >
-                        <Download className="h-4 w-4 mr-2" />
-                        Download
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" className="flex-1">
+                            <Key className="mr-2 h-4 w-4" />
+                            View Backup Codes
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Backup Codes</DialogTitle>
+                            <DialogDescription>
+                              Use these codes if you lose access to your authenticator app. Each code can only be used once.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="space-y-4">
+                            {backupCodes.length > 0 ? (
+                              <>
+                                <div className="grid grid-cols-2 gap-2">
+                                  {backupCodes.map((code, index) => (
+                                    <div
+                                      key={index}
+                                      className="flex items-center justify-between p-2 bg-muted rounded font-mono text-sm"
+                                    >
+                                      <span>{code}</span>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => copyToClipboard(code, `backup-${index}`)}
+                                      >
+                                        {copiedCode === `backup-${index}` ? (
+                                          <Check className="h-3 w-3 text-green-500" />
+                                        ) : (
+                                          <Copy className="h-3 w-3" />
+                                        )}
+                                      </Button>
+                                    </div>
+                                  ))}
+                                </div>
+                                <div className="flex gap-2">
+                                  <Button onClick={downloadBackupCodes} variant="outline" className="flex-1">
+                                    <Download className="mr-2 h-4 w-4" />
+                                    Download
+                                  </Button>
+                                  <Button onClick={handleRegenerateBackupCodes} variant="outline" className="flex-1">
+                                    <RefreshCw className="mr-2 h-4 w-4" />
+                                    Regenerate
+                                  </Button>
+                                </div>
+                              </>
+                            ) : (
+                              <p className="text-sm text-muted-foreground text-center py-4">
+                                No backup codes available
+                              </p>
+                            )}
+                          </div>
+                        </DialogContent>
+                      </Dialog>
 
-        {/* Activity Tab */}
-        <TabsContent value="activity" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Login History</CardTitle>
-              <CardDescription>
-                Recent login activity on your account
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {loginHistory.length === 0 ? (
-                  <p className="text-center text-muted-foreground py-8">
-                    No login history available
-                  </p>
-                ) : (
-                  loginHistory.map((login) => (
-                    <div
-                      key={login.id}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div className="flex items-center gap-3">
-                        {login.success ? (
-                          <Check className="h-5 w-5 text-green-500" />
+                      <Button variant="destructive" onClick={handleDisable2FA} disabled={disabling2FA}>
+                        {disabling2FA ? (
+                          <>
+                            <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                            Disabling...
+                          </>
                         ) : (
-                          <AlertTriangle className="h-5 w-5 text-red-500" />
+                          'Disable 2FA'
                         )}
-                        <div>
-                          <p className="font-medium">
-                            {login.success ? 'Successful Login' : 'Failed Login'}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {login.ip_address} • {new Date(login.created_at).toLocaleString()}
-                          </p>
-                        </div>
-                      </div>
-                      <Badge variant={login.success ? 'default' : 'destructive'}>
-                        {login.success ? 'Success' : 'Failed'}
-                      </Badge>
+                      </Button>
                     </div>
-                  ))
+                  </div>
                 )}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+
+                {/* Backup Codes Display Dialog */}
+                {showBackupCodes && backupCodes.length > 0 && (
+                  <Dialog open={showBackupCodes} onOpenChange={setShowBackupCodes}>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Save Your Backup Codes</DialogTitle>
+                        <DialogDescription>
+                          Store these codes in a safe place. You'll need them if you lose access to your authenticator app.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <Alert>
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertDescription>
+                          These codes will only be shown once. Make sure to save them now!
+                        </AlertDescription>
+                      </Alert>
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-2">
+                          {backupCodes.map((code, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center justify-between p-2 bg-muted rounded font-mono text-sm"
+                            >
+                              <span>{code}</span>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => copyToClipboard(code, `new-backup-${index}`)}
+                              >
+                                {copiedCode === `new-backup-${index}` ? (
+                                  <Check className="h-3 w-3 text-green-500" />
+                                ) : (
+                                  <Copy className="h-3 w-3" />
+                                )}
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                        <Button onClick={downloadBackupCodes} variant="outline" className="w-full">
+                          <Download className="mr-2 h-4 w-4" />
+                          Download Backup Codes
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }

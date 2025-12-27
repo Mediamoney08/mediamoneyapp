@@ -30,7 +30,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Search, Edit, DollarSign, Shield } from 'lucide-react';
-import { getAllUsers, updateUserProfile, updateUserBalance } from '@/db/api';
+import { getAllUsers, updateUserProfileAdmin, updateUserBalance } from '@/db/api';
 import type { Profile } from '@/types/types';
 
 export default function UserManagement() {
@@ -68,7 +68,7 @@ export default function UserManagement() {
     if (!selectedUser) return;
 
     try {
-      await updateUserProfile(selectedUser.id, { role: newRole });
+      await updateUserProfileAdmin(selectedUser.id, { role: newRole });
       toast({
         title: 'Success',
         description: 'User role updated successfully',

@@ -41,8 +41,9 @@ play4cards.com
   - Some categories include subcategories (e.g., denominations, regions)
 
 ### 2.2 User System
-- User registration and login\n- **Two-Step Verification (2FA)**: Mandatory two-factor authentication for all users to protect accounts using authenticator apps (Google Authenticator, Authy, etc.) or SMS verification
-- **Profile Management**: Users can edit and update their profile information including:
+- User registration and login
+- **Two-Step Verification (2FA)**: Mandatory two-factor authentication for all users to protect accounts using authenticator apps (Google Authenticator, Authy, etc.) or SMS verification, **fully integrated with backend API**
+- **Profile Management**: Users can edit and update their profile information **through backend API integration** including:
   - Email address
   - Password
   - Phone number
@@ -54,7 +55,7 @@ play4cards.com
 - Personal wallet system\n- Balance top-up functionality
 - Order history tracking
 - **Invoice generation for orders**
-- Security settings with 2FA management
+- Security settings with 2FA management **connected to backend**
 - **Wallet-only purchase requirement: All purchases must be made using wallet balance**
 
 ### 2.3 User Level System
@@ -156,13 +157,16 @@ play4cards.com
   - Notification content: Change timestamp, IP address, 'Not you?' action link
 - **Suspicious Activity Alert**: Notification for unusual account activity
   - Notification content: Activity description, recommended actions
-\n#### 2.6.6 Support & Ticket Notifications
+- **Profile Update Confirmation**: Notification when profile information is changed
+  - Notification content: Changed fields, update timestamp, IP address, 'Not you?' action link\n- **2FA Status Change**: Notification when 2FA is enabled or disabled
+  - Notification content: Status change, timestamp, device information, security recommendations
+
+#### 2.6.6 Support & Ticket Notifications
 - **Ticket Created**: Confirmation when support ticket is submitted
   - Notification content: Ticket number, subject, estimated response time
 - **Ticket Reply**: Notification when admin responds to ticket
   - Notification content: Ticket number, reply preview, link to full conversation
-- **Ticket Status Update**: Notification when ticket status changes
-  - Notification content: Ticket number, new status, next steps
+- **Ticket Status Update**: Notification when ticket status changes\n  - Notification content: Ticket number, new status, next steps
 - **Ticket Resolved**: Notification when ticket is marked as resolved
   - Notification content: Ticket number, resolution summary, satisfaction survey link
 \n#### 2.6.7 Notification Delivery System
@@ -200,8 +204,7 @@ play4cards.com
 - **Multi-language ticket support**: Customers can submit tickets in their preferred language
 \n### 2.8 Comprehensive API System
 \n#### 2.8.1 Public API for External Integration
-- **API Documentation Portal**: Interactive API documentation similar to https://api.play4cards.com/api-docs
-- **RESTful API Architecture**: Standard REST endpoints with JSON request/response format
+- **API Documentation Portal**: Interactive API documentation similar to https://api.play4cards.com/api-docs\n- **RESTful API Architecture**: Standard REST endpoints with JSON request/response format
 - **API Authentication**: Secure API key-based authentication for all requests
 - **API Versioning**: Version control system (v1, v2, etc.) for backward compatibility
 \n**Available API Endpoints:**
@@ -210,22 +213,27 @@ play4cards.com
 - POST /api/v1/auth/login - Authenticate and get API token
 - GET /api/v1/account/balance - Check wallet balance
 - GET /api/v1/account/profile - Get user profile information
+- **PUT /api/v1/account/profile - Update user profile information (email, phone, display name, language, currency)**
+- **POST /api/v1/account/profile/picture - Upload profile picture**
+- **PUT /api/v1/account/password - Change password**
+- **POST /api/v1/account/2fa/setup - Initialize 2FA setup and get QR code**
+- **POST /api/v1/account/2fa/verify - Verify and enable 2FA with TOTP code**
+- **POST /api/v1/account/2fa/disable - Disable 2FA with verification**
+- **GET /api/v1/account/2fa/backup-codes - Get backup codes**
+- **POST /api/v1/account/2fa/regenerate-backup-codes - Regenerate backup codes**
 \n**Services & Pricing:**
 - GET /api/v1/services - List all available services
-- GET /api/v1/services/{id} - Get specific service details
-- GET /api/v1/services/categories - List all service categories
+- GET /api/v1/services/{id} - Get specific service details\n- GET /api/v1/services/categories - List all service categories
 - GET /api/v1/services/search - Search services by keyword
 - GET /api/v1/pricing/{service_id} - Get current pricing for service
-
-**Order Management:**
+\n**Order Management:**
 - POST /api/v1/orders/create - Create new order
 - GET /api/v1/orders/{order_id} - Get order status and details
 - GET /api/v1/orders/list - List all orders with filters
 - POST /api/v1/orders/{order_id}/cancel - Request order cancellation
 - GET /api/v1/orders/{order_id}/invoice - Download order invoice
 - **GET /api/v1/orders/{order_id}/provider-response - Get provider response/replay for order**
-
-**Wallet Operations:**
+\n**Wallet Operations:**
 - POST /api/v1/wallet/topup - Submit balance top-up request
 - GET /api/v1/wallet/transactions - Get wallet transaction history
 - GET /api/v1/wallet/pending - Get pending payment requests
@@ -415,8 +423,7 @@ Full navigation menu with the following modules:
 - **API Settings**: Configure public API parameters, rate limits, authentication methods, and API documentation access
 - **Currency Settings**: Manage supported currencies, exchange rates, automatic rate updates, and default currency configuration
 - **Language Settings**: Add/edit language packs, set default language, manage translations, and configure language selector display
-- **Tax Configuration**: Set up tax rules, VAT settings, and regional tax compliance
-- **Terms & Policies**: Manage Terms of Service, Privacy Policy, Refund Policy, and legal documents
+- **Tax Configuration**: Set up tax rules, VAT settings, and regional tax compliance\n- **Terms & Policies**: Manage Terms of Service, Privacy Policy, Refund Policy, and legal documents
 - **GDPR Compliance**: Configure data retention policies, user data export, and right to be forgotten features
 - **Rate Limiting**: Configure API rate limits, request throttling, and abuse prevention
 - **Cache Management**: Configure caching settings, clear cache, and optimize performance
@@ -454,8 +461,8 @@ Full navigation menu with the following modules:
 3. **Add Balance** - Wallet recharge page with multiple payment methods and currency selection
 4. **My Orders** - Order history and status tracking with invoice generation option
 5. **Order Details** - Detailed order information page with provider response/replay section, copy functionality, and real-time updates
-6. **Profile Settings** - User profile management page for editing email, password, phone number, display name, profile picture, language preference, currency preference, and communication preferences
-7. **Security** - Account security settings including 2FA setup, trusted devices management, login history, and password change\n8. **API** - Customer API documentation, key management, and testing console
+6. **Profile Settings** - User profile management page **with full backend integration** for editing email, password, phone number, display name, profile picture, language preference, currency preference, and communication preferences
+7. **Security** - Account security settings including **backend-connected 2FA setup**, trusted devices management, login history, and password change\n8. **API** - Customer API documentation, key management, and testing console
 9. **API Documentation** - Interactive API documentation portal with code examples and testing tools
 10. **About Us** - Company information and contact details
 11. **Service Category Pages** - Dedicated pages for each main service type (Games, Apps, Streaming, Gift Cards) with category/subcategory navigation and unified category images
@@ -489,8 +496,7 @@ Full navigation menu with the following modules:
 37. **Logs & Monitoring** - Interface for viewing system logs, admin activity logs, and real-time monitoring\n38. **Backup & Restore** - Interface for managing database backups and restoration
 39. **Email Templates** - Interface for managing email notification templates\n40. **SMS Gateway** - Interface for configuring SMS settings\n41. **Bulk Operations** - Interface for performing bulk actions across multiple records
 42. **Scheduled Tasks** - Interface for configuring automated tasks and cron jobs
-43. **Webhook Management** - Interface for managing webhook integrations
-44. **Fraud Detection** - Interface for configuring fraud rules and viewing suspicious activities
+43. **Webhook Management** - Interface for managing webhook integrations\n44. **Fraud Detection** - Interface for configuring fraud rules and viewing suspicious activities
 45. **Performance Dashboard** - Interface for monitoring system performance and optimization
 46. **Language Management** - Interface for adding, editing, and managing all language translations; import/export language files; configure language availability\n47. **Currency Management** - Interface for adding, editing, and managing all supported currencies; configure exchange rates; set currency availability per region\n48. **Notification Management** - Interface for creating notification templates, sending broadcast notifications, viewing notification analytics, and managing notification delivery settings
 49. **Notification Analytics** - Interface for tracking notification performance metrics, delivery rates, and user engagement
@@ -592,7 +598,8 @@ For each balance top-up request, customers must:
 - user_agent (String)
 - expires_at (Timestamp)
 - created_at (Timestamp)
-- last_activity_at (Timestamp)\n\n**Admin Activity Logs Table (admin_activity_logs)**
+- last_activity_at (Timestamp)\n
+**Admin Activity Logs Table (admin_activity_logs)**
 - id (Primary Key, UUID)
 - admin_user_id (Foreign Key → admin_users.id)
 - action_type (String)
@@ -666,8 +673,7 @@ For each balance top-up request, customers must:
 - discount_amount (Decimal)
 - total_amount (Decimal)
 - currency (String)
-- player_id (String)\n- order_status (Enum: pending, processing, completed, failed, cancelled, refunded, partial)
-- provider_order_id (String)\n- provider_response (JSON)
+- player_id (String)\n- order_status (Enum: pending, processing, completed, failed, cancelled, refunded, partial)\n- provider_order_id (String)\n- provider_response (JSON)
 - **provider_response_text (Text)** - Human-readable provider message/response
 - **provider_response_timestamp (Timestamp)** - When provider response was received
 - external_id (String)\n- delivery_link (String)
@@ -1036,7 +1042,8 @@ For each balance top-up request, customers must:
 - DELETE /admin/api-keys/:id - Delete API key
 - GET /admin/api-logs - View API logs
 - GET /admin/api-stats - Get API usage statistics
-\n**Admin Security Endpoints**
+
+**Admin Security Endpoints**
 - GET /admin/security/logs - View security logs
 - GET /admin/security/failed-logins - View failed login attempts
 - POST /admin/security/ip-whitelist - Add IP to whitelist
@@ -1064,6 +1071,62 @@ For each balance top-up request, customers must:
 - Log all admin actions in admin_activity_logs
 - Implement IP address validation
 - Check for concurrent session limits
+\n**User Profile Update Logic**
+- **Validate user authentication token**
+- **Verify user has permission to update profile**
+- **Validate input data (email format, phone number format, etc.)**
+- **Check if email is already in use by another user**
+- **For email changes: Send verification email to new address**
+- **For password changes: Verify current password before updating**
+- **Hash new password using bcrypt or Argon2**
+- **Update user record in database**
+- **For profile picture: Validate file type and size, upload to S3, update URL**
+- **For language/currency changes: Update preferred_language and preferred_currency fields**
+- **Create notification for profile update confirmation**
+- **Log profile update action with timestamp and IP address**
+- **Return updated profile data to frontend**
+
+**2FA Setup and Management Logic**
+- **2FA Setup Initialization**:\n  - Generate unique TOTP secret using speakeasy or similar library
+  - Create QR code containing secret and user identifier
+  - Generate 10 backup codes (random alphanumeric strings)
+  - Store encrypted secret and backup codes in database (two_factor_secret, backup_codes)
+  - Return QR code and backup codes to user
+  - Set two_factor_enabled = false until verification
+\n- **2FA Verification and Activation**:
+  - User scans QR code with authenticator app
+  - User enters TOTP code from app
+  - Verify TOTP code against stored secret
+  - If valid: Set two_factor_enabled = true\n  - Create notification for 2FA setup confirmation
+  - Log 2FA activation with timestamp and device info
+\n- **2FA Login Verification**:
+  - After username/password validation
+  - Check if two_factor_enabled = true
+  - Prompt user for TOTP code
+  - Verify code against stored secret with time window tolerance
+  - Allow backup code usage if TOTP unavailable
+  - Mark used backup codes as invalid
+  - Track failed 2FA attempts and implement lockout after 5 failures
+  - Log successful 2FA verification
+
+- **2FA Disable**:
+  - Require current password verification
+  - Require valid TOTP code or backup code
+  - Set two_factor_enabled = false\n  - Clear two_factor_secret and backup_codes\n  - Create notification for 2FA status change
+  - Log 2FA deactivation with timestamp and IP address
+
+- **Backup Code Regeneration**:
+  - Require authentication and 2FA verification
+  - Generate new set of 10 backup codes
+  - Invalidate old backup codes
+  - Update backup_codes field in database
+  - Return new backup codes to user
+  - Create notification for backup code regeneration
+\n- **Trusted Device Management**:
+  - Store device fingerprint on successful 2FA verification
+  - Allow 2FA bypass for trusted devices (optional)
+  - Provide interface to view and revoke trusted devices
+  - Send notification when new device is trusted
 \n**Order Processing Logic**
 - Calculate final price based on user level discount
 - Verify wallet balance before order creation
@@ -1076,7 +1139,8 @@ For each balance top-up request, customers must:
 - **Trigger order created notification**
 - **Trigger order status change notifications (processing, completed, failed)**
 - **Trigger provider response notification when provider sends update**
-- Send notification to user\n- Generate invoice\n- Log transaction in wallet_transactions\n\n**Provider Response Handling Logic**
+- Send notification to user\n- Generate invoice\n- Log transaction in wallet_transactions\n
+**Provider Response Handling Logic**
 - Receive response from provider API
 - Parse provider response data
 - Extract human-readable message from response
@@ -1084,8 +1148,7 @@ For each balance top-up request, customers must:
 - Update order.provider_response_timestamp\n- Create entry in provider_response_logs table
 - Determine response type (status_update, completion, error, info)
 - **Trigger provider response notification**:\n  - Create notification record
-  - Set notification_type = 'provider_response'
-  - Include order number and provider message
+  - Set notification_type = 'provider_response'\n  - Include order number and provider message
   - Queue for delivery via user's enabled channels
   - Send real-time notification via WebSocket
   - Send push notification if enabled
@@ -1110,8 +1173,7 @@ For each balance top-up request, customers must:
   - Create wallet transaction record
   - **Trigger balance added notification**
   - Send approval notification\n- If rejected:
-  - Add rejection notes
-  - **Trigger payment rejected notification**
+  - Add rejection notes\n  - **Trigger payment rejected notification**
   - Send rejection notification
 - Log admin action\n
 **Service Management Logic**
@@ -1175,16 +1237,6 @@ For each balance top-up request, customers must:
 - Store both original and converted amounts
 - Update exchange rates periodically from external API
 - Display prices in user's preferred currency
-\n**2FA Implementation Logic**
-- Generate TOTP secret on 2FA setup
-- Create QR code for authenticator app
-- Generate backup codes
-- Store encrypted secret in database
-- Verify TOTP code on login
-- Implement backup code verification
-- Track trusted devices
-- Require 2FA for sensitive actions
-- **Trigger 2FA setup confirmation notification**
 \n### 5.2 Security Infrastructure
 - **SSL/TLS Encryption**: HTTPS enforcement across entire platform
 - **Database Encryption**: Encryption at rest for sensitive data
@@ -1196,7 +1248,8 @@ For each balance top-up request, customers must:
 - **DDoS Protection**: Integration with DDoS mitigation services
 - **Firewall Rules**: Web Application Firewall (WAF) configuration
 - **Security Headers**: Implementation of security headers (HSTS, X-Frame-Options, etc.)\n- **Vulnerability Scanning**: Regular automated security scans
-- **Penetration Testing**: Periodic security audits and penetration testing\n- **Data Backup Encryption**: Encrypted backup storage
+- **Penetration Testing**: Periodic security audits and penetration testing
+- **Data Backup Encryption**: Encrypted backup storage
 - **Secure File Upload**: File type validation and malware scanning
 - **Admin Session Security**: Secure session management with token rotation
 - **API Key Encryption**: Encrypted storage of API keys in database
@@ -1204,13 +1257,17 @@ For each balance top-up request, customers must:
 - **IP Whitelisting for API**: Restrict API access to authorized IP addresses
 - **API Token Expiration**: Configurable token expiration and refresh mechanism
 - **Two-Factor Authentication Security**:
-  - Encrypted storage of 2FA secrets
-  - Rate limiting on 2FA verification attempts
-  - Brute force protection for 2FA codes
-  - Secure backup code generation and storage
+  - Encrypted storage of 2FA secrets using AES-256 encryption
+  - Rate limiting on 2FA verification attempts (max 5 attempts per 15 minutes)
+  - Brute force protection for 2FA codes with exponential backoff
+  - Secure backup code generation using cryptographically secure random number generator
+  - Backup codes hashed before storage in database
+  - Time-based one-time password (TOTP) with 30-second time window
+  - Clock skew tolerance of ±1 time step for TOTP validation
+  - Automatic account lockout after 5 consecutive failed 2FA attempts
+  - Security notifications for 2FA setup, changes, and suspicious activities
 \n### 5.3 Frontend-Backend Integration
-
-#### 5.3.1 Admin Panel Frontend Integration
+\n#### 5.3.1 Admin Panel Frontend Integration
 - **Admin Login Page**: Connect to POST /admin/auth/login endpoint
 - **2FA Verification**: Connect to POST /admin/auth/verify-2fa endpoint
 - **Dashboard Data Loading**: Fetch from GET /admin/dashboard/stats\n- **Real-time Updates**: WebSocket connection for live data
@@ -1222,7 +1279,8 @@ For each balance top-up request, customers must:
 - **Error Handling**: Display user-friendly error messages from API responses
 - **Notification Management**: Connect to notification management endpoints for creating templates and sending broadcasts
 - **Provider Response Viewing**: Fetch and display provider responses from GET /admin/orders/:id/provider-responses
-\n#### 5.3.2 Customer Frontend Integration
+
+#### 5.3.2 Customer Frontend Integration
 - **User Authentication**: Connect to public API auth endpoints
 - **Service Browsing**: Fetch categories and services from API
 - **Order Placement**: Submit orders via API with wallet validation
@@ -1230,13 +1288,28 @@ For each balance top-up request, customers must:
 - **Real-time Notifications**: WebSocket for instant notification delivery
 - **Notification Center**: Display in-app notifications with unread badge
 - **Invoice Download**: Generate and download PDF invoices
-- **Profile Management**: Update user settings via API
-- **2FA Setup**: QR code generation and verification flow
+- **Profile Management**: **Full backend integration for profile updates**
+  - **Connect to PUT /api/v1/account/profile for updating email, phone, display name, language, currency**
+  - **Connect to POST /api/v1/account/profile/picture for profile picture upload**
+  - **Connect to PUT /api/v1/account/password for password changes**
+  - **Real-time validation and error handling**
+  - **Success notifications after profile updates**
+  - **Automatic UI refresh after successful updates**
+- **2FA Setup and Management**: **Complete backend integration for 2FA functionality**
+  - **Connect to POST /api/v1/account/2fa/setup to initialize 2FA and get QR code**
+  - **Display QR code for scanning with authenticator app**
+  - **Connect to POST /api/v1/account/2fa/verify to verify and enable 2FA**
+  - **Connect to POST /api/v1/account/2fa/disable to disable 2FA**
+  - **Connect to GET /api/v1/account/2fa/backup-codes to retrieve backup codes**
+  - **Connect to POST /api/v1/account/2fa/regenerate-backup-codes to regenerate backup codes**
+  - **Display backup codes with copy functionality**
+  - **2FA verification during login flow**
+  - **Backup code input option during login**
+  - **Security notifications for 2FA changes**
 - **Notification Preferences**: Update notification settings via API
 - **Order Details Page**: Fetch order details including provider responses from GET /api/v1/orders/{order_id}\n- **Provider Response Display**: Show provider response/replay section with copy functionality
 - **Real-time Provider Updates**: WebSocket listener for new provider responses
-
-### 5.4 Deployment & Infrastructure
+\n### 5.4 Deployment & Infrastructure
 - **Server Environment**: Linux (Ubuntu/CentOS) with Nginx reverse proxy
 - **Application Deployment**: Docker containers with orchestration
 - **Database Hosting**: Managed PostgreSQL with automatic backups
@@ -1278,8 +1351,8 @@ For each balance top-up request, customers must:
 - Professional admin panel interface with clear data visualization and comprehensive navigation menu
 - Organized settings sidebar with grouped configuration modules
 - **API Documentation Portal**: Clean, developer-friendly interface with syntax highlighting and interactive elements
-- **Profile Settings Page**: Clean, organized layout with tabbed sections for different profile settings including language and currency preferences
-- **2FA Setup Interface**: Step-by-step wizard with QR code display and backup codes presentation
+- **Profile Settings Page**: Clean, organized layout with tabbed sections for different profile settings including language and currency preferences, **with real-time validation feedback and success indicators**
+- **2FA Setup Interface**: Step-by-step wizard with QR code display, backup codes presentation, **verification input field, and clear success/error messages**
 - **Admin Login Page**: Clean, secure login interface with username/email and password fields, CAPTCHA, and 2FA verification
 - **Notification Center**: Slide-in panel with categorized notifications and quick action buttons
 - **Notification Management Interface**: Admin dashboard for creating templates and sending broadcasts with preview functionality
@@ -1309,9 +1382,11 @@ For each balance top-up request, customers must:
 - **Keyboard shortcuts** for common admin actions
 - **API Testing Console**: Interactive API endpoint testing with real-time response display
 - **Code Snippet Copy Button**: One-click copy for code examples in API documentation
-- **Profile Edit Forms**: Inline validation with real-time feedback
-- **2FA QR Code Scanner**: Interactive QR code display with copy-to-clipboard functionality
-- **Password Strength Indicator**: Real-time password strength visualization
+- **Profile Edit Forms**: **Inline validation with real-time feedback, loading indicators during save, success animations, and error messages**
+- **2FA QR Code Scanner**: **Interactive QR code display with copy-to-clipboard functionality for manual entry code**
+- **2FA Verification Input**: **6-digit code input with auto-focus and real-time validation**
+- **Backup Codes Display**: **Formatted backup codes with individual copy buttons and download option**
+- **Password Strength Indicator**: Real-time password strength visualization with color-coded feedback
 - **Trusted Devices List**: Manage and revoke trusted devices with confirmation dialogs
 - **Language Translation Editor**: In-context translation editing for admins
 - **Currency Converter Widget**: Real-time currency conversion display on pricing pages
@@ -1322,6 +1397,9 @@ For each balance top-up request, customers must:
 - **Provider Response Copy Button**: One-click copy functionality for provider messages
 - **Real-time Provider Response Updates**: Automatic refresh and notification when new provider responses arrive
 - **Provider Response Timestamp**: Display relative time (e.g., '2 minutes ago') with hover tooltip showing exact timestamp
+- **Profile Picture Upload**: Drag-and-drop or click-to-upload with image preview and crop functionality
+- **Save Changes Button**: Disabled state when no changes, enabled with loading state during save
+- **2FA Enable/Disable Toggle**: Clear visual state with confirmation modal before disabling
 \n### 6.3 Theme Options
 - Light mode: White background with soft shadows and colorful category cards with main images
 - Dark mode: Deep dark background with neon highlights and glowing category borders
@@ -1331,6 +1409,8 @@ For each balance top-up request, customers must:
 - **Admin Login Page**: Professional, secure design with brand colors and trust indicators
 - **Notification Center**: Consistent theme with main application, supporting both light and dark modes
 - **Order Details Page**: Consistent with main application theme, with distinct styling for provider response section
+- **Profile Settings Page**: Consistent with main application theme, with clear visual hierarchy and form styling
+- **2FA Setup Page**: Clean, security-focused design with step-by-step visual indicators and clear instructions
 \n---
 
 ## 7. Reference Documentation
@@ -1352,16 +1432,19 @@ For each balance top-up request, customers must:
 8. **Notification system backend implementation**
 9. **Provider response notification system**
 10. Admin API endpoints for all core functions
-
-### Phase 2: Customer Frontend & Integration\n1. Customer authentication and registration
+11. **User profile management API endpoints (PUT /api/v1/account/profile, POST /api/v1/account/profile/picture, PUT /api/v1/account/password)**
+12. **2FA backend implementation with all API endpoints (setup, verify, disable, backup codes)**
+\n### Phase 2: Customer Frontend & Integration\n1. Customer authentication and registration
 2. Service browsing and ordering
 3. Wallet system and payment submission
 4. Order tracking and history
 5. **Order details page with provider response display**
-6. Profile management with 2FA\n7. **Notification center and real-time notification delivery**
-8. **Real-time provider response updates**
-9. Frontend-backend API integration
-\n### Phase 3: Advanced Features
+6. **Profile management frontend with full backend integration**
+7. **2FA setup and management frontend with complete backend connection**
+8. **Notification center and real-time notification delivery**
+9. **Real-time provider response updates**
+10. Frontend-backend API integration\n
+### Phase 3: Advanced Features
 1. Stock management system
 2. Multi-currency and multi-language\n3. Public API system
 4. **Complete notification system with all notification types**
@@ -1370,6 +1453,7 @@ For each balance top-up request, customers must:
 7. Analytics and reporting
 8. **Notification analytics and tracking**
 9. **Provider response logs and monitoring**
+10. **Security notifications for profile and 2FA changes**
 \n### Phase 4: Additional Modules
 1. Affiliate system
 2. Subscription management
@@ -1379,3 +1463,4 @@ For each balance top-up request, customers must:
 7. **Broadcast notification system**
 8. **Notification template management**
 9. **Provider response analytics**
+10. **Trusted device management for 2FA**

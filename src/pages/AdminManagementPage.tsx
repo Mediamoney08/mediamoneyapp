@@ -26,7 +26,7 @@ import {
   updateProduct,
   deleteProduct,
   getAllUsers,
-  updateUserProfile,
+  updateUserProfileAdmin,
   updateUserBalance,
   getAllOrdersAdmin,
   updateOrderStatus,
@@ -321,7 +321,7 @@ export default function AdminManagementPage() {
   const handleToggleUserRole = async (userId: string, currentRole: string) => {
     try {
       const newRole = currentRole === 'admin' ? 'user' : 'admin';
-      await updateUserProfile(userId, { role: newRole });
+      await updateUserProfileAdmin(userId, { role: newRole });
       toast({ title: 'Role Updated', description: `User role has been updated to ${newRole}` });
       loadData();
     } catch (error: any) {
