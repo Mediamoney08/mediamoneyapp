@@ -784,8 +784,17 @@ export const getUserNotifications = async (userId: string, limit: number = 50): 
   return Array.isArray(data) ? data : [];
 };
 
-// Backward compatibility alias
-export const getNotifications = getUserNotifications;
+// Get notifications for a user
+export const getNotifications = async (userId: string): Promise<Notification[]> => {
+  const { data, error } = await supabase
+    .from('notifications')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return Array.isArray(data) ? data : [];
+};
 
 export const getUnreadNotificationCount = async (userId: string): Promise<number> => {
   const { count, error } = await supabase
@@ -835,29 +844,8 @@ export const deleteAllNotifications = async (userId: string): Promise<void> => {
   if (error) throw error;
 };
 
-export const createNotification = async (
-  userId: string,
-  type: NotificationType,
-  title: string,
-  message: string,
-  metadata?: any
-): Promise<Notification> => {
-  const { data, error } = await supabase
-    .from('notifications')
-    .insert({
-      user_id: userId,
-      type,
-      title,
-      message,
-      metadata: metadata || null,
-      is_read: false
-    })
-    .select()
-    .single();
+// Notification functions moved to end of file (see line ~1720)
 
-  if (error) throw error;
-  return data;
-};
 
 // ==================== Banner Functions ====================
 
@@ -1648,4 +1636,61 @@ export const deleteNewBanner = async (id: string) => {
     .eq('id', id);
 
   if (error) throw error;
+};
+
+// ==================== Additional Notification Functions ====================
+
+/**
+ * Create a notification (admin only)
+ */
+export const createNotification = async (
+  userId: string,
+  type: NotificationType,
+  title: string,
+  message: string,
+  metadata?: Record<string, any>
+): Promise<string> => {
+  const { data, error } = await supabase.rpc('create_notification', {
+    p_user_id: userId,
+    p_type: type,
+    p_title: title,
+    p_message: message,
+    p_metadata: metadata || null,
+  });
+
+  if (error) throw error;
+  return data;
+};
+
+/**
+ * Create a broadcast notification to all users (admin only)
+ */
+export const createBroadcastNotification = async (
+  type: NotificationType,
+  title: string,
+  message: string,
+  metadata?: Record<string, any>
+): Promise<number> => {
+  const { data, error } = await supabase.rpc('create_broadcast_notification', {
+    p_type: type,
+    p_title: title,
+    p_message: message,
+    p_metadata: metadata || null,
+  });
+
+  if (error) throw error;
+  return data;
+};
+
+/**
+ * Get all notifications (admin only)
+ */
+export const getAllNotifications = async (): Promise<Notification[]> => {
+  const { data, error } = await supabase
+    .from('notifications')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return Array.isArray(data) ? data : [];
 };

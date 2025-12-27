@@ -2,13 +2,27 @@ export type UserRole = 'user' | 'admin';
 export type OrderStatus = 'pending' | 'completed' | 'cancelled' | 'refunded';
 export type TicketStatus = 'open' | 'in_progress' | 'resolved' | 'closed';
 export type NotificationType = 
+  | 'order_created'
+  | 'order_processing'
   | 'order_completed' 
+  | 'order_failed'
+  | 'order_rejected'
   | 'order_canceled' 
   | 'order_refunded' 
+  | 'balance_added'
   | 'wallet_credited' 
   | 'wallet_debited' 
   | 'payment_approved' 
   | 'payment_rejected' 
+  | 'service_added'
+  | 'service_available'
+  | 'service_unavailable'
+  | 'price_update'
+  | 'price_increased'
+  | 'price_decreased'
+  | 'website_update'
+  | 'news'
+  | 'system'
   | 'api_key_changed' 
   | 'system_announcement';
 export type ServiceCategory = 'game' | 'app' | 'streaming' | 'gift_card';

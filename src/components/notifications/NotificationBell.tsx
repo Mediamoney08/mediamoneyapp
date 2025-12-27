@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
-import { getUserNotifications, getUnreadNotificationCount, markAllNotificationsAsRead } from '@/db/api';
+import { getNotifications, getUnreadNotificationCount, markAllNotificationsAsRead } from '@/db/api';
 import type { Notification } from '@/types/types';
 import NotificationList from './NotificationList';
 
@@ -51,7 +51,7 @@ export default function NotificationBell() {
     if (!user?.id) return;
     setIsLoading(true);
     try {
-      const data = await getUserNotifications(user.id, 50);
+      const data = await getNotifications(user.id);
       setNotifications(data);
     } catch (error) {
       console.error('Failed to load notifications:', error);
