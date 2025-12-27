@@ -25,6 +25,8 @@ export default function LoginPage() {
 
   const [signUpForm, setSignUpForm] = useState({
     username: '',
+    email: '',
+    phone: '',
     password: '',
     confirmPassword: '',
   });
@@ -82,6 +84,26 @@ export default function LoginPage() {
       return;
     }
 
+    // Validate email
+    if (!signUpForm.email || !signUpForm.email.includes('@')) {
+      toast({
+        title: 'Invalid Email',
+        description: 'Please enter a valid email address',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Validate phone (optional but if provided, should be valid)
+    if (signUpForm.phone && signUpForm.phone.length < 10) {
+      toast({
+        title: 'Invalid Phone',
+        description: 'Please enter a valid phone number',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     if (signUpForm.password !== signUpForm.confirmPassword) {
       toast({
         title: 'Password Mismatch',
@@ -118,7 +140,12 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { error } = await signUp(signUpForm.username, signUpForm.password);
+      const { error } = await signUp(
+        signUpForm.username, 
+        signUpForm.email,
+        signUpForm.phone,
+        signUpForm.password
+      );
       if (error) {
         toast({
           title: 'Sign Up Failed',
@@ -214,6 +241,33 @@ export default function LoginPage() {
                     />
                     <p className="text-xs text-muted-foreground">
                       Only letters, numbers, and underscores allowed
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-email">Email</Label>
+                    <Input
+                      id="signup-email"
+                      type="email"
+                      placeholder="Enter your email address"
+                      value={signUpForm.email}
+                      onChange={(e) => setSignUpForm({ ...signUpForm, email: e.target.value })}
+                      required
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      We'll use this for account recovery and notifications
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-phone">Phone Number</Label>
+                    <Input
+                      id="signup-phone"
+                      type="tel"
+                      placeholder="Enter your phone number (optional)"
+                      value={signUpForm.phone}
+                      onChange={(e) => setSignUpForm({ ...signUpForm, phone: e.target.value })}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Optional: For account security and support
                     </p>
                   </div>
                   <div className="space-y-2">
