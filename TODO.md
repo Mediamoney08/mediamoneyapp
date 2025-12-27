@@ -1,85 +1,45 @@
-# Task: Connect All Frontend and Backend Components
+# Task: Complete Backend-to-Frontend Connection with Full Admin Dashboard
 
 ## Plan
-- [x] Step 1: Initialize Supabase database and verify connection
-  - [x] Initialize Supabase project
-  - [x] Create all required database tables
-  - [x] Set up Row Level Security policies
-  - [x] Add sample data for testing
-- [x] Step 2: Verify and enhance database API functions
-  - [x] Review all API functions in db/api.ts
-  - [x] Add missing CRUD operations
-  - [x] Ensure proper error handling
-  - [x] Add data validation
-- [x] Step 3: Create secure public API system
-  - [x] Create API key management system
-  - [x] Build Supabase Edge Functions for API endpoints
-  - [x] Implement rate limiting
-  - [x] Create API documentation page
-  - [x] Add webhook support
-  - [x] Implement API authentication middleware
-- [x] Step 4: Implement 2FA and profile management
-  - [x] Add 2FA setup and verification
-  - [x] Create profile edit page
-  - [x] Implement email change functionality
-  - [x] Implement password change functionality
-  - [x] Add security settings page
-  - [x] Create admin profile management
-  - [x] Connect all features to secure backend
-  - [x] Implement server-side TOTP verification
-  - [x] Add rate limiting for security operations
-  - [x] Create secure Edge Functions
-  - [x] Add comprehensive security logging
-  - [x] Implement backup code verification
-  - [x] Add password history tracking
-  - [x] Create security audit documentation
-- [x] Step 5: Implement multi-language and multi-currency
-  - [x] Add i18n system with language switcher
-  - [x] Support 20+ major languages
-  - [x] Add currency system with conversion
-  - [x] Support 20+ major currencies
-  - [x] Create language/currency preferences
-  - [x] Update all UI text for translation
-  - [x] Move language/currency to profile settings
-  - [x] Fix currency loading from database
-  - [x] Add Preferences tab to profile page
-  - [x] Change profile tabs to icon-only design
-  - [x] Fix currency conversion with proper exchange rates
-  - [x] Add currency symbol to useCurrency hook
-  - [x] Update wallet balance to show in selected currency
-  - [x] Fix profile loading error (single to maybeSingle)
-  - [x] Improve error handling and loading states
-  - [x] Fix i18n initialization errors in profile page
-  - [x] Add null checks for i18n object
-  - [x] Improve async error handling
-  - [x] Fix profile creation triggers (INSERT and UPDATE)
-  - [x] Add INSERT policy for profiles table
-  - [x] Create profiles for existing users
-  - [x] Add frontend auto-create fallback
-- [ ] Step 3: Connect user-facing pages to backend
-  - [ ] HomePage - categories and products
-  - [ ] CheckoutPage - order creation
-  - [ ] WalletPage - balance display and transactions
-  - [ ] AddBalancePage - payment processing
-  - [ ] OrdersPage - order history
-  - [ ] SecurityPage - user settings
-- [ ] Step 4: Connect admin pages to backend
-  - [ ] DashboardOverview - statistics and metrics
-  - [ ] UserManagement - CRUD operations
-  - [ ] OrderManagement - order processing
-  - [ ] PaymentVerification - payment approval
-  - [ ] ProductManagement - product CRUD
-  - [ ] CategoryManagement - category CRUD
-  - [ ] StockManagement - inventory management
-- [ ] Step 5: Test all integrations
-  - [ ] Test user registration and login
-  - [ ] Test product browsing and ordering
-  - [ ] Test payment processing
-  - [ ] Test admin operations
-  - [ ] Verify data persistence
+
+- [x] Step 1: Verify current database schema and tables
+  - [x] Check existing tables (users, profiles, orders, products, categories, etc.)
+  - [x] Identified 46 tables in database
+  - [x] Document current database structure
+
+- [ ] Step 2: Verify admin dashboard components are connected
+  - [x] DashboardOverview - Connected to database (fixed payment_proofs table)
+  - [x] UserManagement - Connected via API functions
+  - [ ] OrderManagement - Need to verify
+  - [ ] ProductManagement - Need to verify
+  - [ ] CategoryManagement - Need to verify
+  - [ ] PaymentVerification - Need to verify
+  - [ ] StockManagement - Need to verify
+
+- [ ] Step 3: Test admin dashboard functionality
+  - [ ] Login as admin and access /admin/dashboard
+  - [ ] Verify Overview tab shows statistics
+  - [ ] Test Users tab - view, edit, delete
+  - [ ] Test Orders tab - view, update status
+  - [ ] Test Services tab - products, categories, stock
+  - [ ] Test Payments tab - verify payment proofs
+  - [ ] Test other tabs
+
+- [ ] Step 4: Fix any issues found during testing
+  - [ ] Fix database queries if needed
+  - [ ] Fix RLS policies if access denied
+  - [ ] Add missing API functions
+  - [ ] Improve error handling
+
+- [ ] Step 5: Final verification
+  - [ ] All admin features work correctly
+  - [ ] Data displays properly
+  - [ ] CRUD operations work
+  - [ ] No console errors
+  - [ ] Run lint check
 
 ## Notes
-- All pages must connect to Supabase backend
+- Admin account: mediamoney01@gmail.com / 718191@@Aa
+- Admin dashboard route: /admin/dashboard
+- Focus on making features functional, not just UI
 - Ensure proper error handling and loading states
-- Add toast notifications for user feedback
-- Verify RLS policies for security

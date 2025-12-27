@@ -75,7 +75,7 @@ export default function DashboardOverview() {
 
       // Get pending payments
       const { count: pendingPaymentsCount } = await supabase
-        .from('payment_requests')
+        .from('payment_proofs')
         .select('*', { count: 'exact', head: true })
         .eq('status', 'pending');
 

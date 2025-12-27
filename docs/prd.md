@@ -15,7 +15,10 @@ play4cards.com
 - Screenshot 2025-12-25 195327.png: Main category structure reference
 - Screenshot 2025-12-26 133441.png: Admin dashboard navigation menu reference
 - Screenshot 2025-12-26 133448.png: Admin settings sidebar reference
-\n## 2. Core Features\n
+\n---
+
+## 2. Core Features
+
 ### 2.1 Service Categories Structure
 - **Unified Service Grouping**: All services with the same name are grouped into one category, allowing customers to choose from available options within that category
 - **Category Main Image**: Each category displays a unified main image representing all services within that category
@@ -233,8 +236,7 @@ play4cards.com
   - Password
   - Phone number
   - Display name
-  - Profile picture
-  - 2FA settings
+  - Profile picture\n  - 2FA settings
 - **Session Management**: \n  - Configurable session timeout (15-120 minutes)
   - Automatic logout on inactivity
   - Single session enforcement option
@@ -314,7 +316,9 @@ Full navigation menu with the following modules:
 - **Version Control**: Track changes to services, prices, and configurations with rollback capability
 - **Language Management**: Add, edit, and manage all language translations; import/export language files; set language availability per region
 - **Currency Management**: Add, edit, and manage all supported currencies; configure exchange rate sources; set currency availability per region; manage currency conversion rules
-\n## 3. Website Pages
+\n---
+
+## 3. Website Pages
 
 ### 3.1 Customer-Facing Pages
 1. **Home** - Main landing page with reduced-height advertisement banner at top, search field below banner, and service categories\n2. **Wallet** - User wallet management and balance display with multi-currency support
@@ -361,7 +365,9 @@ Full navigation menu with the following modules:
 42. **Scheduled Tasks** - Interface for configuring automated tasks and cron jobs
 43. **Webhook Management** - Interface for managing webhook integrations\n44. **Fraud Detection** - Interface for configuring fraud rules and viewing suspicious activities
 45. **Performance Dashboard** - Interface for monitoring system performance and optimization
-46. **Language Management** - Interface for adding, editing, and managing all language translations; import/export language files; configure language availability\n47. **Currency Management** - Interface for adding, editing, and managing all supported currencies; configure exchange rates; set currency availability per region\n\n## 4. Add Balance Payment System
+46. **Language Management** - Interface for adding, editing, and managing all language translations; import/export language files; configure language availability\n47. **Currency Management** - Interface for adding, editing, and managing all supported currencies; configure exchange rates; set currency availability per region\n\n---
+
+## 4. Add Balance Payment System
 
 ### 4.1 Payment Methods
 - Support for 15+ payment methods including:
@@ -382,44 +388,555 @@ For each balance top-up request, customers must:
 - Balance credited after verification with automatic currency conversion if needed
 - Notification sent upon approval or rejection
 
+---
+
 ## 5. Technical Requirements
 
-### 5.1 Backend & Database
-- Database system for user data, orders, inventory, transactions, payment submissions, and admin accounts
-- Backend server for business logic and API handling
-- Category and subcategory management system with image storage
-- Payment proof storage and verification workflow
-- **Admin authentication and authorization system with secure credential validation**
-- **Admin login session management with token-based authentication**
-- Role-based access control for admin functions and stock managers
-- Notification queue and delivery system\n- Stock inventory database for gift cards, Netflix codes, Shahid codes, PUBG codes, and digital products
-- Automatic order fulfillment system from stock\n- **User level system database with discount rate configuration**
-- **Pricing calculation engine for profit markup and custom user rates**
-- **Invoice generation system with PDF export functionality**
-- **Two-Factor Authentication (2FA) system**:\n  - TOTP (Time-based One-Time Password) implementation
-  - QR code generation for authenticator app setup
-  - Backup codes generation and storage
-  - SMS verification integration
-  - 2FA recovery mechanism
-  - Trusted device management
-- **User profile management system** with secure data update workflows
-- **Supabase Integration**: Configure Supabase connection files including supabase.js, supabaseClient.js, lib/supabase.js, and src/supabase.ts to connect the application to Supabase backend services
-- **Subscription management system** for recurring billing cycles
-- **Drip-feed order processing system** for scheduled delivery
-- **Affiliate tracking system** for referral management and commission calculation
-- **Child panel management system** for reseller account hierarchy
-- **Comprehensive audit logging system** for all admin and user actions
-- **Backup and disaster recovery system** with automated scheduling
-- **Redis caching layer** for improved performance\n- **Queue management system** for background job processing
-- **API request/response logging system** for all API calls
-- **API rate limiting engine** with configurable thresholds
-- **Webhook delivery system** with retry mechanism
-- **Multi-language database system**: Store translations for all interface elements, notifications, and content in all supported languages
-- **Multi-currency database system**: Store currency configurations, exchange rates, and conversion rules for all supported currencies
-- **Language preference storage**: Store user and admin language preferences
-- **Currency preference storage**: Store user currency preferences and transaction currency history
-- **Real-time exchange rate API integration**: Automatic currency exchange rate updates from reliable sources
-\n### 5.2 Security Infrastructure
+### 5.1 Backend Architecture & Database Design
+\n#### 5.1.1 Backend Technology Stack
+- **Backend Framework**: Node.js with Express.js or Python with Django/FastAPI
+- **Database**: PostgreSQL (primary) with Redis for caching
+- **ORM**: Sequelize (Node.js) or SQLAlchemy (Python)
+- **API Architecture**: RESTful API with JSON format\n- **Authentication**: JWT (JSON Web Tokens) for session management
+- **File Storage**: AWS S3 or similar cloud storage for images and documents
+- **Queue System**: Bull (Node.js) or Celery (Python) for background jobs
+- **Real-time Communication**: Socket.io for live updates
+- **Email Service**: SendGrid or AWS SES\n- **SMS Service**: Twilio or similar provider
+\n#### 5.1.2 Complete Database Schema
+\n**Users Table (users)**
+- id (Primary Key, UUID)
+- username (Unique, String)
+- email (Unique, String)
+- password_hash (String)
+- phone_number (String)
+- display_name (String)
+- profile_picture_url (String)
+- user_level_id (Foreign Key → user_levels.id)
+- wallet_balance (Decimal)
+- total_spent (Decimal)
+- preferred_language (String)
+- preferred_currency (String)
+- two_factor_enabled (Boolean)
+- two_factor_secret (Encrypted String)
+- backup_codes (Encrypted JSON Array)
+- email_verified (Boolean)
+- account_status (Enum: active, suspended, banned)
+- created_at (Timestamp)
+- updated_at (Timestamp)
+- last_login_at (Timestamp)
+- last_login_ip (String)
+\n**Admin Users Table (admin_users)**
+- id (Primary Key, UUID)\n- username (Unique, String)
+- email (Unique, String)
+- password_hash (String)
+- phone_number (String)
+- display_name (String)
+- profile_picture_url (String)
+- admin_role_id (Foreign Key → admin_roles.id)
+- two_factor_enabled (Boolean)
+- two_factor_secret (Encrypted String)
+- backup_codes (Encrypted JSON Array)
+- ip_whitelist (JSON Array)
+- session_timeout_minutes (Integer)
+- password_expires_at (Timestamp)
+- password_history (JSON Array)
+- account_status (Enum: active, suspended)\n- created_at (Timestamp)
+- updated_at (Timestamp)
+- last_login_at (Timestamp)
+- last_login_ip (String)
+- created_by_admin_id (Foreign Key → admin_users.id)
+
+**Admin Roles Table (admin_roles)**
+- id (Primary Key, UUID)
+- role_name (String)
+- role_description (Text)
+- permissions (JSON Object with granular permissions)
+- is_super_admin (Boolean)
+- created_at (Timestamp)
+- updated_at (Timestamp)
+\n**Admin Sessions Table (admin_sessions)**
+- id (Primary Key, UUID)\n- admin_user_id (Foreign Key → admin_users.id)
+- session_token (Unique, String)
+- ip_address (String)
+- user_agent (String)
+- expires_at (Timestamp)
+- created_at (Timestamp)
+- last_activity_at (Timestamp)\n
+**Admin Activity Logs Table (admin_activity_logs)**
+- id (Primary Key, UUID)
+- admin_user_id (Foreign Key → admin_users.id)
+- action_type (String)
+- action_description (Text)
+- affected_resource_type (String)
+- affected_resource_id (String)
+- ip_address (String)
+- user_agent (String)
+- request_data (JSON)\n- response_data (JSON)\n- created_at (Timestamp)
+\n**User Levels Table (user_levels)**
+- id (Primary Key, UUID)
+- level_name (String)
+- level_description (Text)
+- discount_percentage (Decimal)
+- level_order (Integer)
+- created_at (Timestamp)
+- updated_at (Timestamp)
+
+**Categories Table (categories)**
+- id (Primary Key, UUID)
+- category_name (String)
+- category_slug (Unique, String)
+- category_type (Enum: game, app, streaming, gift_card)
+- parent_category_id (Foreign Key → categories.id, Nullable)
+- main_image_url (String)
+- description (Text)
+- display_order (Integer)
+- is_active (Boolean)
+- created_at (Timestamp)
+- updated_at (Timestamp)
+
+**Services Table (services)**
+- id (Primary Key, UUID)
+- service_name (String)
+- service_slug (Unique, String)
+- category_id (Foreign Key → categories.id)
+- provider_id (Foreign Key → providers.id)
+- provider_service_id (String)
+- base_price (Decimal)
+- profit_markup_percentage (Decimal)
+- final_price (Decimal, Calculated)
+- currency (String)
+- service_type (Enum: instant, manual, stock)\n- stock_quantity (Integer, Nullable)
+- min_quantity (Integer)\n- max_quantity (Integer)\n- description (Text)
+- instructions (Text)
+- is_active (Boolean)
+- created_at (Timestamp)
+- updated_at (Timestamp)
+
+**Providers Table (providers)**
+- id (Primary Key, UUID)
+- provider_name (String)
+- provider_api_url (String)
+- api_key (Encrypted String)
+- api_secret (Encrypted String)
+- provider_type (String)
+- priority_order (Integer)
+- is_active (Boolean)
+- failover_provider_id (Foreign Key → providers.id, Nullable)
+- created_at (Timestamp)
+- updated_at (Timestamp)
+
+**Orders Table (orders)**
+- id (Primary Key, UUID)
+- order_number (Unique, String)
+- user_id (Foreign Key → users.id)
+- service_id (Foreign Key → services.id)
+- quantity (Integer)
+- unit_price (Decimal)
+- discount_amount (Decimal)
+- total_amount (Decimal)
+- currency (String)
+- player_id (String)\n- order_status (Enum: pending, processing, completed, failed, cancelled, refunded, partial)
+- provider_order_id (String)
+- provider_response (JSON)
+- external_id (String)\n- delivery_link (String)
+- fulfillment_type (Enum: api, stock, manual)
+- stock_item_id (Foreign Key → stock_items.id, Nullable)
+- created_at (Timestamp)
+- updated_at (Timestamp)
+- completed_at (Timestamp)\n\n**Stock Items Table (stock_items)**\n- id (Primary Key, UUID)
+- service_id (Foreign Key → services.id)
+- stock_code (Encrypted String)
+- stock_type (Enum: gift_card, netflix_code, shahid_code, pubg_code, other)
+- denomination (Decimal)
+- currency (String)
+- status (Enum: available, sold, reserved, expired)
+- added_by_admin_id (Foreign Key → admin_users.id)
+- sold_in_order_id (Foreign Key → orders.id, Nullable)
+- created_at (Timestamp)
+- updated_at (Timestamp)
+- sold_at (Timestamp)
+\n**Wallet Transactions Table (wallet_transactions)**
+- id (Primary Key, UUID)\n- user_id (Foreign Key → users.id)
+- transaction_type (Enum: credit, debit, refund, bonus)
+- amount (Decimal)\n- currency (String)
+- balance_before (Decimal)
+- balance_after (Decimal)
+- description (Text)
+- reference_type (String)
+- reference_id (String)
+- created_at (Timestamp)
+\n**Payment Requests Table (payment_requests)**
+- id (Primary Key, UUID)\n- user_id (Foreign Key → users.id)
+- payment_method (String)
+- amount (Decimal)
+- currency (String)
+- transaction_id (String)
+- payment_proof_url (String)
+- transaction_details (JSON)
+- status (Enum: pending, approved, rejected)\n- reviewed_by_admin_id (Foreign Key → admin_users.id, Nullable)
+- review_notes (Text)
+- created_at (Timestamp)
+- updated_at (Timestamp)
+- reviewed_at (Timestamp)
+\n**Invoices Table (invoices)**
+- id (Primary Key, UUID)\n- invoice_number (Unique, String)\n- order_id (Foreign Key → orders.id)
+- user_id (Foreign Key → users.id)
+- invoice_date (Timestamp)
+- total_amount (Decimal)
+- currency (String)
+- pdf_url (String)
+- created_at (Timestamp)
+\n**Tickets Table (tickets)**
+- id (Primary Key, UUID)
+- ticket_number (Unique, String)\n- user_id (Foreign Key → users.id)
+- subject (String)
+- category (String)
+- priority (Enum: low, medium, high, urgent)
+- status (Enum: open, in_progress, waiting_customer, resolved, closed)
+- language (String)
+- assigned_to_admin_id (Foreign Key → admin_users.id, Nullable)
+- created_at (Timestamp)
+- updated_at (Timestamp)
+- closed_at (Timestamp)
+\n**Ticket Messages Table (ticket_messages)**
+- id (Primary Key, UUID)\n- ticket_id (Foreign Key → tickets.id)
+- sender_type (Enum: user, admin)\n- sender_id (String)
+- message_content (Text)
+- attachments (JSON Array)
+- created_at (Timestamp)
+\n**Notifications Table (notifications)**
+- id (Primary Key, UUID)
+- user_id (Foreign Key → users.id, Nullable)
+- admin_user_id (Foreign Key → admin_users.id, Nullable)
+- notification_type (String)
+- title (String)
+- message (Text)
+- language (String)
+- is_read (Boolean)
+- delivery_method (Enum: in_app, email, sms, push)\n- created_at (Timestamp)
+- read_at (Timestamp)
+\n**API Keys Table (api_keys)**\n- id (Primary Key, UUID)
+- user_id (Foreign Key → users.id, Nullable)
+- admin_user_id (Foreign Key → admin_users.id, Nullable)
+- key_name (String)
+- api_key (Unique, Encrypted String)
+- api_secret (Encrypted String)
+- key_type (Enum: public_api, admin_api_v2)
+- permissions (JSON Object)
+- rate_limit_per_hour (Integer)
+- ip_whitelist (JSON Array)
+- is_active (Boolean)
+- last_used_at (Timestamp)\n- created_at (Timestamp)
+- updated_at (Timestamp)
+- expires_at (Timestamp)
+\n**API Logs Table (api_logs)**
+- id (Primary Key, UUID)
+- api_key_id (Foreign Key → api_keys.id)
+- endpoint (String)
+- http_method (String)
+- request_headers (JSON)\n- request_body (JSON)\n- response_status (Integer)
+- response_body (JSON)
+- response_time_ms (Integer)
+- ip_address (String)
+- user_agent (String)
+- created_at (Timestamp)
+\n**Webhooks Table (webhooks)**
+- id (Primary Key, UUID)\n- user_id (Foreign Key → users.id)
+- webhook_url (String)
+- event_types (JSON Array)
+- secret_key (Encrypted String)
+- is_active (Boolean)
+- last_triggered_at (Timestamp)
+- created_at (Timestamp)
+- updated_at (Timestamp)
+
+**Subscriptions Table (subscriptions)**
+- id (Primary Key, UUID)\n- user_id (Foreign Key → users.id)
+- service_id (Foreign Key → services.id)
+- subscription_status (Enum: active, paused, cancelled, expired)
+- billing_cycle (Enum: daily, weekly, monthly, yearly)
+- next_billing_date (Timestamp)\n- created_at (Timestamp)
+- updated_at (Timestamp)
+- cancelled_at (Timestamp)
+\n**Drip Feed Orders Table (drip_feed_orders)**
+- id (Primary Key, UUID)
+- order_id (Foreign Key → orders.id)
+- total_quantity (Integer)
+- delivered_quantity (Integer)
+- delivery_interval_minutes (Integer)
+- next_delivery_at (Timestamp)
+- status (Enum: active, paused, completed, cancelled)
+- created_at (Timestamp)
+- updated_at (Timestamp)
+
+**Refill Requests Table (refill_requests)**
+- id (Primary Key, UUID)
+- order_id (Foreign Key → orders.id)
+- user_id (Foreign Key → users.id)
+- refill_status (Enum: pending, processing, completed, rejected)
+- reason (Text)
+- created_at (Timestamp)\n- updated_at (Timestamp)
+- completed_at (Timestamp)
+\n**Cancel Requests Table (cancel_requests)**
+- id (Primary Key, UUID)
+- order_id (Foreign Key → orders.id)
+- user_id (Foreign Key → users.id)
+- cancel_status (Enum: pending, processing, approved, rejected)
+- reason (Text)
+- reviewed_by_admin_id (Foreign Key → admin_users.id, Nullable)
+- created_at (Timestamp)
+- updated_at (Timestamp)
+- reviewed_at (Timestamp)\n
+**Affiliates Table (affiliates)**
+- id (Primary Key, UUID)\n- user_id (Foreign Key → users.id)
+- referral_code (Unique, String)
+- commission_rate (Decimal)
+- total_referrals (Integer)
+- total_earnings (Decimal)
+- created_at (Timestamp)
+- updated_at (Timestamp)
+
+**Affiliate Transactions Table (affiliate_transactions)**
+- id (Primary Key, UUID)\n- affiliate_id (Foreign Key → affiliates.id)
+- referred_user_id (Foreign Key → users.id)
+- order_id (Foreign Key → orders.id)
+- commission_amount (Decimal)
+- status (Enum: pending, paid)\n- created_at (Timestamp)
+- paid_at (Timestamp)
+\n**Child Panels Table (child_panels)**
+- id (Primary Key, UUID)\n- parent_user_id (Foreign Key → users.id)
+- panel_name (String)
+- panel_url (String)
+- revenue_share_percentage (Decimal)
+- is_active (Boolean)
+- created_at (Timestamp)
+- updated_at (Timestamp)
+
+**Languages Table (languages)**
+- id (Primary Key, UUID)
+- language_code (Unique, String)
+- language_name (String)
+- native_name (String)
+- is_rtl (Boolean)
+- is_active (Boolean)
+- display_order (Integer)
+- created_at (Timestamp)
+- updated_at (Timestamp)
+
+**Translations Table (translations)**
+- id (Primary Key, UUID)
+- language_id (Foreign Key → languages.id)
+- translation_key (String)
+- translation_value (Text)
+- context (String)
+- created_at (Timestamp)
+- updated_at (Timestamp)
+
+**Currencies Table (currencies)**
+- id (Primary Key, UUID)
+- currency_code (Unique, String)
+- currency_name (String)
+- currency_symbol (String)
+- exchange_rate_to_usd (Decimal)
+- is_active (Boolean)
+- display_order (Integer)
+- created_at (Timestamp)
+- updated_at (Timestamp)
+
+**Exchange Rates Table (exchange_rates)**
+- id (Primary Key, UUID)
+- from_currency (String)
+- to_currency (String)
+- rate (Decimal)
+- source (String)
+- created_at (Timestamp)
+\n**Site Settings Table (site_settings)**
+- id (Primary Key, UUID)\n- setting_key (Unique, String)
+- setting_value (JSON)\n- setting_category (String)
+- created_at (Timestamp)
+- updated_at (Timestamp)
+
+**Banners Table (banners)**
+- id (Primary Key, UUID)\n- banner_title (String)
+- banner_image_url (String)
+- banner_link (String)
+- display_order (Integer)
+- is_active (Boolean)
+- start_date (Timestamp)
+- end_date (Timestamp)
+- created_at (Timestamp)\n- updated_at (Timestamp)
+
+**System Logs Table (system_logs)**
+- id (Primary Key, UUID)
+- log_level (Enum: info, warning, error, critical)
+- log_message (Text)
+- log_context (JSON)
+- stack_trace (Text)
+- created_at (Timestamp)
+\n**Backups Table (backups)**
+- id (Primary Key, UUID)\n- backup_type (Enum: full, incremental)\n- backup_file_url (String)
+- backup_size_bytes (BigInteger)
+- status (Enum: in_progress, completed, failed)\n- created_by_admin_id (Foreign Key → admin_users.id)\n- created_at (Timestamp)
+- completed_at (Timestamp)
+\n#### 5.1.3 Backend API Endpoints Structure
+
+**Admin Authentication Endpoints**
+- POST /admin/auth/login - Admin login with credentials
+- POST /admin/auth/verify-2fa - Verify 2FA code
+- POST /admin/auth/logout - Admin logout
+- POST /admin/auth/refresh-token - Refresh session token
+- GET /admin/auth/session - Get current session info
+\n**Admin Dashboard Endpoints**
+- GET /admin/dashboard/stats - Get dashboard statistics
+- GET /admin/dashboard/recent-activity - Get recent activities
+- GET /admin/dashboard/alerts - Get system alerts
+\n**Admin User Management Endpoints**
+- GET /admin/users - List all users with filters
+- GET /admin/users/:id - Get user details
+- POST /admin/users - Create new user
+- PUT /admin/users/:id - Update user
+- DELETE /admin/users/:id - Delete user\n- PUT /admin/users/:id/level - Assign user level
+- PUT /admin/users/:id/wallet - Adjust wallet balance
+- GET /admin/users/:id/orders - Get user order history
+- GET /admin/users/:id/transactions - Get user transactions
+\n**Admin Order Management Endpoints**
+- GET /admin/orders - List all orders with filters
+- GET /admin/orders/:id - Get order details\n- PUT /admin/orders/:id/status - Update order status
+- PUT /admin/orders/:id/link - Edit order link
+- POST /admin/orders/:id/resend - Resend order\n- POST /admin/orders/:id/cancel - Cancel and refund order
+- PUT /admin/orders/:id/partial - Set partial fulfillment
+- POST /admin/orders/pull - Pull orders from providers
+- PUT /admin/orders/bulk-update - Bulk update orders\n
+**Admin Service Management Endpoints**
+- GET /admin/services - List all services\n- GET /admin/services/:id - Get service details
+- POST /admin/services - Create new service
+- PUT /admin/services/:id - Update service
+- DELETE /admin/services/:id - Delete service
+- POST /admin/services/import - Import services from provider
+- PUT /admin/services/bulk-update - Bulk update services
+
+**Admin Payment Management Endpoints**
+- GET /admin/payments - List payment requests
+- GET /admin/payments/:id - Get payment details
+- PUT /admin/payments/:id/approve - Approve payment
+- PUT /admin/payments/:id/reject - Reject payment
+- POST /admin/payments/add - Manually add payment
+\n**Admin Stock Management Endpoints**
+- GET /admin/stock - List stock items
+- POST /admin/stock - Add stock items
+- PUT /admin/stock/:id - Update stock item
+- DELETE /admin/stock/:id - Delete stock item
+- GET /admin/stock/alerts - Get low stock alerts
+
+**Admin Settings Endpoints**
+- GET /admin/settings/:category - Get settings by category
+- PUT /admin/settings/:category - Update settings
+- GET /admin/settings/all - Get all settings
+\n**Admin API Management Endpoints**
+- GET /admin/api-keys - List API keys
+- POST /admin/api-keys - Create API key
+- PUT /admin/api-keys/:id - Update API key
+- DELETE /admin/api-keys/:id - Delete API key
+- GET /admin/api-logs - View API logs
+- GET /admin/api-stats - Get API usage statistics
+
+**Admin Security Endpoints**
+- GET /admin/security/logs - View security logs
+- GET /admin/security/failed-logins - View failed login attempts
+- POST /admin/security/ip-whitelist - Add IP to whitelist
+- DELETE /admin/security/ip-whitelist/:ip - Remove IP from whitelist
+\n**Admin Backup Endpoints**
+- GET /admin/backups - List backups
+- POST /admin/backups/create - Create backup
+- POST /admin/backups/:id/restore - Restore backup\n- DELETE /admin/backups/:id - Delete backup
+\n#### 5.1.4 Backend Business Logic Implementation
+
+**Admin Authentication Logic**
+- Validate admin credentials against admin_users table
+- Check account status and IP whitelist
+- Verify CAPTCHA token
+- Generate JWT token with admin permissions
+- Require 2FA verification\n- Create admin session record
+- Log login attempt in admin_activity_logs
+- Implement session timeout and auto-logout
+- Track failed login attempts and implement lockout
+
+**Admin Authorization Middleware**
+- Verify JWT token on each request
+- Check admin role permissions for requested action
+- Validate session is not expired
+- Log all admin actions in admin_activity_logs
+- Implement IP address validation
+- Check for concurrent session limits
+\n**Order Processing Logic**
+- Calculate final price based on user level discount
+- Verify wallet balance before order creation
+- Deduct amount from wallet\n- Create order record\n- Route order to appropriate fulfillment method (API/Stock/Manual)
+- For stock orders: Reserve and assign stock item
+- For API orders: Send request to provider
+- Update order status based on provider response
+- Send notification to user
+- Generate invoice\n- Log transaction in wallet_transactions
+
+**Stock Fulfillment Logic**
+- Check stock availability for service
+- Reserve stock item (status = reserved)
+- Assign stock code to order
+- Mark stock as sold (status = sold)
+- Deliver stock code to customer
+- Update order status to completed
+- Update stock quantity\n- Trigger low stock alert if threshold reached
+
+**Payment Verification Logic**
+- Admin reviews payment proof
+- Validate transaction details
+- If approved:\n  - Convert currency if needed
+  - Credit wallet balance
+  - Create wallet transaction record
+  - Send approval notification\n- If rejected:
+  - Add rejection notes
+  - Send rejection notification
+- Log admin action\n
+**User Level Pricing Logic**
+- Get service base price from provider
+- Apply profit markup percentage
+- Calculate user-specific discount based on level
+- Final price = (base_price * (1 + profit_markup)) * (1 - user_discount)
+- Store calculated price in orders table
+
+**API Rate Limiting Logic**
+- Track API requests per key in Redis
+- Increment counter on each request
+- Check if limit exceeded
+- Return 429 error if limit reached
+- Reset counter after time window
+- Log rate limit violations
+
+**Notification Delivery Logic**
+- Create notification record
+- Translate message to user's preferred language
+- Queue notification for delivery
+- Send via configured channels (in-app, email, SMS, push)
+- Mark as delivered
+- Track read status
+
+**Multi-Currency Conversion Logic**
+- Get current exchange rate from exchange_rates table
+- Convert amount: converted_amount = amount * exchange_rate
+- Store both original and converted amounts
+- Update exchange rates periodically from external API
+- Display prices in user's preferred currency
+\n**2FA Implementation Logic**
+- Generate TOTP secret on 2FA setup
+- Create QR code for authenticator app
+- Generate backup codes
+- Store encrypted secret in database
+- Verify TOTP code on login
+- Implement backup code verification
+- Track trusted devices
+- Require 2FA for sensitive actions
+
+### 5.2 Security Infrastructure
 - **SSL/TLS Encryption**: HTTPS enforcement across entire platform
 - **Database Encryption**: Encryption at rest for sensitive data
 - **Password Hashing**: Bcrypt or Argon2 for secure password storage
@@ -429,10 +946,8 @@ For each balance top-up request, customers must:
 - **Rate Limiting**: API and login rate limiting to prevent abuse
 - **DDoS Protection**: Integration with DDoS mitigation services
 - **Firewall Rules**: Web Application Firewall (WAF) configuration
-- **Security Headers**: Implementation of security headers (HSTS, X-Frame-Options, etc.)
-- **Vulnerability Scanning**: Regular automated security scans
-- **Penetration Testing**: Periodic security audits and penetration testing
-- **Data Backup Encryption**: Encrypted backup storage
+- **Security Headers**: Implementation of security headers (HSTS, X-Frame-Options, etc.)\n- **Vulnerability Scanning**: Regular automated security scans
+- **Penetration Testing**: Periodic security audits and penetration testing\n- **Data Backup Encryption**: Encrypted backup storage
 - **Secure File Upload**: File type validation and malware scanning
 - **Admin Session Security**: Secure session management with token rotation
 - **API Key Encryption**: Encrypted storage of API keys in database
@@ -444,179 +959,54 @@ For each balance top-up request, customers must:
   - Rate limiting on 2FA verification attempts
   - Brute force protection for 2FA codes
   - Secure backup code generation and storage
-\n### 5.3 Stock Inventory System
-- Automated gift card and digital code delivery from stock upon purchase
-- Real-time inventory tracking and management
-- Stock management across categories and subcategories
-- Admin and stock manager interface for stock updates and monitoring
-- Direct order fulfillment for customers
-- Low stock alerts and notifications
-\n### 5.4 Category Management
-- Hierarchical category structure (Category → Subcategory → Service)
-- Unified service grouping by name within categories
-- Dynamic category display based on service type
-- Category filtering and search functionality
-- Main image assignment for each category
-- Admin tools for category organization and image uploads
-\n### 5.5 Pricing & Profit System
-- **Provider API Integration**: Import services from external provider APIs
-- **Automatic Profit Markup**: Apply configurable profit percentage (e.g., 10%) on provider prices
-- **Custom Rate Engine**: Calculate final user prices based on user level discounts
-- **Dynamic Price Updates**: Real-time price adjustments when provider prices or profit margins change
-- **Price History Tracking**: Log all pricing changes for audit purposes
-- **Multi-currency pricing**: Display prices in user's selected currency with automatic conversion
-\n### 5.6 Currency & Language\n- **Multi-currency payment support**: Support for all major global currencies including:\n  - USD (US Dollar)
-  - EUR (Euro)
-  - GBP (British Pound)
-  - JPY (Japanese Yen)\n  - CNY (Chinese Yuan)
-  - AUD (Australian Dollar)
-  - CAD (Canadian Dollar)
-  - CHF (Swiss Franc)
-  - INR (Indian Rupee)
-  - SAR (Saudi Riyal)
-  - AED (UAE Dirham)
-  - KWD (Kuwaiti Dinar)
-  - QAR (Qatari Riyal)
-  - BHD (Bahraini Dinar)
-  - OMR (Omani Rial)
-  - EGP (Egyptian Pound)
-  - TRY (Turkish Lira)
-  - ZAR (South African Rand)\n  - BRL (Brazilian Real)
-  - MXN (Mexican Peso)\n  - RUB (Russian Ruble)\n  - KRW (South Korean Won)
-  - SGD (Singapore Dollar)
-  - HKD (Hong Kong Dollar)
-  - MYR (Malaysian Ringgit)
-  - THB (Thai Baht)
-  - IDR (Indonesian Rupiah)
-  - PHP (Philippine Peso)
-  - VND (Vietnamese Dong)
-  - PKR (Pakistani Rupee)
-  - BDT (Bangladeshi Taka)
-  - NGN (Nigerian Naira)
-  - And other major currencies
-- **Real-time exchange rate updates**: Automatic currency conversion based on current exchange rates
-- **Currency selector**: User-friendly currency selector in header and profile settings
-- **Multi-language interface**: Support for all major global languages including:
-  - English
-  - Arabic (العربية)
-  - Spanish (Español)
-  - French (Français)
-  - German (Deutsch)
-  - Chinese Simplified (简体中文)
-  - Chinese Traditional (繁體中文)
-  - Japanese (日本語)
-  - Korean (한국어)
-  - Portuguese (Português)
-  - Russian (Русский)
-  - Italian (Italiano)
-  - Dutch (Nederlands)
-  - Turkish (Türkçe)
-  - Polish (Polski)
-  - Hindi (हिन्दी)
-  - Bengali (বাংলা)
-  - Urdu (اردو)
-  - Indonesian (Bahasa Indonesia)
-  - Malay (Bahasa Melayu)
-  - Thai (ไทย)
-  - Vietnamese (Tiếng Việt)\n  - Filipino (Filipino)
-  - Swedish (Svenska)
-  - Norwegian (Norsk)
-  - Danish (Dansk)
-  - Finnish (Suomi)
-  - Greek (Ελληνικά)
-  - Hebrew (עברית)
-  - Persian (فارسی)
-  - And other major languages
-- **Language selector**: Prominent language selector in header for easy switching
-- **RTL support**: Full right-to-left language support for Arabic, Hebrew, Persian, and Urdu
-- **Translation management system**: Admin interface for managing all translations
-- **Automatic language detection**: Detect user's browser language and suggest appropriate language
-\n### 5.7 Advertisement System
-- Image storage for promotional banners\n- Automatic rotation mechanism for multiple ads
-- Click tracking and analytics
-- Admin control for banner scheduling and display order
-- Reduced banner height for better user experience
-\n### 5.8 API System Architecture
-\n#### 5.8.1 Public API Infrastructure
-- **RESTful API Design**: Standard REST architecture with JSON format
-- **API Gateway**: Centralized API gateway for request routing and management
-- **Load Balancing**: Distribute API requests across multiple servers
-- **API Versioning System**: Support multiple API versions simultaneously
-- **Request/Response Logging**: Complete logging of all API interactions
-- **Error Handling Framework**: Standardized error codes and messages
-- **API Documentation Generator**: Auto-generated interactive API documentation
-- **Swagger/OpenAPI Integration**: OpenAPI 3.0 specification for API documentation
-- **API Testing Suite**: Automated testing for all API endpoints
-- **API Monitoring Dashboard**: Real-time monitoring of API performance and health
+\n### 5.3 Frontend-Backend Integration
 
-#### 5.8.2 API Security Layer
-- **API Key Authentication**: Secure API key generation and validation
-- **OAuth 2.0 Support**: Optional OAuth 2.0 authentication flow
-- **JWT Token Management**: JSON Web Token for session management
-- **Request Signing**: HMAC-SHA256 signature verification\n- **Rate Limiting Engine**: Configurable rate limits per API key
-- **IP Whitelisting**: Restrict API access by IP address
-- **API Key Scopes**: Granular permission control per API key
-- **Request Throttling**: Automatic throttling for excessive requests
-- **API Firewall**: Filter malicious requests and attacks
-- **Encryption**: End-to-end encryption for sensitive API data
+#### 5.3.1 Admin Panel Frontend Integration
+- **Admin Login Page**: Connect to POST /admin/auth/login endpoint
+- **2FA Verification**: Connect to POST /admin/auth/verify-2fa endpoint
+- **Dashboard Data Loading**: Fetch from GET /admin/dashboard/stats\n- **Real-time Updates**: WebSocket connection for live data
+- **Form Submissions**: POST/PUT requests with CSRF tokens
+- **File Uploads**: Multipart form data for images and documents
+- **Data Tables**: Pagination, sorting, filtering via API parameters
+- **Session Management**: Store JWT token in secure httpOnly cookie
+- **Auto-logout**: Implement idle timeout with warning modal
+- **Error Handling**: Display user-friendly error messages from API responses
 
-#### 5.8.3 API Documentation System
-- **Interactive Documentation Portal**: Similar to https://api.play4cards.com/api-docs
-- **Try It Out Feature**: Test API endpoints directly from documentation
-- **Code Examples**: Sample code in PHP, Python, JavaScript, cURL
-- **Request/Response Schemas**: Detailed schema documentation
-- **Authentication Guide**: Step-by-step authentication setup
-- **Quick Start Tutorial**: Getting started guide for developers
-- **Webhook Documentation**: Webhook setup and event documentation
-- **Postman Collection**: Exportable Postman collection for testing
-- **API Changelog**: Version history and breaking changes documentation
+#### 5.3.2 Customer Frontend Integration
+- **User Authentication**: Connect to public API auth endpoints
+- **Service Browsing**: Fetch categories and services from API
+- **Order Placement**: Submit orders via API with wallet validation
+- **Payment Submission**: Upload payment proofs with transaction details
+- **Real-time Notifications**: WebSocket for instant updates
+- **Invoice Download**: Generate and download PDF invoices
+- **Profile Management**: Update user settings via API
+- **2FA Setup**: QR code generation and verification flow
+\n### 5.4 Deployment & Infrastructure
+- **Server Environment**: Linux (Ubuntu/CentOS) with Nginx reverse proxy
+- **Application Deployment**: Docker containers with orchestration
+- **Database Hosting**: Managed PostgreSQL with automatic backups
+- **Redis Hosting**: Managed Redis for caching and queues
+- **CDN Integration**: CloudFlare or AWS CloudFront for static assets
+- **Load Balancing**: Multiple application servers with load balancer
+- **Auto-scaling**: Automatic scaling based on traffic
+- **Monitoring**: Application performance monitoring (APM) tools
+- **Logging**: Centralized logging with ELK stack or similar
+- **CI/CD Pipeline**: Automated testing and deployment
+- **Environment Variables**: Secure configuration management
+- **SSL Certificates**: Automatic SSL certificate management
 
-#### 5.8.4 Admin API v2
-- RESTful API with granular permission control per API key
-- API key generation and management
-- Rate limiting and security controls
-- API usage monitoring and analytics
-\n### 5.9 Invoice System
-- **PDF Generation**: Automatic invoice creation in PDF format
-- **Invoice Details**: Order number, date, service details, amount, user information
-- **Download Functionality**: Users can download invoices from order page
-- **Invoice Storage**: Secure storage of all generated invoices
-- **Invoice Numbering**: Sequential invoice number generation system
-- **Multi-language invoices**: Generate invoices in user's selected language
-- **Multi-currency invoices**: Display amounts in user's selected currency
-\n### 5.10 Advanced Order Management
-- **Order Editing**: Edit order links and details
-- **Order Resending**: Resend failed or incomplete orders
-- **Partial Orders**: Set and manage partial order fulfillment
-- **Order Pulling**: Pull orders from external sources or providers
-- **Bulk Order Updates**: Update multiple orders simultaneously
-- **Provider Charge Tracking**: View and track provider charges per order
-- **External ID Management**: Manage external order identifiers
-- **Provider Response Logging**: Log and view provider API responses
-\n### 5.11 Refill & Cancellation System
-- **Refill Task Queue**: Automated refill task management and processing
-- **Refill Status Control**: Change and track refill request status
-- **Cancel Request Handling**: Process and manage cancellation requests
-- **Cancel Task Queue**: Automated cancel task management
-- **Cancel Rejection**: Reject invalid or fraudulent cancellation requests
-\n### 5.12 Affiliate & Reseller System
-- **Affiliate Tracking**: Track referrals and conversions
-- **Commission Calculation**: Automatic commission calculation based on sales
-- **Child Panel Management**: Create and manage reseller sub-accounts
-- **Hierarchical Permissions**: Set different permission levels for child panels
-- **Revenue Sharing**: Configure revenue sharing models for resellers
-\n### 5.13 Monitoring & Analytics
-- **Real-time Dashboard**: Live metrics for orders, revenue, and user activity
-- **Custom Reports**: Build custom reports with flexible date ranges and filters
-- **Revenue Analytics**: Detailed financial reports with profit margins and trends
-- **User Behavior Analytics**: Track user engagement and conversion funnels
-- **Service Performance**: Monitor popular services and identify trends
-- **System Health Monitoring**: Server uptime, response times, and error rates
-- **Alert System**: Configurable alerts for critical events and thresholds
-- **API Usage Analytics**: Track API request volumes, success rates, and error patterns
-- **API Performance Metrics**: Monitor API response times and latency
-- **Multi-currency analytics**: View revenue and statistics in multiple currencies
-- **Language usage analytics**: Track which languages are most used by customers
+### 5.5 Performance Optimization
+- **Database Indexing**: Proper indexes on frequently queried columns
+- **Query Optimization**: Optimized database queries with explain plans
+- **Caching Strategy**: Redis caching for frequently accessed data
+- **API Response Caching**: Cache API responses with appropriate TTL
+- **Image Optimization**: Automatic image compression and resizing
+- **Lazy Loading**: Lazy load images and components
+- **Code Splitting**: Split frontend code for faster loading
+- **Minification**: Minify CSS and JavaScript\n- **Gzip Compression**: Enable gzip compression for responses
+- **Database Connection Pooling**: Efficient database connection management
+
+---
 
 ## 6. Design Style\n
 ### 6.1 Visual Design\n- **Top Advertisement Banner**: Reduced-height horizontal moving banner displaying promotional photos with smooth scrolling animation
@@ -668,8 +1058,38 @@ For each balance top-up request, customers must:
 - API Documentation: Developer-friendly theme with syntax highlighting and clear code examples
 - **RTL Layout**: Fully mirrored layout for right-to-left languages with proper text alignment
 - **Admin Login Page**: Professional, secure design with brand colors and trust indicators
-\n## 7. Reference Documentation
-- API Documentation Reference: https://api.play4cards.com/api-docs
-\n## 8. Reference Images
+\n---
+
+## 7. Reference Documentation
+- API Documentation Reference: https://api.play4cards.com/api-docs\n\n---
+
+## 8. Reference Images
 - Screenshot 2025-12-26 133441.png: Admin dashboard top navigation menu showing Users, Orders, Subscriptions, Drip-feed, Refill, Cancel, Services, Payments, Tickets, Affiliates, Child panels, Updates, Reports, Appearance, and Settings modules
 - Screenshot 2025-12-26 133448.png: Admin settings sidebar showing General, Providers, Payments Modules, Integrations, Notifications, Bonuses, Signup form, and Ticket form configuration sections
+\n---
+
+## 9. Implementation Priority
+
+### Phase 1: Core Backend & Admin System (Highest Priority)
+1. Database schema implementation with all tables\n2. Admin authentication system with login page
+3. Admin dashboard with basic statistics
+4. User management module\n5. Service management module
+6. Order management module
+7. Payment verification module
+8. Admin API endpoints for all core functions
+\n### Phase 2: Customer Frontend & Integration\n1. Customer authentication and registration
+2. Service browsing and ordering
+3. Wallet system and payment submission
+4. Order tracking and history
+5. Profile management with 2FA\n6. Frontend-backend API integration
+
+### Phase 3: Advanced Features
+1. Stock management system
+2. Multi-currency and multi-language\n3. Public API system
+4. Notification system\n5. Ticket support system
+6. Analytics and reporting
+\n### Phase 4: Additional Modules
+1. Affiliate system\n2. Subscription management
+3. Drip-feed orders
+4. Child panels\n5. Advanced security features
+6. Performance optimization
