@@ -41,7 +41,7 @@ play4cards.com
   - Some categories include subcategories (e.g., denominations, regions)
 
 ### 2.2 User System
-- User registration and login
+- User registration and login via Supabase Auth (email + password)
 - **Two-Step Verification (2FA)**: Mandatory two-factor authentication for all users to protect accounts using authenticator apps (Google Authenticator, Authy, etc.) or SMS verification, **fully integrated with backend API**
 - **Profile Management**: Users can view their profile information and **change password only through backend API integration**. The following fields are **read-only and cannot be modified by customers**:
   - Username (read-only)
@@ -50,8 +50,8 @@ play4cards.com
   - Display name (read-only)
   - Profile picture (read-only)
   - **Language preference selection from all supported languages**
-  - **Currency preference selection from all supported currencies**
-  - Communication preferences\n- **Password Change**: Users can change their password through **backend-connected API endpoint**\n- Personal wallet system\n- Balance top-up functionality
+  - **Currency preference selection from all supported currencies**\n  - Communication preferences\n- **Password Change**: Users can change their password through **backend-connected API endpoint**
+- Personal wallet system\n- Balance top-up functionality
 - Order history tracking
 - **Invoice generation for orders**
 - Security settings with 2FA management **connected to backend**
@@ -455,8 +455,7 @@ Full navigation menu with the following modules:
 - **API Settings**: Configure public API parameters, rate limits, authentication methods, and API documentation access
 - **Currency Settings**: Manage supported currencies, exchange rates, automatic rate updates, and default currency configuration
 - **Language Settings**: Add/edit language packs, set default language, manage translations, and configure language selector display
-- **Tax Configuration**: Set up tax rules, VAT settings, and regional tax compliance
-- **Terms & Policies**: Manage Terms of Service, Privacy Policy, Refund Policy, and legal documents
+- **Tax Configuration**: Set up tax rules, VAT settings, and regional tax compliance\n- **Terms & Policies**: Manage Terms of Service, Privacy Policy, Refund Policy, and legal documents
 - **GDPR Compliance**: Configure data retention policies, user data export, and right to be forgotten features
 - **Rate Limiting**: Configure API rate limits, request throttling, and abuse prevention
 - **Cache Management**: Configure caching settings, clear cache, and optimize performance
@@ -514,7 +513,9 @@ Full navigation menu with the following modules:
 14. **Affiliates Management** - Interface for managing affiliate program and commissions
 15. **Child Panels Management** - Interface for managing reseller sub-panels\n16. **Updates** - Interface for viewing system updates and changelog
 17. **Reports & Analytics** - Interface for viewing site statistics and performance data
-18. **Appearance Settings** - Interface for customizing site visual design\n19. **General Settings** - Interface for basic site configuration\n20. **Providers Settings** - Interface for managing service provider API connections
+18. **Appearance Settings** - Interface for customizing site visual design
+19. **General Settings** - Interface for basic site configuration
+20. **Providers Settings** - Interface for managing service provider API connections
 21. **Payments Modules Settings** - Interface for configuring payment gateway integrations
 22. **Integrations Settings** - Interface for connecting third-party services\n23. **Notifications Settings** - Interface for configuring notification system
 24. **Bonuses Settings** - Interface for setting up bonus programs
@@ -569,15 +570,15 @@ For each balance top-up request, customers must:
 - **Backend Framework**: Node.js with Express.js or Python with Django/FastAPI
 - **Database**: **Supabase (PostgreSQL)** with Redis for caching
 - **ORM**: Sequelize (Node.js) or SQLAlchemy (Python)
-- **API Architecture**: RESTful API with JSON format\n- **Authentication**: JWT (JSON Web Tokens) for session management
-- **File Storage**: AWS S3 or similar cloud storage for images and documents
-- **Queue System**: Bull (Node.js) or Celery (Python) for background jobs
-- **Real-time Communication**: Socket.io for live updates
+- **API Architecture**: RESTful API with JSON format\n- **Authentication**: **Supabase Auth with JWT tokens**
+- **File Storage**: Supabase Storage for images and documents\n- **Queue System**: Bull (Node.js) or Celery (Python) for background jobs
+- **Real-time Communication**: Supabase Realtime for live updates
 - **Email Service**: SendGrid or AWS SES\n- **SMS Service**: Twilio or similar provider
 - **Push Notification Service**: Firebase Cloud Messaging (FCM) or OneSignal
 \n#### 5.1.2 Supabase Integration Configuration
 \n**Supabase Project Details:**
-- **Project URL**: https://hbqeslmfietqvdbkaqsy.supabase.co\n- **Anon Public Key**: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhicWVzbG1maWV0cXZkYmthcXN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NDAyOTIsImV4cCI6MjA4MjQxNjI5Mn0.rG8pkDL-ygFWT_xzV5Yh0GixNc4YDJ3xK77xxZKT0yA
+- **Project URL**: https://hbqeslmfietqvdbkaqsy.supabase.co
+- **Anon Public Key**: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhicWVzbG1maWV0cXZkYmthcXN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NDAyOTIsImV4cCI6MjA4MjQxNjI5Mn0.rG8pkDL-ygFWT_xzV5Yh0GixNc4YDJ3xK77xxZKT0yA
 \n**Supabase Integration Setup:**
 \n1. **Database Connection**:
    - Use Supabase PostgreSQL database for all data storage
@@ -586,16 +587,18 @@ For each balance top-up request, customers must:
    - Configure connection pooling for optimal performance
 
 2. **Authentication Integration**:
-   - Utilize Supabase Auth for user authentication
-   - Configure JWT token validation with Supabase\n   - Implement Row Level Security (RLS) policies for data access control
-   - Set up custom claims for admin roles and permissions
+   - **Use Supabase Auth for all user authentication (email + password)**
+   - **Configure JWT token validation with Supabase**
+   - **Implement Row Level Security (RLS) policies for data access control**
+   - **Set up custom claims for admin roles and permissions**
+   - **Default user role: 'user'**
+   - **Admin role: 'admin' (manually assigned via SQL or admin interface)**
 
 3. **Real-time Features**:
    - Use Supabase Realtime for live order updates
    - Subscribe to database changes for notification delivery
    - Implement real-time provider response updates
-   - Configure WebSocket connections via Supabase Realtime
-
+   - Configure WebSocket connections via Supabase Realtime\n
 4. **Storage Integration**:
    - Use Supabase Storage for file uploads (payment proofs, images, documents)
    - Configure storage buckets for different file types
@@ -612,8 +615,7 @@ For each balance top-up request, customers must:
    - Configure RLS policies for user data isolation
    - Set up admin-only access policies for sensitive tables
    - Implement API key rotation and management
-
-7. **Environment Variables**:
+\n7. **Environment Variables**:
    ```\n   SUPABASE_URL=https://hbqeslmfietqvdbkaqsy.supabase.co
    SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhicWVzbG1maWV0cXZkYmthcXN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NDAyOTIsImV4cCI6MjA4MjQxNjI5Mn0.rG8pkDL-ygFWT_xzV5Yh0GixNc4YDJ3xK77xxZKT0yA
    SUPABASE_SERVICE_ROLE_KEY=[To be configured in Supabase dashboard]
@@ -639,81 +641,75 @@ For each balance top-up request, customers must:
     - **Supabase Studio**: Database management interface
 \n#### 5.1.3 Complete Database Schema
 
-**Users Table (users)**\n- id (Primary Key, UUID)
-- username (Unique, String) - **Read-only for customers**
-- email (Unique, String) - **Read-only for customers**
-- password_hash (String)\n- phone_number (String) - **Read-only for customers**
-- display_name (String) - **Read-only for customers**
-- profile_picture_url (String) - **Read-only for customers**
-- user_level_id (Foreign Key → user_levels.id)
-- wallet_balance (Decimal)\n- total_spent (Decimal)
-- preferred_language (String)
-- preferred_currency (String)
-- two_factor_enabled (Boolean)
-- two_factor_secret (Encrypted String)
-- backup_codes (Encrypted JSON Array)
-- email_verified (Boolean)
-- account_status (Enum: active, suspended, banned)
+**Profiles Table (profiles)** - Linked to auth.users\n- id (Primary Key, UUID, references auth.users.id)
+- username (Unique, String)\n- email (String, synced from auth.users.email)
+- phone_number (String)\n- display_name (String)\n- profile_picture_url (String)
+- **role (String, default: 'user')** - Values: 'user', 'admin', 'stock_manager'\n- user_level_id (Foreign Key → user_levels.id)
+- wallet_balance (Decimal, default: 0)\n- total_spent (Decimal, default: 0)
+- preferred_language (String, default: 'en')
+- preferred_currency (String, default: 'USD')
+- two_factor_enabled (Boolean, default: false)
+- two_factor_secret (Encrypted String)\n- backup_codes (Encrypted JSON Array)
+- email_verified (Boolean)\n- account_status (Enum: active, suspended, banned, default: 'active')
 - notification_preferences (JSON Object)
-- created_at (Timestamp)
-- updated_at (Timestamp)
-- last_login_at (Timestamp)
+- created_at (Timestamp, default: now())
+- updated_at (Timestamp, default: now())\n- last_login_at (Timestamp)
 - last_login_ip (String)
-\n**Admin Users Table (admin_users)**
-- id (Primary Key, UUID)\n- username (Unique, String)\n- email (Unique, String)
-- password_hash (String)
-- phone_number (String)
-- display_name (String)
-- profile_picture_url (String)
-- admin_role_id (Foreign Key → admin_roles.id)
-- two_factor_enabled (Boolean)\n- two_factor_secret (Encrypted String)
-- backup_codes (Encrypted JSON Array)
-- ip_whitelist (JSON Array)
-- session_timeout_minutes (Integer)
-- password_expires_at (Timestamp)
-- password_history (JSON Array)
-- account_status (Enum: active, suspended)\n- is_preview_account (Boolean)
-- created_at (Timestamp)
-- updated_at (Timestamp)
-- last_login_at (Timestamp)\n- last_login_ip (String)
-- created_by_admin_id (Foreign Key → admin_users.id)
-\n**Admin Roles Table (admin_roles)**
-- id (Primary Key, UUID)
-- role_name (String)
-- role_description (Text)
-- permissions (JSON Object with granular permissions)
-- is_super_admin (Boolean)
-- created_at (Timestamp)
-- updated_at (Timestamp)
-\n**Admin Sessions Table (admin_sessions)**
-- id (Primary Key, UUID)\n- admin_user_id (Foreign Key → admin_users.id)
+\n**RLS Policies for Profiles Table:**
+```sql
+-- Users can view their own profile
+CREATE POLICY 'Users can view own profile' ON profiles\n  FOR SELECT USING (auth.uid() = id);
+
+-- Users can update their own profile (limited fields)
+CREATE POLICY 'Users can update own profile' ON profiles
+  FOR UPDATE USING (auth.uid() = id);
+
+-- Admins can view all profiles
+CREATE POLICY 'Admins can view all profiles' ON profiles
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM profiles
+      WHERE id = auth.uid() AND role = 'admin'
+    )
+  );
+
+-- Admins can update all profiles\nCREATE POLICY 'Admins can update all profiles' ON profiles
+  FOR UPDATE USING (
+    EXISTS (
+      SELECT 1 FROM profiles
+      WHERE id = auth.uid() AND role = 'admin'
+    )
+  );
+```
+
+**Admin Sessions Table (admin_sessions)**
+- id (Primary Key, UUID)\n- admin_user_id (Foreign Key → profiles.id)
 - session_token (Unique, String)
 - ip_address (String)
 - user_agent (String)
-- is_preview_session (Boolean)
+- is_preview_session (Boolean, default: false)
 - expires_at (Timestamp)
 - created_at (Timestamp)
-- last_activity_at (Timestamp)\n
-**Admin Activity Logs Table (admin_activity_logs)**
+- last_activity_at (Timestamp)\n\n**Admin Activity Logs Table (admin_activity_logs)**
 - id (Primary Key, UUID)
-- admin_user_id (Foreign Key → admin_users.id)
-- action_type (String)
-- action_description (Text)
+- admin_user_id (Foreign Key → profiles.id)
+- action_type (String)\n- action_description (Text)
 - affected_resource_type (String)
 - affected_resource_id (String)
 - ip_address (String)
 - user_agent (String)
-- is_preview_mode (Boolean)
-- request_data (JSON)\n- response_data (JSON)\n- created_at (Timestamp)
+- is_preview_mode (Boolean)\n- request_data (JSON)
+- response_data (JSON)
+- created_at (Timestamp)
 \n**Preview Mode Settings Table (preview_mode_settings)**
 - id (Primary Key, UUID)
-- is_enabled (Boolean)
-- enabled_by_admin_id (Foreign Key → admin_users.id)
+- is_enabled (Boolean, default: false)
+- enabled_by_admin_id (Foreign Key → profiles.id)
 - enabled_at (Timestamp)
 - auto_disable_at (Timestamp)
 - permissions_level (Enum: read_only, full_access, custom)\n- custom_permissions (JSON Object)
-- session_timeout_minutes (Integer)
-- test_admin_email (String)
+- session_timeout_minutes (Integer, default: 120)
+- test_admin_email (String, default: 'admin@preview.test')
 - test_admin_password_hash (String)
 - magic_login_token (Encrypted String)
 - magic_login_expires_at (Timestamp)
@@ -731,9 +727,7 @@ For each balance top-up request, customers must:
 - id (Primary Key, UUID)
 - level_name (String)
 - level_description (Text)
-- discount_percentage (Decimal)
-- level_order (Integer)
-- created_at (Timestamp)
+- discount_percentage (Decimal)\n- level_order (Integer)\n- created_at (Timestamp)
 - updated_at (Timestamp)
 
 **Categories Table (categories)**
@@ -744,22 +738,21 @@ For each balance top-up request, customers must:
 - main_image_url (String)
 - description (Text)
 - display_order (Integer)
-- is_active (Boolean)
-- created_at (Timestamp)
+- is_active (Boolean)\n- created_at (Timestamp)
 - updated_at (Timestamp)
 
 **Services Table (services)**
 - id (Primary Key, UUID)
 - service_name (String)
 - service_slug (Unique, String)
-- category_id (Foreign Key → categories.id)\n- provider_id (Foreign Key → providers.id)
+- category_id (Foreign Key → categories.id)
+- provider_id (Foreign Key → providers.id)
 - provider_service_id (String)
 - base_price (Decimal)
 - profit_markup_percentage (Decimal)
 - final_price (Decimal, Calculated)
 - currency (String)
-- service_type (Enum: instant, manual, stock)
-- stock_quantity (Integer, Nullable)
+- service_type (Enum: instant, manual, stock)\n- stock_quantity (Integer, Nullable)
 - min_quantity (Integer)\n- max_quantity (Integer)\n- description (Text)
 - instructions (Text)
 - is_active (Boolean)
@@ -783,16 +776,14 @@ For each balance top-up request, customers must:
 **Orders Table (orders)**
 - id (Primary Key, UUID)
 - order_number (Unique, String)
-- user_id (Foreign Key → users.id)
+- user_id (Foreign Key → profiles.id)
 - service_id (Foreign Key → services.id)
 - quantity (Integer)
 - unit_price (Decimal)
 - discount_amount (Decimal)
 - total_amount (Decimal)
 - currency (String)
-- player_id (String)
-- order_status (Enum: pending, processing, completed, failed, cancelled, refunded, partial)\n- provider_order_id (String)
-- provider_response (JSON)
+- player_id (String)\n- order_status (Enum: pending, processing, completed, failed, cancelled, refunded, partial)\n- provider_order_id (String)\n- provider_response (JSON)
 - **provider_response_text (Text)** - Human-readable provider message/response
 - **provider_response_timestamp (Timestamp)** - When provider response was received
 - external_id (String)\n- delivery_link (String)
@@ -816,14 +807,13 @@ For each balance top-up request, customers must:
 - stock_type (Enum: gift_card, netflix_code, shahid_code, pubg_code, other)
 - denomination (Decimal)
 - currency (String)
-- status (Enum: available, sold, reserved, expired)
-- added_by_admin_id (Foreign Key → admin_users.id)
+- status (Enum: available, sold, reserved, expired)\n- added_by_admin_id (Foreign Key → profiles.id)
 - sold_in_order_id (Foreign Key → orders.id, Nullable)
 - created_at (Timestamp)
 - updated_at (Timestamp)
 - sold_at (Timestamp)
 \n**Wallet Transactions Table (wallet_transactions)**
-- id (Primary Key, UUID)\n- user_id (Foreign Key → users.id)
+- id (Primary Key, UUID)\n- user_id (Foreign Key → profiles.id)
 - transaction_type (Enum: credit, debit, refund, bonus)\n- amount (Decimal)
 - currency (String)
 - balance_before (Decimal)
@@ -833,20 +823,20 @@ For each balance top-up request, customers must:
 - reference_id (String)
 - created_at (Timestamp)
 \n**Payment Requests Table (payment_requests)**
-- id (Primary Key, UUID)\n- user_id (Foreign Key → users.id)
+- id (Primary Key, UUID)\n- user_id (Foreign Key → profiles.id)
 - payment_method (String)
 - amount (Decimal)\n- currency (String)
 - transaction_id (String)
 - payment_proof_url (String)
 - transaction_details (JSON)
-- status (Enum: pending, approved, rejected)\n- reviewed_by_admin_id (Foreign Key → admin_users.id, Nullable)
+- status (Enum: pending, approved, rejected)\n- reviewed_by_admin_id (Foreign Key → profiles.id, Nullable)
 - review_notes (Text)
 - created_at (Timestamp)
 - updated_at (Timestamp)
 - reviewed_at (Timestamp)
 \n**Invoices Table (invoices)**
 - id (Primary Key, UUID)\n- invoice_number (Unique, String)\n- order_id (Foreign Key → orders.id)
-- user_id (Foreign Key → users.id)
+- user_id (Foreign Key → profiles.id)
 - invoice_date (Timestamp)
 - total_amount (Decimal)
 - currency (String)
@@ -854,13 +844,13 @@ For each balance top-up request, customers must:
 - created_at (Timestamp)
 \n**Tickets Table (tickets)**
 - id (Primary Key, UUID)
-- ticket_number (Unique, String)\n- user_id (Foreign Key → users.id)
+- ticket_number (Unique, String)\n- user_id (Foreign Key → profiles.id)
 - subject (String)
 - category (String)
 - priority (Enum: low, medium, high, urgent)
 - status (Enum: open, in_progress, waiting_customer, resolved, closed)
 - language (String)
-- assigned_to_admin_id (Foreign Key → admin_users.id, Nullable)
+- assigned_to_admin_id (Foreign Key → profiles.id, Nullable)
 - created_at (Timestamp)
 - updated_at (Timestamp)
 - closed_at (Timestamp)
@@ -870,10 +860,11 @@ For each balance top-up request, customers must:
 - message_content (Text)
 - attachments (JSON Array)
 - created_at (Timestamp)
-\n**Notifications Table (notifications)**
+
+**Notifications Table (notifications)**
 - id (Primary Key, UUID)
-- user_id (Foreign Key → users.id, Nullable)
-- admin_user_id (Foreign Key → admin_users.id, Nullable)
+- user_id (Foreign Key → profiles.id, Nullable)
+- admin_user_id (Foreign Key → profiles.id, Nullable)
 - notification_type (String)
 - notification_category (Enum: order, wallet, service, security, support, system)
 - title (String)
@@ -895,11 +886,10 @@ For each balance top-up request, customers must:
 - variables (JSON Array)
 - delivery_channels (JSON Array)
 - is_active (Boolean)
-- created_by_admin_id (Foreign Key → admin_users.id)\n- created_at (Timestamp)
+- created_by_admin_id (Foreign Key → profiles.id)\n- created_at (Timestamp)
 - updated_at (Timestamp)
-
-**Notification Preferences Table (notification_preferences)**
-- id (Primary Key, UUID)\n- user_id (Foreign Key → users.id)
+\n**Notification Preferences Table (notification_preferences)**
+- id (Primary Key, UUID)\n- user_id (Foreign Key → profiles.id)
 - notification_type (String)
 - in_app_enabled (Boolean)
 - email_enabled (Boolean)
@@ -919,14 +909,14 @@ For each balance top-up request, customers must:
 - total_recipients (Integer)
 - successful_deliveries (Integer)
 - failed_deliveries (Integer)
-- created_by_admin_id (Foreign Key → admin_users.id)
+- created_by_admin_id (Foreign Key → profiles.id)
 - status (Enum: draft, scheduled, sending, sent, failed)
 - created_at (Timestamp)
 - updated_at (Timestamp)
 
 **API Keys Table (api_keys)**
-- id (Primary Key, UUID)\n- user_id (Foreign Key → users.id, Nullable)
-- admin_user_id (Foreign Key → admin_users.id, Nullable)
+- id (Primary Key, UUID)\n- user_id (Foreign Key → profiles.id, Nullable)
+- admin_user_id (Foreign Key → profiles.id, Nullable)
 - key_name (String)
 - api_key (Unique, Encrypted String)
 - api_secret (Encrypted String)
@@ -949,7 +939,7 @@ For each balance top-up request, customers must:
 - user_agent (String)
 - created_at (Timestamp)
 \n**Webhooks Table (webhooks)**
-- id (Primary Key, UUID)\n- user_id (Foreign Key → users.id)
+- id (Primary Key, UUID)\n- user_id (Foreign Key → profiles.id)
 - webhook_url (String)
 - event_types (JSON Array)
 - secret_key (Encrypted String)
@@ -958,7 +948,7 @@ For each balance top-up request, customers must:
 - created_at (Timestamp)
 - updated_at (Timestamp)\n
 **Subscriptions Table (subscriptions)**
-- id (Primary Key, UUID)\n- user_id (Foreign Key → users.id)
+- id (Primary Key, UUID)\n- user_id (Foreign Key → profiles.id)
 - service_id (Foreign Key → services.id)
 - subscription_status (Enum: active, paused, cancelled, expired)
 - billing_cycle (Enum: daily, weekly, monthly, yearly)
@@ -979,7 +969,7 @@ For each balance top-up request, customers must:
 **Refill Requests Table (refill_requests)**
 - id (Primary Key, UUID)
 - order_id (Foreign Key → orders.id)
-- user_id (Foreign Key → users.id)
+- user_id (Foreign Key → profiles.id)
 - refill_status (Enum: pending, processing, completed, rejected)
 - reason (Text)
 - created_at (Timestamp)\n- updated_at (Timestamp)
@@ -988,15 +978,16 @@ For each balance top-up request, customers must:
 **Cancel Requests Table (cancel_requests)**
 - id (Primary Key, UUID)
 - order_id (Foreign Key → orders.id)
-- user_id (Foreign Key → users.id)
+- user_id (Foreign Key → profiles.id)
 - cancel_status (Enum: pending, processing, approved, rejected)
 - reason (Text)
-- reviewed_by_admin_id (Foreign Key → admin_users.id, Nullable)
+- reviewed_by_admin_id (Foreign Key → profiles.id, Nullable)
 - created_at (Timestamp)
 - updated_at (Timestamp)
 - reviewed_at (Timestamp)
-\n**Affiliates Table (affiliates)**
-- id (Primary Key, UUID)\n- user_id (Foreign Key → users.id)
+
+**Affiliates Table (affiliates)**
+- id (Primary Key, UUID)\n- user_id (Foreign Key → profiles.id)
 - referral_code (Unique, String)
 - commission_rate (Decimal)
 - total_referrals (Integer)
@@ -1005,13 +996,13 @@ For each balance top-up request, customers must:
 - updated_at (Timestamp)
 \n**Affiliate Transactions Table (affiliate_transactions)**
 - id (Primary Key, UUID)\n- affiliate_id (Foreign Key → affiliates.id)
-- referred_user_id (Foreign Key → users.id)
+- referred_user_id (Foreign Key → profiles.id)
 - order_id (Foreign Key → orders.id)
 - commission_amount (Decimal)
 - status (Enum: pending, paid)\n- created_at (Timestamp)
 - paid_at (Timestamp)
 \n**Child Panels Table (child_panels)**
-- id (Primary Key, UUID)\n- parent_user_id (Foreign Key → users.id)
+- id (Primary Key, UUID)\n- parent_user_id (Foreign Key → profiles.id)
 - panel_name (String)
 - panel_url (String)
 - revenue_share_percentage (Decimal)
@@ -1054,8 +1045,7 @@ For each balance top-up request, customers must:
 - id (Primary Key, UUID)
 - from_currency (String)
 - to_currency (String)
-- rate (Decimal)
-- source (String)
+- rate (Decimal)\n- source (String)
 - created_at (Timestamp)
 \n**Site Settings Table (site_settings)**
 - id (Primary Key, UUID)\n- setting_key (Unique, String)
@@ -1082,18 +1072,26 @@ For each balance top-up request, customers must:
 \n**Backups Table (backups)**
 - id (Primary Key, UUID)\n- backup_type (Enum: full, incremental)\n- backup_file_url (String)
 - backup_size_bytes (BigInteger)
-- status (Enum: in_progress, completed, failed)\n- created_by_admin_id (Foreign Key → admin_users.id)
+- status (Enum: in_progress, completed, failed)\n- created_by_admin_id (Foreign Key → profiles.id)
 - created_at (Timestamp)
 - completed_at (Timestamp)
 \n#### 5.1.4 Backend API Endpoints Structure
 
-**Admin Authentication Endpoints**
-- POST /admin/auth/login - Admin login with credentials
+**Authentication Endpoints (Supabase Auth)**
+- POST /auth/signup - Register new user (creates auth.users + profiles entry with role='user')
+- POST /auth/login - User login via Supabase Auth\n- POST /auth/logout - User logout\n- POST /auth/refresh - Refresh JWT token
+- GET /auth/user - Get current authenticated user
+- POST /auth/reset-password - Request password reset
+- POST /auth/update-password - Update password
+\n**Admin Authentication Endpoints**
+- POST /admin/auth/login - Admin login (checks role='admin' in profiles table)
 - POST /admin/auth/verify-2fa - Verify 2FA code
 - POST /admin/auth/logout - Admin logout
 - POST /admin/auth/refresh-token - Refresh session token
 - GET /admin/auth/session - Get current session info
-\n**Admin Preview Mode Endpoints**
+- **GET /admin/auth/check-role - Verify user has admin role**
+
+**Admin Preview Mode Endpoints**
 - POST /admin/preview/enable - Enable preview mode (Super Admin only)
 - POST /admin/preview/disable - Disable preview mode\n- POST /admin/preview/magic-login - Generate magic login link
 - GET /admin/preview/status - Check preview mode status
@@ -1109,8 +1107,8 @@ For each balance top-up request, customers must:
 - GET /admin/users/:id - Get user details
 - POST /admin/users - Create new user
 - PUT /admin/users/:id - Update user
-- DELETE /admin/users/:id - Delete user\n- PUT /admin/users/:id/level - Assign user level
-- PUT /admin/users/:id/wallet - Adjust wallet balance
+- DELETE /admin/users/:id - Delete user\n- **PUT /admin/users/:id/role - Update user role (user/admin/stock_manager)**
+- PUT /admin/users/:id/level - Assign user level\n- PUT /admin/users/:id/wallet - Adjust wallet balance
 - GET /admin/users/:id/orders - Get user order history
 - GET /admin/users/:id/transactions - Get user transactions
 \n**Admin Order Management Endpoints**
@@ -1122,7 +1120,8 @@ For each balance top-up request, customers must:
 - POST /admin/orders/pull - Pull orders from providers
 - PUT /admin/orders/bulk-update - Bulk update orders\n- **GET /admin/orders/:id/provider-responses - Get all provider responses for order**
 - **GET /admin/provider-responses - List all provider responses with filters**
-\n**Admin Service Management Endpoints**
+
+**Admin Service Management Endpoints**
 - GET /admin/services - List all services\n- GET /admin/services/:id - Get service details
 - POST /admin/services - Create new service
 - PUT /admin/services/:id - Update service
@@ -1143,8 +1142,7 @@ For each balance top-up request, customers must:
 - PUT /admin/stock/:id - Update stock item
 - DELETE /admin/stock/:id - Delete stock item
 - GET /admin/stock/alerts - Get low stock alerts
-
-**Admin Notification Management Endpoints**
+\n**Admin Notification Management Endpoints**
 - GET /admin/notifications - List all notifications
 - POST /admin/notifications/broadcast - Send broadcast notification
 - GET /admin/notifications/templates - List notification templates
@@ -1178,19 +1176,89 @@ For each balance top-up request, customers must:
 - POST /admin/backups/:id/restore - Restore backup\n- DELETE /admin/backups/:id - Delete backup
 \n#### 5.1.5 Backend Business Logic Implementation
 
-**Admin Authentication Logic**
-- Validate admin credentials against admin_users table
-- Check account status and IP whitelist
+**User Registration Logic (Supabase Auth)**
+- User submits registration form with email and password
+- Call Supabase Auth signup API: `supabase.auth.signUp({ email, password })`
+- Supabase creates entry in auth.users table
+- **Trigger: Create corresponding entry in profiles table**
+  - Set id = auth.users.id (UUID)
+  - Set email = auth.users.email\n  - **Set role = 'user' (default)**
+  - Set account_status = 'active'\n  - Set created_at = now()
+- Send email verification link
+- Return success response
+
+**User Login Logic (Supabase Auth)**
+- User submits email and password
+- Call Supabase Auth login API: `supabase.auth.signInWithPassword({ email, password })`\n- Supabase validates credentials and returns JWT token
+- Fetch user profile from profiles table using auth.uid()
+- Check account_status (active/suspended/banned)
+- If 2FA enabled, require TOTP verification
+- Update last_login_at and last_login_ip in profiles table
+- Return JWT token and user profile data
+- **Store JWT token in secure httpOnly cookie or localStorage**
+
+**Admin Login Logic**
+- Admin submits email/username and password on admin login page
+- Call Supabase Auth login API: `supabase.auth.signInWithPassword({ email, password })`
+- Supabase validates credentials and returns JWT token
+- **Fetch user profile from profiles table using auth.uid()**
+- **Check if role = 'admin' in profiles table**
+- **If role != 'admin', reject login and return error: 'Access denied. Admin privileges required.'**
+- If role = 'admin', proceed with admin authentication
 - Verify CAPTCHA token
-- Generate JWT token with admin permissions
-- Require 2FA verification\n- Create admin session record
-- Log login attempt in admin_activity_logs
-- Implement session timeout and auto-logout
-- Track failed login attempts and implement lockout
+- Check account_status\n- Require 2FA verification\n- Create admin session record in admin_sessions table
+- Log login attempt in admin_activity_logs\n- Update last_login_at and last_login_ip\n- Return JWT token with admin permissions
+- Redirect to admin dashboard
+
+**Admin Authorization Middleware**
+- Verify JWT token on each admin request
+- Extract user ID from JWT token
+- **Fetch user profile from profiles table**
+- **Check if role = 'admin'**
+- **If role != 'admin', return 403 Forbidden error**
+- Check admin session is not expired
+- Validate IP address if IP whitelisting enabled
+- Log all admin actions in admin_activity_logs
+- **Check if session is preview mode and apply appropriate restrictions**
+- **Display preview mode banner if is_preview_session = true**
+- Allow request to proceed if all checks pass
+
+**Admin Route Protection (Frontend)**
+- On admin dashboard page load, check if user is authenticated
+- Call GET /admin/auth/check-role endpoint
+- **Backend verifies JWT token and checks role = 'admin'**
+- If role != 'admin', redirect to login page or show access denied message
+- If role = 'admin', allow access to admin dashboard
+- Persist auth state on page refresh using JWT token
+
+**Creating Test Admin User**
+- **Option 1: SQL Command (Recommended for initial setup)**
+  ```sql\n  -- First, create user via Supabase Auth signup
+  -- Then, promote user to admin using SQL:\n  UPDATE profiles\n  SET role = 'admin'\n  WHERE email = 'admin@example.com';
+  ```
+\n- **Option 2: Admin Interface (After first admin is created)**
+  - Super Admin logs into admin dashboard
+  - Navigate to Users Management\n  - Select user to promote\n  - Click 'Change Role' button
+  - Select 'admin' from dropdown
+  - Confirm role change
+  - Backend updates profiles.role = 'admin'
+\n- **Option 3: Supabase Dashboard**
+  - Open Supabase project dashboard
+  - Navigate to Table Editor
+  - Open profiles table
+  - Find user by email
+  - Edit role column and set to 'admin'
+  - Save changes
+\n**Session Persistence on Refresh**
+- Store JWT token in secure httpOnly cookie or localStorage
+- On page load, check if JWT token exists\n- If token exists, validate token with Supabase: `supabase.auth.getSession()`
+- If token valid, fetch user profile and check role
+- If role = 'admin', restore admin session
+- If token invalid or expired, redirect to login page
+- Implement automatic token refresh before expiration
 
 **Admin Preview Mode Logic**
-- **Enable Preview Mode**:
-  - Verify Super Admin permissions
+- **Enable Preview Mode**:\n  - Verify Super Admin permissions (role = 'admin' + additional super_admin flag)
   - Create or update preview_mode_settings record
   - Set is_enabled = true
   - Generate test admin credentials if not exists
@@ -1244,30 +1312,18 @@ For each balance top-up request, customers must:
   - Send notification to Super Admin
   - Log auto-disable event
 
-**Admin Authorization Middleware**
-- Verify JWT token on each request
-- Check admin role permissions for requested action
-- Validate session is not expired
-- Log all admin actions in admin_activity_logs
-- Implement IP address validation
-- Check for concurrent session limits
-- **Check if session is preview mode and apply appropriate restrictions**
-- **Display preview mode banner if is_preview_session = true**
-
 **User Profile View Logic**
 - **Validate user authentication token**
-- **Fetch user profile data from database**
+- **Fetch user profile data from profiles table using auth.uid()**
 - **Return read-only fields: username, email, phone_number, display_name, profile_picture_url**
 - **Return editable preferences: preferred_language, preferred_currency, notification_preferences**
 - **All profile fields except password are read-only for customers**
 
 **Password Change Logic**
 - **Validate user authentication token**
-- **Verify current password matches stored password_hash**
+- **Call Supabase Auth update password API: `supabase.auth.updateUser({ password: newPassword })`**
 - **Validate new password meets security requirements (minimum length, complexity)**
-- **Check new password is not in password history (if applicable)**
-- **Hash new password using bcrypt or Argon2**
-- **Update password_hash in users table**
+- **Supabase handles password hashing and storage**
 - **Create password change confirmation notification**
 - **Log password change action with timestamp and IP address**
 - **Send security notification email to user**
@@ -1278,7 +1334,7 @@ For each balance top-up request, customers must:
   - Generate unique TOTP secret using speakeasy or similar library
   - Create QR code containing secret and user identifier
   - Generate 10 backup codes (random alphanumeric strings)
-  - Store encrypted secret and backup codes in database (two_factor_secret, backup_codes)
+  - Store encrypted secret and backup codes in profiles table (two_factor_secret, backup_codes)
   - Return QR code and backup codes to user\n  - Set two_factor_enabled = false until verification
 
 - **2FA Verification and Activation**:
@@ -1288,8 +1344,8 @@ For each balance top-up request, customers must:
   - If valid: Set two_factor_enabled = true\n  - Create notification for 2FA setup confirmation
   - Log 2FA activation with timestamp and device info
 \n- **2FA Login Verification**:
-  - After username/password validation
-  - Check if two_factor_enabled = true
+  - After username/password validation via Supabase Auth
+  - Check if two_factor_enabled = true in profiles table
   - Prompt user for TOTP code
   - Verify code against stored secret with time window tolerance
   - Allow backup code usage if TOTP unavailable
@@ -1298,7 +1354,7 @@ For each balance top-up request, customers must:
   - Log successful 2FA verification
 
 - **2FA Disable**:
-  - Require current password verification
+  - Require current password verification via Supabase Auth
   - Require valid TOTP code or backup code
   - Set two_factor_enabled = false\n  - Clear two_factor_secret and backup_codes
   - Create notification for 2FA status change
@@ -1308,10 +1364,11 @@ For each balance top-up request, customers must:
   - Require authentication and 2FA verification
   - Generate new set of 10 backup codes
   - Invalidate old backup codes
-  - Update backup_codes field in database
+  - Update backup_codes field in profiles table
   - Return new backup codes to user
   - Create notification for backup code regeneration
-\n- **Trusted Device Management**:
+
+- **Trusted Device Management**:
   - Store device fingerprint on successful 2FA verification
   - Allow 2FA bypass for trusted devices (optional)
   - Provide interface to view and revoke trusted devices
@@ -1338,7 +1395,7 @@ For each balance top-up request, customers must:
 - **Trigger provider response notification**:\n  - Create notification record
   - Set notification_type = 'provider_response'\n  - Include order number and provider message
   - Queue for delivery via user's enabled channels
-  - Send real-time notification via WebSocket
+  - Send real-time notification via Supabase Realtime
   - Send push notification if enabled
   - Send email if configured
 - Update order status if needed based on response
@@ -1361,7 +1418,8 @@ For each balance top-up request, customers must:
   - Create wallet transaction record
   - **Trigger balance added notification**
   - Send approval notification\n- If rejected:
-  - Add rejection notes\n  - **Trigger payment rejected notification**
+  - Add rejection notes
+  - **Trigger payment rejected notification**
   - Send rejection notification
 - Log admin action\n
 **Service Management Logic**
@@ -1383,7 +1441,7 @@ For each balance top-up request, customers must:
 - Translate message to user's preferred language
 - Check user notification preferences
 - Queue notification for delivery via enabled channels
-- For in-app: Store in database and send via WebSocket
+- For in-app: Store in database and send via Supabase Realtime
 - For email: Queue email job with template rendering
 - For SMS: Queue SMS job via SMS gateway
 - For push: Send via FCM or OneSignal
@@ -1396,7 +1454,7 @@ For each balance top-up request, customers must:
 **Broadcast Notification Logic**
 - Admin creates broadcast notification
 - Define target audience criteria
-- Query users matching criteria
+- Query users matching criteria from profiles table
 - Calculate total recipients
 - Schedule delivery if future date specified
 - Process recipients in batches
@@ -1427,17 +1485,17 @@ For each balance top-up request, customers must:
 - Display prices in user's preferred currency
 \n### 5.2 Security Infrastructure
 - **SSL/TLS Encryption**: HTTPS enforcement across entire platform
-- **Database Encryption**: Encryption at rest for sensitive data
-- **Password Hashing**: Bcrypt or Argon2 for secure password storage
-- **SQL Injection Prevention**: Parameterized queries and input sanitization
+- **Database Encryption**: Encryption at rest for sensitive data via Supabase
+- **Password Hashing**: Handled automatically by Supabase Auth using bcrypt
+- **SQL Injection Prevention**: Parameterized queries via Supabase client
 - **XSS Protection**: Content Security Policy and output encoding
 - **CSRF Protection**: Token-based CSRF prevention
 - **Rate Limiting**: API and login rate limiting to prevent abuse
-- **DDoS Protection**: Integration with DDoS mitigation services
+- **DDoS Protection**: Integration with DDoS mitigation services via Supabase
 - **Firewall Rules**: Web Application Firewall (WAF) configuration
 - **Security Headers**: Implementation of security headers (HSTS, X-Frame-Options, etc.)\n- **Vulnerability Scanning**: Regular automated security scans
 - **Penetration Testing**: Periodic security audits and penetration testing
-- **Data Backup Encryption**: Encrypted backup storage
+- **Data Backup Encryption**: Encrypted backup storage via Supabase
 - **Secure File Upload**: File type validation and malware scanning
 - **Admin Session Security**: Secure session management with token rotation
 - **API Key Encryption**: Encrypted storage of API keys in database
@@ -1469,34 +1527,48 @@ For each balance top-up request, customers must:
   - Secure API key management via Supabase dashboard
   - Automatic SSL/TLS encryption for all connections
   - Built-in DDoS protection via Supabase infrastructure
-  - Encrypted data at rest in Supabase PostgreSQL\n  - Secure file storage with signed URLs in Supabase Storage
+  - Encrypted data at rest in Supabase PostgreSQL
+  - Secure file storage with signed URLs in Supabase Storage
+- **Role-Based Access Control**:
+  - Enforce role checks on all admin endpoints
+  - Implement RLS policies to restrict data access based on user role
+  - Log all role changes in admin_activity_logs
 \n### 5.3 Frontend-Backend Integration
 \n#### 5.3.1 Admin Panel Frontend Integration
-- **Admin Login Page**: Connect to POST /admin/auth/login endpoint
+- **Admin Login Page**: Connect to Supabase Auth login + role verification
+  - Call `supabase.auth.signInWithPassword({ email, password })`
+  - After successful login, call GET /admin/auth/check-role to verify admin role
+  - If role != 'admin', show error and prevent dashboard access
+  - If role = 'admin', redirect to admin dashboard
 - **Admin Preview Login Page**: Connect to preview mode endpoints for test credentials and magic login
 - **Preview Mode Banner**: Display prominent banner when in preview mode with disable option
 - **2FA Verification**: Connect to POST /admin/auth/verify-2fa endpoint
-- **Dashboard Data Loading**: Fetch from GET /admin/dashboard/stats\n- **Real-time Updates**: WebSocket connection for live data\n- **Form Submissions**: POST/PUT requests with CSRF tokens
-- **File Uploads**: Multipart form data for images and documents
+- **Dashboard Data Loading**: Fetch from GET /admin/dashboard/stats\n- **Real-time Updates**: Supabase Realtime subscription for live data
+- **Form Submissions**: POST/PUT requests with CSRF tokens
+- **File Uploads**: Multipart form data to Supabase Storage
 - **Data Tables**: Pagination, sorting, filtering via API parameters
-- **Session Management**: Store JWT token in secure httpOnly cookie
+- **Session Management**: Store JWT token from Supabase Auth in secure httpOnly cookie
 - **Auto-logout**: Implement idle timeout with warning modal
 - **Error Handling**: Display user-friendly error messages from API responses
 - **Notification Management**: Connect to notification management endpoints for creating templates and sending broadcasts
 - **Provider Response Viewing**: Fetch and display provider responses from GET /admin/orders/:id/provider-responses
 - **Preview Mode Controls**: Enable/disable preview mode, generate magic links, view access logs
 - **Supabase Integration**: Use Supabase client for real-time data subscriptions and database operations
+- **Session Persistence**: On page load, call `supabase.auth.getSession()` to restore session
+- **Role Verification on Route Change**: Check admin role before allowing access to protected routes
 
 #### 5.3.2 Customer Frontend Integration
-- **User Authentication**: Connect to public API auth endpoints
-- **Service Browsing**: Fetch categories and services from API
+- **User Authentication**: Connect to Supabase Auth for signup and login
+  - Call `supabase.auth.signUp({ email, password })` for registration
+  - Call `supabase.auth.signInWithPassword({ email, password })` for login
+  - Store JWT token from Supabase Auth\n- **Service Browsing**: Fetch categories and services from API
 - **Order Placement**: Submit orders via API with wallet validation
-- **Payment Submission**: Upload payment proofs with transaction details
-- **Real-time Notifications**: WebSocket for instant notification delivery
+- **Payment Submission**: Upload payment proofs to Supabase Storage with transaction details
+- **Real-time Notifications**: Supabase Realtime subscription for instant notification delivery
 - **Notification Center**: Display in-app notifications with unread badge
-- **Invoice Download**: Generate and download PDF invoices
+- **Invoice Download**: Generate and download PDF invoices from Supabase Storage
 - **Profile Viewing**: **Connect to GET /api/v1/account/profile to fetch and display read-only profile information (username, email, phone, display name, profile picture, language, currency)**
-- **Password Change**: **Connect to PUT /api/v1/account/password for password updates**
+- **Password Change**: **Connect to Supabase Auth updateUser API for password updates**
   - **Display password change form with current password and new password fields**
   - **Implement real-time password strength indicator**
   - **Validate password requirements on frontend before submission**
@@ -1508,17 +1580,18 @@ For each balance top-up request, customers must:
   - **Display QR code for scanning with authenticator app**
   - **Connect to POST /api/v1/account/2fa/verify to verify and enable 2FA**
   - **Connect to POST /api/v1/account/2fa/disable to disable 2FA**
-  - **Connect to GET /api/v1/account/2fa/backup-codes to retrieve backup codes**\n  - **Connect to POST /api/v1/account/2fa/regenerate-backup-codes to regenerate backup codes**
+  - **Connect to GET /api/v1/account/2fa/backup-codes to retrieve backup codes**
+  - **Connect to POST /api/v1/account/2fa/regenerate-backup-codes to regenerate backup codes**
   - **Display backup codes with copy functionality**
   - **2FA verification during login flow**
   - **Backup code input option during login**
   - **Security notifications for 2FA changes**
 - **Notification Preferences**: Update notification settings via API
 - **Order Details Page**: Fetch order details including provider responses from GET /api/v1/orders/{order_id}\n- **Provider Response Display**: Show provider response/replay section with copy functionality
-- **Real-time Provider Updates**: WebSocket listener for new provider responses
+- **Real-time Provider Updates**: Supabase Realtime listener for new provider responses
 - **Supabase Integration**: Use Supabase client for authentication, real-time subscriptions, and file uploads
-
-### 5.4 Deployment & Infrastructure
+- **Session Persistence**: On page load, call `supabase.auth.getSession()` to restore session
+\n### 5.4 Deployment & Infrastructure
 - **Server Environment**: Linux (Ubuntu/CentOS) with Nginx reverse proxy
 - **Application Deployment**: Docker containers with orchestration
 - **Database Hosting**: **Supabase PostgreSQL with automatic backups**
@@ -1536,18 +1609,16 @@ For each balance top-up request, customers must:
 - **Supabase Infrastructure**: Leverage Supabase managed services for database, storage, and real-time features
 
 ### 5.5 Performance Optimization
-- **Database Indexing**: Proper indexes on frequently queried columns
+- **Database Indexing**: Proper indexes on frequently queried columns in Supabase
 - **Query Optimization**: Optimized database queries with explain plans
 - **Caching Strategy**: Redis caching for frequently accessed data
 - **API Response Caching**: Cache API responses with appropriate TTL
-- **Image Optimization**: Automatic image compression and resizing
-- **Lazy Loading**: Lazy load images and components
-- **Code Splitting**: Split frontend code for faster loading
+- **Image Optimization**: Automatic image compression and resizing via Supabase Storage
+- **Lazy Loading**: Lazy load images and components\n- **Code Splitting**: Split frontend code for faster loading
 - **Minification**: Minify CSS and JavaScript\n- **Gzip Compression**: Enable gzip compression for responses
-- **Database Connection Pooling**: Efficient database connection management
+- **Database Connection Pooling**: Efficient database connection management via Supabase
 - **Notification Queue Optimization**: Batch processing for bulk notifications
-- **WebSocket Connection Management**: Efficient real-time connection handling
-- **Supabase Performance Features**: Utilize Supabase connection pooling, caching, and CDN for optimal performance
+- **WebSocket Connection Management**: Efficient real-time connection handling via Supabase Realtime\n- **Supabase Performance Features**: Utilize Supabase connection pooling, caching, and CDN for optimal performance
 
 ---
 
@@ -1557,7 +1628,8 @@ For each balance top-up request, customers must:
 - **Language Selector**: Prominent language dropdown in header with flag icons for easy identification
 - **Currency Selector**: Currency dropdown in header showing currency symbols and codes
 - **Notification Badge**: Unread notification counter badge on notification bell icon in header
-- **Preview Mode Banner**: Prominent banner at top of admin dashboard displaying 'PREVIEW MODE - Testing Environment' with distinct color scheme (e.g., orange or yellow background)\n- Card-based layout for categories with unified main images representing each service group
+- **Preview Mode Banner**: Prominent banner at top of admin dashboard displaying 'PREVIEW MODE - Testing Environment' with distinct color scheme (e.g., orange or yellow background)
+- Card-based layout for categories with unified main images representing each service group
 - Vibrant blue and purple gradient accents on clean backgrounds\n- Smooth animations for category navigation and transitions
 - Professional admin panel interface with clear data visualization and comprehensive navigation menu
 - Organized settings sidebar with grouped configuration modules
@@ -1573,7 +1645,8 @@ For each balance top-up request, customers must:
 - **Preview Mode Indicator**: Distinct visual banner or ribbon indicating preview/test environment
 \n### 6.2 Interactive Elements
 - **Advertisement Banner**: Auto-scrolling promotional photos with pause-on-hover functionality
-- **Search Field**: Instant search with autocomplete suggestions\n- **Language Selector**: Dropdown with search functionality and flag icons
+- **Search Field**: Instant search with autocomplete suggestions
+- **Language Selector**: Dropdown with search functionality and flag icons
 - **Currency Selector**: Dropdown with real-time exchange rate display
 - **Notification Bell**: Animated bell icon with unread badge counter and dropdown preview
 - **Notification Center**: Slide-in panel with filtering, search, and mark-as-read functionality
@@ -1641,20 +1714,26 @@ For each balance top-up request, customers must:
 \n---
 
 ## 9. Supabase Integration Details
-\n### 9.1 Supabase Project Configuration
+
+### 9.1 Supabase Project Configuration
 - **Project URL**: https://hbqeslmfietqvdbkaqsy.supabase.co
 - **Anon Public Key**: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhicWVzbG1maWV0cXZkYmthcXN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NDAyOTIsImV4cCI6MjA4MjQxNjI5Mn0.rG8pkDL-ygFWT_xzV5Yh0GixNc4YDJ3xK77xxZKT0yA
 \n### 9.2 Database Setup in Supabase
 1. Create all database tables in Supabase PostgreSQL using SQL migrations
-2. Enable Row Level Security (RLS) on all tables
-3. Configure RLS policies for user data isolation and admin access control
-4. Set up database indexes for optimal query performance
-5. Configure automatic backups via Supabase dashboard
+2. **Create profiles table linked to auth.users with role column (default: 'user')**
+3. Enable Row Level Security (RLS) on all tables
+4. **Configure RLS policies for user data isolation and admin access control based on role**
+5. Set up database indexes for optimal query performance
+6. Configure automatic backups via Supabase dashboard
 \n### 9.3 Authentication Setup
-1. Configure Supabase Auth for user registration and login
-2. Set up JWT token validation with Supabase\n3. Implement custom claims for admin roles and user levels
+1. **Use Supabase Auth for all user authentication (email + password)**
+2. **Configure JWT token validation with Supabase**
+3. **Implement custom claims for admin roles via profiles.role column**
 4. Configure email verification and password reset flows
 5. Set up 2FA integration with Supabase Auth
+6. **Create database trigger to automatically create profiles entry when new user signs up**
+7. **Default role for new users: 'user'**
+8. **Admin role assignment: Manual via SQL or admin interface**
 
 ### 9.4 Storage Configuration
 1. Create storage buckets for different file types:\n   - payment-proofs: For payment proof uploads
@@ -1671,26 +1750,46 @@ For each balance top-up request, customers must:
    - Wallet balance changes
    - New notifications
    - Stock level changes
-2. Configure WebSocket connections via Supabase Realtime
-3. Implement real-time data synchronization across all connected clients
+2. Configure WebSocket connections via Supabase Realtime\n3. Implement real-time data synchronization across all connected clients
 \n### 9.6 API Integration
 1. Use Supabase REST API for all database operations
 2. Implement Supabase client-side queries for frontend data fetching
 3. Configure API rate limiting via Supabase dashboard
 4. Set up custom API endpoints using Supabase Edge Functions for complex business logic
+5. **Implement role-based access control in API endpoints**
 
 ### 9.7 Security Configuration
 1. Enable Row Level Security (RLS) on all tables
 2. Configure RLS policies:\n   - Users can only access their own data
-   - Admins have full access to all data based on role permissions
+   - **Admins (role='admin') have full access to all data based on role permissions**
    - Stock managers can only access stock-related tables
 3. Set up API key rotation and management
 4. Configure IP whitelisting for admin access
 5. Implement request signing for sensitive operations
+6. **Enforce role checks on all admin endpoints**
 
-### 9.8 Backup and Recovery\n1. Enable automatic daily backups via Supabase\n2. Configure backup retention policy (30 days)
+### 9.8 Backup and Recovery
+1. Enable automatic daily backups via Supabase\n2. Configure backup retention policy (30 days)
 3. Set up point-in-time recovery\n4. Implement manual backup triggers for critical operations
 5. Test backup restoration procedures regularly
+
+### 9.9 Admin Role Management
+1. **Create initial admin user via SQL after signup:**
+   ```sql
+   UPDATE profiles\n   SET role = 'admin'
+   WHERE email = 'admin@example.com';
+   ```
+2. **Implement admin interface for role management (after first admin is created)**
+3. **Log all role changes in admin_activity_logs**
+4. **Send security notifications when user role is changed**
+
+### 9.10 Session Persistence
+1. **Use Supabase Auth session management**
+2. **Store JWT token in secure httpOnly cookie or localStorage**
+3. **On page load, call `supabase.auth.getSession()` to restore session**
+4. **Verify user role from profiles table after session restoration**
+5. **Implement automatic token refresh before expiration**
+6. **Redirect to login if session invalid or role insufficient**
 
 ---
 
@@ -1698,33 +1797,38 @@ For each balance top-up request, customers must:
 
 ### Phase 1: Core Backend & Admin System (Highest Priority)
 1. **Supabase project setup and database schema implementation**
-2. Database schema implementation with all tables including notification tables, provider_response_logs table, and preview mode tables
-3. Admin authentication system with login page\n4. **Admin preview mode implementation with test credentials and magic login**
-5. Admin dashboard with basic statistics and preview mode indicator
-6. User management module\n7. Service management module
-8. Order management module with provider response handling
-9. Payment verification module
-10. **Notification system backend implementation**
-11. **Provider response notification system**
-12. Admin API endpoints for all core functions
-13. **Preview mode API endpoints**
-14. **User profile viewing API endpoint (GET /api/v1/account/profile) returning read-only fields**
-15. **Password change API endpoint (PUT /api/v1/account/password) with validation and security**
-16. **2FA backend implementation with all API endpoints (setup, verify, disable, backup codes)**
-17. **Supabase integration for authentication, database, and storage**
-\n### Phase 2: Customer Frontend & Integration\n1. Customer authentication and registration
-2. Service browsing and ordering
-3. Wallet system and payment submission
-4. Order tracking and history
-5. **Order details page with provider response display**
-6. **Profile viewing frontend displaying read-only profile information**
-7. **Password change frontend with full backend integration**
-8. **2FA setup and management frontend with complete backend connection**
-9. **Notification center and real-time notification delivery**
-10. **Real-time provider response updates**
-11. Frontend-backend API integration\n12. **Supabase client integration for real-time features**
-
-### Phase 3: Advanced Features
+2. **Create profiles table linked to auth.users with role column**
+3. **Implement Supabase Auth integration for user registration and login**
+4. **Create database trigger for automatic profiles entry creation on signup**
+5. **Implement RLS policies for role-based access control**
+6. **Create admin authentication endpoints with role verification**
+7. **Implement admin authorization middleware checking role='admin'**
+8. **Create SQL script for promoting users to admin role**
+9. Admin dashboard with basic statistics and preview mode indicator
+10. User management module with role assignment interface
+11. Service management module\n12. Order management module with provider response handling
+13. Payment verification module
+14. **Notification system backend implementation**
+15. **Provider response notification system**
+16. Admin API endpoints for all core functions
+17. **Preview mode API endpoints**
+18. **User profile viewing API endpoint (GET /api/v1/account/profile) returning read-only fields**
+19. **Password change API endpoint using Supabase Auth updateUser**
+20. **2FA backend implementation with all API endpoints (setup, verify, disable, backup codes)**
+21. **Session persistence implementation using Supabase Auth**
+\n### Phase 2: Customer Frontend & Integration\n1. **Customer authentication and registration using Supabase Auth**
+2. **Session persistence on page refresh**
+3. Service browsing and ordering
+4. Wallet system and payment submission
+5. Order tracking and history
+6. **Order details page with provider response display**
+7. **Profile viewing frontend displaying read-only profile information**
+8. **Password change frontend with Supabase Auth integration**
+9. **2FA setup and management frontend with complete backend connection**
+10. **Notification center and real-time notification delivery via Supabase Realtime**
+11. **Real-time provider response updates**
+12. Frontend-backend API integration\n13. **Admin route protection with role verification**
+\n### Phase 3: Advanced Features
 1. Stock management system
 2. Multi-currency and multi-language\n3. Public API system
 4. **Complete notification system with all notification types**
@@ -1736,8 +1840,7 @@ For each balance top-up request, customers must:
 10. **Security notifications for password changes and 2FA changes**
 11. **Preview mode management interface**
 12. **Supabase Realtime subscriptions for all real-time features**
-
-### Phase 4: Additional Modules
+\n### Phase 4: Additional Modules
 1. Affiliate system
 2. Subscription management
 3. Drip-feed orders
@@ -1749,3 +1852,213 @@ For each balance top-up request, customers must:
 10. **Trusted device management for 2FA**
 11. **Preview mode access logs and monitoring**
 12. **Supabase Edge Functions for custom business logic**
+\n---
+
+## 11. Testing & Development Guide
+
+### 11.1 Creating Test Admin User
+\n**Step 1: Register User via Frontend**
+- Navigate to registration page
+- Enter email: admin@example.com
+- Enter password: SecureAdminPass123!\n- Complete registration\n- Verify email if required
+\n**Step 2: Promote User to Admin via SQL**
+- Open Supabase project dashboard
+- Navigate to SQL Editor
+- Run the following SQL command:
+  ```sql
+  UPDATE profiles
+  SET role = 'admin'
+  WHERE email = 'admin@example.com';
+  ```
+- Verify role update:\n  ```sql
+  SELECT id, email, role FROM profiles WHERE email = 'admin@example.com';
+  ```
+
+**Step 3: Test Admin Login**
+- Navigate to admin login page
+- Enter admin credentials
+- System should verify role='admin' and grant access
+- Confirm redirect to admin dashboard
+
+### 11.2 Quick Login / Preview Mode for Development
+
+**Enabling Preview Mode:**
+- Preview mode remains enabled for development
+- Test credentials: admin@preview.test / PreviewAdmin2025!
+- Magic login links available for instant access
+- Preview mode banner displayed at top of admin dashboard
+
+**Using Preview Mode:**
+- Click 'Quick Login' button on admin login page
+- Or use magic login link\n- Automatic login without authentication
+- Limited permissions (read-only by default)
+- Session expires after 2 hours
+
+### 11.3 Session Persistence Testing
+
+**Test Scenario 1: Page Refresh**
+- Log in as admin
+- Refresh browser page
+- Verify session persists
+- Verify admin dashboard remains accessible
+
+**Test Scenario 2: New Tab**
+- Log in as admin in one tab
+- Open new tab and navigate to admin dashboard
+- Verify automatic authentication
+- Verify role verification occurs
+
+**Test Scenario 3: Token Expiration**
+- Log in as admin
+- Wait for token expiration (or manually expire token)
+- Attempt to access admin page
+- Verify redirect to login page
+- Verify error message displayed
+
+### 11.4 Role-Based Access Control Testing
+\n**Test Scenario 1: Regular User Access**
+- Log in as regular user (role='user')
+- Attempt to access admin dashboard URL directly
+- Verify access denied
+- Verify redirect to login or error page
+
+**Test Scenario 2: Admin Access**\n- Log in as admin (role='admin')
+- Access admin dashboard
+- Verify full access granted
+- Verify all admin features accessible
+
+**Test Scenario 3: Role Change**
+- Log in as admin
+- Change another user's role to 'admin'
+- Verify role update in database
+- Verify new admin can access dashboard
+- Verify activity logged in admin_activity_logs
+
+---
+
+## 12. SQL Migration Scripts
+
+### 12.1 Create Profiles Table
+```sql\n-- Create profiles table linked to auth.users
+CREATE TABLE profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  username TEXT UNIQUE,
+  email TEXT,
+  phone_number TEXT,
+  display_name TEXT,
+  profile_picture_url TEXT,
+  role TEXT DEFAULT 'user' CHECK (role IN ('user', 'admin', 'stock_manager')),
+  user_level_id UUID REFERENCES user_levels(id),
+  wallet_balance DECIMAL(10, 2) DEFAULT 0,
+  total_spent DECIMAL(10, 2) DEFAULT 0,
+  preferred_language TEXT DEFAULT 'en',
+  preferred_currency TEXT DEFAULT 'USD',
+  two_factor_enabled BOOLEAN DEFAULT FALSE,
+  two_factor_secret TEXT,
+  backup_codes JSONB,
+  email_verified BOOLEAN DEFAULT FALSE,\n  account_status TEXT DEFAULT 'active' CHECK (account_status IN ('active', 'suspended', 'banned')),
+  notification_preferences JSONB,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  last_login_at TIMESTAMPTZ,
+  last_login_ip TEXT\n);
+\n-- Create index on role for faster queries
+CREATE INDEX idx_profiles_role ON profiles(role);
+\n-- Create index on email for faster lookups
+CREATE INDEX idx_profiles_email ON profiles(email);
+```
+\n### 12.2 Create Trigger for Automatic Profile Creation
+```sql
+-- Function to create profile on user signup
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, role, created_at)
+  VALUES (NEW.id, NEW.email, 'user', NOW());
+  RETURN NEW;
+END;\n$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger to call function on new user creation
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users\n  FOR EACH ROW\n  EXECUTE FUNCTION public.handle_new_user();
+```
+
+### 12.3 Row Level Security Policies
+```sql
+-- Enable RLS on profiles table
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+\n-- Policy: Users can view their own profile
+CREATE POLICY 'Users can view own profile' ON profiles
+  FOR SELECT
+  USING (auth.uid() = id);
+
+-- Policy: Users can update their own profile (limited fields)
+CREATE POLICY 'Users can update own profile' ON profiles
+  FOR UPDATE\n  USING (auth.uid() = id);
+
+-- Policy: Admins can view all profiles
+CREATE POLICY 'Admins can view all profiles' ON profiles
+  FOR SELECT\n  USING (
+    EXISTS (
+      SELECT 1 FROM profiles\n      WHERE id = auth.uid() AND role = 'admin'
+    )
+  );
+\n-- Policy: Admins can update all profiles\nCREATE POLICY 'Admins can update all profiles' ON profiles
+  FOR UPDATE
+  USING (
+    EXISTS (
+      SELECT 1 FROM profiles
+      WHERE id = auth.uid() AND role = 'admin'
+    )
+  );
+\n-- Policy: Admins can insert profiles
+CREATE POLICY 'Admins can insert profiles' ON profiles
+  FOR INSERT
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM profiles
+      WHERE id = auth.uid() AND role = 'admin'
+    )
+  );
+\n-- Policy: Admins can delete profiles
+CREATE POLICY 'Admins can delete profiles' ON profiles
+  FOR DELETE
+  USING (
+    EXISTS (
+      SELECT 1 FROM profiles
+      WHERE id = auth.uid() AND role = 'admin'
+    )
+  );
+```
+
+### 12.4 Promote User to Admin
+```sql\n-- Promote specific user to admin by email
+UPDATE profiles
+SET role = 'admin', updated_at = NOW()
+WHERE email = 'admin@example.com';
+\n-- Verify role update
+SELECT id, email, role, created_at, updated_at
+FROM profiles
+WHERE email = 'admin@example.com';
+```
+
+### 12.5 Create Admin Activity Log Entry
+```sql
+-- Log role change action
+INSERT INTO admin_activity_logs (
+  admin_user_id,
+  action_type,
+  action_description,
+  affected_resource_type,
+  affected_resource_id,
+  created_at
+)
+VALUES (
+  (SELECT id FROM profiles WHERE email = 'admin@example.com'),
+  'role_change',
+  'User promoted to admin role',
+  'profile',
+  (SELECT id FROM profiles WHERE email = 'admin@example.com'),
+  NOW()
+);
+```

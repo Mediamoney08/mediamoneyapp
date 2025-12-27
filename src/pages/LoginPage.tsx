@@ -196,11 +196,11 @@ export default function LoginPage() {
               <form onSubmit={handleSignIn}>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="signin-username">Username</Label>
+                    <Label htmlFor="signin-username">Email or Username</Label>
                     <Input
                       id="signin-username"
                       type="text"
-                      placeholder="Enter your username"
+                      placeholder="Enter your email or username"
                       value={signInForm.username}
                       onChange={(e) => setSignInForm({ ...signInForm, username: e.target.value })}
                       required
