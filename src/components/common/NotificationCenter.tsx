@@ -109,6 +109,8 @@ export default function NotificationCenter() {
       case 'order_failed':
       case 'order_rejected':
         return '❌';
+      case 'provider_reply':
+        return '💬';
       case 'balance_added':
       case 'payment_approved':
         return '💰';

@@ -16,6 +16,7 @@ The notification system is now fully functional with automatic triggers for all 
 - ✅ **Order Completed** - When order is successfully completed
 - ✅ **Order Failed** - When order fails
 - ✅ **Order Rejected** - When order is rejected and refunded
+- ✅ **Provider Reply** - When provider adds a response/reply to an order
 
 #### Payment Notifications
 - ✅ **Payment Approved** - When admin approves payment proof
@@ -172,6 +173,7 @@ getAllNotifications(): Promise<Notification[]>
 | `order_completed` | ✅ | Order status → completed | Order owner |
 | `order_failed` | ❌ | Order status → failed | Order owner |
 | `order_rejected` | ❌ | Order status → rejected | Order owner |
+| `provider_reply` | 💬 | Provider adds reply to order | Order owner |
 | `balance_added` | 💰 | Wallet credited | Wallet owner |
 | `payment_approved` | 💰 | Payment proof approved | Payment submitter |
 | `payment_rejected` | ⚠️ | Payment proof rejected | Payment submitter |
@@ -379,18 +381,19 @@ setNotifications(data.slice(0, 100));
 ## ✅ Summary
 
 The notification system is **fully functional** with:
-- ✅ 16 notification types
-- ✅ 4 automatic database triggers
+- ✅ 17 notification types (including provider_reply)
+- ✅ 5 automatic database triggers
 - ✅ Real-time updates every 30 seconds
 - ✅ Admin broadcast functionality
 - ✅ User notification center
 - ✅ Complete API functions
 - ✅ Proper security policies
+- ✅ Provider reply system with automatic notifications
 
 **All notifications are automatic** - no manual intervention required!
 
 ---
 
 **Last Updated:** 2025-12-27  
-**Version:** v54  
+**Version:** v2.0  
 **Status:** ✅ PRODUCTION READY

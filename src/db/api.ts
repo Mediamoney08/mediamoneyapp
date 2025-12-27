@@ -690,6 +690,29 @@ export const updateOrderStatus = async (orderId: string, status: string): Promis
   return data;
 };
 
+/**
+ * Update provider reply for an order (admin only)
+ */
+export const updateProviderReply = async (
+  orderId: string,
+  providerReply: string
+): Promise<Order> => {
+  const { data, error } = await supabase
+    .from('orders')
+    .update({
+      provider_reply: providerReply,
+      provider_reply_at: new Date().toISOString(),
+    })
+    .eq('id', orderId)
+    .select()
+    .maybeSingle();
+
+  if (error) throw error;
+  if (!data) throw new Error('Order not found');
+  
+  return data;
+};
+
 export const refundOrder = async (orderId: string): Promise<void> => {
   // Get order details
   const { data: order, error: orderError } = await supabase

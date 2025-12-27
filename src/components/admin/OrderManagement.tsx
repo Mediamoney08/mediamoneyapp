@@ -20,8 +20,10 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Search, RefreshCw, Eye } from 'lucide-react';
-import { getAllOrdersAdmin, updateOrderStatus, refundOrder } from '@/db/api';
+import { getAllOrdersAdmin, updateOrderStatus, refundOrder, updateProviderReply } from '@/db/api';
 import type { Order } from '@/types/types';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import {
   Dialog,
   DialogContent,
@@ -38,6 +40,8 @@ export default function OrderManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [providerReply, setProviderReply] = useState('');
+  const [savingReply, setSavingReply] = useState(false);
 
   useEffect(() => {
     loadOrders();
@@ -96,6 +100,43 @@ export default function OrderManagement() {
         description: 'Failed to refund order',
         variant: 'destructive',
       });
+    }
+  };
+
+  const handleProviderReply = async () => {
+    if (!selectedOrder || !providerReply.trim()) {
+      toast({
+        title: 'Error',
+        description: 'Please enter a provider reply',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setSavingReply(true);
+    try {
+      await updateProviderReply(selectedOrder.id, providerReply);
+      toast({
+        title: 'Success',
+        description: 'Provider reply added successfully. Customer will be notified.',
+      });
+      setProviderReply('');
+      loadOrders();
+      // Update selected order
+      setSelectedOrder({
+        ...selectedOrder,
+        provider_reply: providerReply,
+        provider_reply_at: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error('Error adding provider reply:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to add provider reply',
+        variant: 'destructive',
+      });
+    } finally {
+      setSavingReply(false);
     }
   };
 
@@ -265,6 +306,40 @@ export default function OrderManagement() {
                                       </SelectContent>
                                     </Select>
                                   </div>
+                                  
+                                  {/* Provider Reply Section */}
+                                  <div className="space-y-2 pt-2 border-t border-border">
+                                    <Label htmlFor="provider-reply">Provider Reply</Label>
+                                    {selectedOrder.provider_reply ? (
+                                      <div className="p-3 bg-muted rounded-md">
+                                        <p className="text-sm whitespace-pre-wrap">
+                                          {selectedOrder.provider_reply}
+                                        </p>
+                                        {selectedOrder.provider_reply_at && (
+                                          <p className="text-xs text-muted-foreground mt-2">
+                                            Added on {new Date(selectedOrder.provider_reply_at).toLocaleString()}
+                                          </p>
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <p className="text-sm text-muted-foreground">No reply yet</p>
+                                    )}
+                                    <Textarea
+                                      id="provider-reply"
+                                      placeholder="Enter provider response for customer (e.g., order completion message, tracking info, etc.)"
+                                      value={providerReply}
+                                      onChange={(e) => setProviderReply(e.target.value)}
+                                      rows={3}
+                                    />
+                                    <Button
+                                      onClick={handleProviderReply}
+                                      disabled={savingReply || !providerReply.trim()}
+                                      className="w-full"
+                                    >
+                                      {savingReply ? 'Saving...' : 'Send Reply to Customer'}
+                                    </Button>
+                                  </div>
+
                                   <div className="flex gap-2">
                                     <Button
                                       variant="destructive"

@@ -9,6 +9,7 @@ export type NotificationType =
   | 'order_rejected'
   | 'order_canceled' 
   | 'order_refunded' 
+  | 'provider_reply'
   | 'balance_added'
   | 'wallet_credited' 
   | 'wallet_debited' 
@@ -142,6 +143,8 @@ export interface Order {
   customer_name: string | null;
   player_id: string | null;
   fulfillment_data: any;
+  provider_reply: string | null;
+  provider_reply_at: string | null;
   completed_at: string | null;
   created_at: string;
   updated_at: string;

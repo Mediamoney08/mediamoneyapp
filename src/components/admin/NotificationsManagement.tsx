@@ -42,6 +42,8 @@ export default function NotificationsManagement() {
       case 'order_failed':
       case 'order_rejected':
         return 'bg-red-500';
+      case 'provider_reply':
+        return 'bg-cyan-500';
       case 'payment_approved':
       case 'balance_added':
         return 'bg-blue-500';

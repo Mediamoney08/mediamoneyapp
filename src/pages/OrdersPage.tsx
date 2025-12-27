@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { getOrders, verifyPayment, getOrderStockCodes } from '@/db/api';
 import type { Order, StockItem } from '@/types/types';
-import { Package, RefreshCw, Key, Copy, Check } from 'lucide-react';
+import { Package, RefreshCw, Key, Copy, Check, MessageSquare } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import InvoiceDialog from '@/components/InvoiceDialog';
 
@@ -34,6 +34,7 @@ export default function OrdersPage() {
   const [stockCodes, setStockCodes] = useState<Record<string, StockItem[]>>({});
   const [loadingCodes, setLoadingCodes] = useState<string | null>(null);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [copiedReply, setCopiedReply] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -90,6 +91,25 @@ export default function OrdersPage() {
       });
     }
   };
+
+  const copyReply = async (reply: string, orderId: string) => {
+    try {
+      await navigator.clipboard.writeText(reply);
+      setCopiedReply(orderId);
+      toast({
+        title: 'Copied!',
+        description: 'Provider reply copied to clipboard',
+      });
+      setTimeout(() => setCopiedReply(null), 2000);
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to copy reply',
+        variant: 'destructive',
+      });
+    }
+  };
+
 
   const handleVerifyPayment = async (order: Order) => {
     if (!order.stripe_session_id) return;
@@ -202,6 +222,44 @@ export default function OrdersPage() {
                       ${order.total_amount.toFixed(2)} {order.currency.toUpperCase()}
                     </span>
                   </div>
+
+                  {/* Provider Reply */}
+                  {order.provider_reply && (
+                    <div className="mt-4 p-4 bg-muted/50 rounded-lg border border-border">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <div className="flex items-center gap-2">
+                          <MessageSquare className="h-4 w-4 text-primary" />
+                          <span className="font-semibold text-sm">Provider Response</span>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => copyReply(order.provider_reply!, order.id)}
+                          className="h-7 px-2"
+                        >
+                          {copiedReply === order.id ? (
+                            <Check className="h-4 w-4 text-green-500" />
+                          ) : (
+                            <Copy className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
+                      <p className="text-sm whitespace-pre-wrap break-words">
+                        {order.provider_reply}
+                      </p>
+                      {order.provider_reply_at && (
+                        <p className="text-xs text-muted-foreground mt-2">
+                          {new Date(order.provider_reply_at).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   {/* Actions */}
                   {order.status === 'pending' && order.stripe_session_id && (

@@ -15,6 +15,7 @@ play4cards.com
 - Screenshot 2025-12-25 195327.png: Main category structure reference
 - Screenshot 2025-12-26 133441.png: Admin dashboard navigation menu reference
 - Screenshot 2025-12-26 133448.png: Admin settings sidebar reference
+- image.png: Order details page with provider replay/response display reference
 
 ---
 
@@ -96,6 +97,11 @@ play4cards.com
   - Notification content: Order number, refund amount, wallet balance update
 - **Partial Order Fulfillment**: Notification for partially completed orders
   - Notification content: Order number, completed quantity, pending quantity
+- **Provider Response/Replay Notification**: Automatic notification when service provider sends a response or update about an order
+  - Notification content: Order number, provider message/response, timestamp
+  - Delivery channels: In-app, email, push notification
+  - Trigger: Whenever provider API returns a response or status update
+  - Display: Provider response visible in order details page with 'REPLAY' section
 
 #### 2.6.2 Wallet & Payment Notifications
 - **Balance Added**: Automatic notification when wallet balance is credited
@@ -108,11 +114,9 @@ play4cards.com
 - **Payment Rejected**: Notification when admin rejects balance top-up request
   - Notification content: Rejection reason, admin notes, resubmission instructions
 - **Low Balance Warning**: Alert when wallet balance falls below threshold
-  - Notification content: Current balance, recommended top-up amount
-- **Wallet Transaction Alert**: Notification for all wallet debits and credits
+  - Notification content: Current balance, recommended top-up amount\n- **Wallet Transaction Alert**: Notification for all wallet debits and credits
   - Notification content: Transaction type, amount, balance before/after
-
-#### 2.6.3 Service & Pricing Notifications
+\n#### 2.6.3 Service & Pricing Notifications
 - **New Service Added**: Notification when new services become available
   - Notification content: Service name, category, pricing, service description
   - Delivery channels: In-app, email, push notification
@@ -128,8 +132,7 @@ play4cards.com
 - **Price Decrease**: Notification when service price decreases
   - Notification content: Service name, old price, new price, savings amount
   - Delivery channels: In-app, email, push notification
-- **Special Offers & Discounts**: Notification for promotional pricing
-  - Notification content: Offer details, discount percentage, validity period
+- **Special Offers & Discounts**: Notification for promotional pricing\n  - Notification content: Offer details, discount percentage, validity period
 \n#### 2.6.4 Website & System Notifications
 - **Website Updates**: Notification for major platform updates or new features
   - Notification content: Update description, new features, changelog link
@@ -153,8 +156,7 @@ play4cards.com
   - Notification content: Change timestamp, IP address, 'Not you?' action link
 - **Suspicious Activity Alert**: Notification for unusual account activity
   - Notification content: Activity description, recommended actions
-
-#### 2.6.6 Support & Ticket Notifications
+\n#### 2.6.6 Support & Ticket Notifications
 - **Ticket Created**: Confirmation when support ticket is submitted
   - Notification content: Ticket number, subject, estimated response time
 - **Ticket Reply**: Notification when admin responds to ticket
@@ -198,7 +200,8 @@ play4cards.com
 - **Multi-language ticket support**: Customers can submit tickets in their preferred language
 \n### 2.8 Comprehensive API System
 \n#### 2.8.1 Public API for External Integration
-- **API Documentation Portal**: Interactive API documentation similar to https://api.play4cards.com/api-docs\n- **RESTful API Architecture**: Standard REST endpoints with JSON request/response format
+- **API Documentation Portal**: Interactive API documentation similar to https://api.play4cards.com/api-docs
+- **RESTful API Architecture**: Standard REST endpoints with JSON request/response format
 - **API Authentication**: Secure API key-based authentication for all requests
 - **API Versioning**: Version control system (v1, v2, etc.) for backward compatibility
 \n**Available API Endpoints:**
@@ -220,6 +223,7 @@ play4cards.com
 - GET /api/v1/orders/list - List all orders with filters
 - POST /api/v1/orders/{order_id}/cancel - Request order cancellation
 - GET /api/v1/orders/{order_id}/invoice - Download order invoice
+- **GET /api/v1/orders/{order_id}/provider-response - Get provider response/replay for order**
 
 **Wallet Operations:**
 - POST /api/v1/wallet/topup - Submit balance top-up request
@@ -312,9 +316,36 @@ play4cards.com
 - **Advertisement Banner**: Reduced height moving banner at the top of screen displaying promotional photos and ads
 - **Search Field**: Positioned below the advertisement banner\n- Dark mode and light mode toggle
 - **Multi-language support**: Support for all major global languages with language selector in header
-- Slide bar navigation\n- Navigation bar\n- Header section\n- Attractive animations\n\n### 2.10 Admin Management System
+- Slide bar navigation\n- Navigation bar\n- Header section\n- Attractive animations\n\n### 2.10 Order Details & Provider Response Display
+\n#### 2.10.1 Order Details Page Features
+- **Complete Order Information Display**:
+  - Order ID\n  - Product/Service name
+  - Quantity
+  - Total price with currency
+  - Order date and time
+  - Player ID or account identifier
+  - Order status
+\n#### 2.10.2 Provider Response/Replay Section
+- **Provider Response Display**: Dedicated section showing responses and updates from service providers
+  - **REPLAY Button**: Interactive button to view provider responses
+  - **Response Content Display**: Shows provider messages, status updates, and completion confirmations
+  - **Copy Functionality**: Copy button to easily copy provider response text
+  - **Timestamp**: Display when provider response was received
+  - **Multi-language Support**: Provider responses displayed in user's preferred language when possible
+  - **Real-time Updates**: Automatic refresh when new provider responses are received
 
-#### 2.10.1 Admin Access & Security
+#### 2.10.3 Provider Response Notification Integration
+- **Automatic Notification Trigger**: When provider sends a response or update:\n  - Create notification record in database
+  - Send real-time notification to user via WebSocket
+  - Send push notification if enabled
+  - Send email notification if configured
+  - Display notification badge on order page
+- **Notification Content**: Include order number, provider message preview, and link to order details
+- **Notification Actions**: Direct link to view full provider response in order details page
+
+### 2.11 Admin Management System
+
+#### 2.11.1 Admin Access & Security
 - **Multi-Level Admin Roles**: Super Admin, Admin, Manager, Support Staff, Stock Manager with customizable permission sets
 - **Role-Based Access Control (RBAC)**: Granular permissions for each admin role with ability to create custom roles
 - **Admin Login Page**: Dedicated secure login page exclusively for administrators with CAPTCHA protection
@@ -348,12 +379,11 @@ play4cards.com
 - **Data Encryption**: End-to-end encryption for sensitive admin data and communications
 - **Backup Admin Access**: Emergency access recovery system for Super Admin
 
-#### 2.10.2 Comprehensive Dashboard Navigation
+#### 2.11.2 Comprehensive Dashboard Navigation
 Full navigation menu with the following modules:
 - **Dashboard Home**: Overview with key metrics, recent activities, and quick action buttons
 - **Users**: Manage user accounts, permissions, wallet balances, activity, user level assignments, profile information, 2FA status, and bulk user operations
-- **Orders**: View, process, update, edit links, resend orders, cancel and refund, set partial, pull and update orders, export order data
-- **Subscriptions**: Manage recurring subscription services, billing cycles, renewal settings, and subscription analytics
+- **Orders**: View, process, update, edit links, resend orders, cancel and refund, set partial, pull and update orders, **view provider responses**, export order data\n- **Subscriptions**: Manage recurring subscription services, billing cycles, renewal settings, and subscription analytics
 - **Drip-feed**: Configure and manage drip-feed order delivery settings, scheduling, and automation rules
 - **Refill**: Handle refill requests, pull refill tasks, change refill status, and refill history tracking
 - **Cancel**: Manage cancellation requests, pull cancel tasks, reject cancellations, and cancellation analytics
@@ -373,7 +403,7 @@ Full navigation menu with the following modules:
 - **SMS Gateway**: Configure SMS notification settings and manage SMS templates
 - **Security Center**: Centralized security management, firewall rules, DDoS protection settings, 2FA enforcement, and security scan reports
 - **Notifications**: Manage notification system, create broadcast messages, view notification analytics, and configure notification templates
-\n#### 2.10.3 Settings Sidebar Modules
+\n#### 2.11.3 Settings Sidebar Modules
 - **General**: Basic site configuration, site name, URL, timezone, general preferences, maintenance mode, and site status
 - **Providers**: Configure service provider API connections, manage provider settings, provider priority, and failover rules
 - **Payments Modules**: Set up and manage payment gateway integrations for balance top-ups, payment method ordering, and fee configuration
@@ -391,7 +421,7 @@ Full navigation menu with the following modules:
 - **Rate Limiting**: Configure API rate limits, request throttling, and abuse prevention
 - **Cache Management**: Configure caching settings, clear cache, and optimize performance
 - **Security Settings**: Configure 2FA enforcement policies, password policies, session management, and security alerts
-\n#### 2.10.4 Additional Admin Features
+\n#### 2.11.4 Additional Admin Features
 - **User Level Management**: Create, edit, and delete user levels; assign custom discount rates to each level
 - **Custom Rate Configuration**: Set custom pricing rates for users based on their level and discount settings
 - **Service Import with Profit Markup**: Import services via API from providers with automatic profit percentage addition
@@ -400,6 +430,7 @@ Full navigation menu with the following modules:
 - **Advertisement Management**: Upload and manage promotional photos for top banner; control banner rotation and display
 - **Admin API v2 Management**: Create and edit API keys, set granular permissions, and monitor API usage
 - **Public API Management**: Configure public API settings, manage API documentation, monitor API usage statistics
+- **Provider Response Management**: View and manage all provider responses/replays for orders; monitor provider communication
 - **Bulk Operations**: Bulk user management, bulk order processing, bulk service updates, and bulk email sending
 - **Advanced Search & Filtering**: Powerful search across all modules with multiple filter criteria
 - **Data Export**: Export data to CSV, Excel, PDF formats for all major modules
@@ -418,32 +449,31 @@ Full navigation menu with the following modules:
 ## 3. Website Pages
 
 ### 3.1 Customer-Facing Pages
-1. **Home** - Main landing page with reduced-height advertisement banner at top, search field below banner, and service categories\n2. **Wallet** - User wallet management and balance display with multi-currency support
+1. **Home** - Main landing page with reduced-height advertisement banner at top, search field below banner, and service categories
+2. **Wallet** - User wallet management and balance display with multi-currency support
 3. **Add Balance** - Wallet recharge page with multiple payment methods and currency selection
 4. **My Orders** - Order history and status tracking with invoice generation option
-5. **Profile Settings** - User profile management page for editing email, password, phone number, display name, profile picture, language preference, currency preference, and communication preferences
-6. **Security** - Account security settings including 2FA setup, trusted devices management, login history, and password change\n7. **API** - Customer API documentation, key management, and testing console
-8. **API Documentation** - Interactive API documentation portal with code examples and testing tools
-9. **About Us** - Company information and contact details
-10. **Service Category Pages** - Dedicated pages for each main service type (Games, Apps, Streaming, Gift Cards) with category/subcategory navigation and unified category images
-11. **Notifications** - Notification center displaying all user notifications with filtering and search capabilities
+5. **Order Details** - Detailed order information page with provider response/replay section, copy functionality, and real-time updates
+6. **Profile Settings** - User profile management page for editing email, password, phone number, display name, profile picture, language preference, currency preference, and communication preferences
+7. **Security** - Account security settings including 2FA setup, trusted devices management, login history, and password change\n8. **API** - Customer API documentation, key management, and testing console
+9. **API Documentation** - Interactive API documentation portal with code examples and testing tools
+10. **About Us** - Company information and contact details
+11. **Service Category Pages** - Dedicated pages for each main service type (Games, Apps, Streaming, Gift Cards) with category/subcategory navigation and unified category images
+12. **Notifications** - Notification center displaying all user notifications with filtering and search capabilities
 \n### 3.2 Admin-Only Pages
 1. **Admin Login** - Secure authentication page with username/email and password fields, CAPTCHA protection, and 2FA verification for administrators only
 2. **Admin Dashboard** - Overview of site statistics and quick access to all management modules
 3. **Admin Profile Settings** - Admin profile management page for editing email, password, phone number, display name, profile picture, and 2FA settings
 4. **Users Management** - Interface for managing user accounts, permissions, levels, activity, profile information, and 2FA status
-5. **Orders Management** - Interface for managing all customer orders with full control options
-6. **Subscriptions Management** - Interface for managing recurring subscription services\n7. **Drip-feed Management** - Interface for configuring drip-feed delivery settings
-8. **Refill Management** - Interface for handling refill requests and tasks
+5. **Orders Management** - Interface for managing all customer orders with full control options and provider response viewing
+6. **Subscriptions Management** - Interface for managing recurring subscription services\n7. **Drip-feed Management** - Interface for configuring drip-feed delivery settings\n8. **Refill Management** - Interface for handling refill requests and tasks
 9. **Cancel Management** - Interface for managing cancellation requests\n10. **Services Management** - Interface for managing services, categories, pricing, and imports
 11. **Payments Management** - Interface for reviewing balance top-up requests and payment verification
-12. **Tickets Management** - Interface for handling customer support tickets
-13. **Affiliates Management** - Interface for managing affiliate program and commissions
+12. **Tickets Management** - Interface for handling customer support tickets\n13. **Affiliates Management** - Interface for managing affiliate program and commissions
 14. **Child Panels Management** - Interface for managing reseller sub-panels\n15. **Updates** - Interface for viewing system updates and changelog
 16. **Reports & Analytics** - Interface for viewing site statistics and performance data
 17. **Appearance Settings** - Interface for customizing site visual design
-18. **General Settings** - Interface for basic site configuration
-19. **Providers Settings** - Interface for managing service provider API connections
+18. **General Settings** - Interface for basic site configuration\n19. **Providers Settings** - Interface for managing service provider API connections
 20. **Payments Modules Settings** - Interface for configuring payment gateway integrations
 21. **Integrations Settings** - Interface for connecting third-party services\n22. **Notifications Settings** - Interface for configuring notification system
 23. **Bonuses Settings** - Interface for setting up bonus programs
@@ -459,10 +489,12 @@ Full navigation menu with the following modules:
 37. **Logs & Monitoring** - Interface for viewing system logs, admin activity logs, and real-time monitoring\n38. **Backup & Restore** - Interface for managing database backups and restoration
 39. **Email Templates** - Interface for managing email notification templates\n40. **SMS Gateway** - Interface for configuring SMS settings\n41. **Bulk Operations** - Interface for performing bulk actions across multiple records
 42. **Scheduled Tasks** - Interface for configuring automated tasks and cron jobs
-43. **Webhook Management** - Interface for managing webhook integrations\n44. **Fraud Detection** - Interface for configuring fraud rules and viewing suspicious activities
+43. **Webhook Management** - Interface for managing webhook integrations
+44. **Fraud Detection** - Interface for configuring fraud rules and viewing suspicious activities
 45. **Performance Dashboard** - Interface for monitoring system performance and optimization
 46. **Language Management** - Interface for adding, editing, and managing all language translations; import/export language files; configure language availability\n47. **Currency Management** - Interface for adding, editing, and managing all supported currencies; configure exchange rates; set currency availability per region\n48. **Notification Management** - Interface for creating notification templates, sending broadcast notifications, viewing notification analytics, and managing notification delivery settings
 49. **Notification Analytics** - Interface for tracking notification performance metrics, delivery rates, and user engagement
+50. **Provider Response Logs** - Interface for viewing all provider responses/replays, monitoring provider communication, and troubleshooting order issues
 \n---
 
 ## 4. Add Balance Payment System
@@ -525,8 +557,8 @@ For each balance top-up request, customers must:
 - updated_at (Timestamp)
 - last_login_at (Timestamp)
 - last_login_ip (String)
-\n**Admin Users Table (admin_users)**
-- id (Primary Key, UUID)\n- username (Unique, String)
+\n**Admin Users Table (admin_users)**\n- id (Primary Key, UUID)
+- username (Unique, String)
 - email (Unique, String)
 - password_hash (String)
 - phone_number (String)
@@ -545,8 +577,7 @@ For each balance top-up request, customers must:
 - last_login_at (Timestamp)
 - last_login_ip (String)
 - created_by_admin_id (Foreign Key → admin_users.id)
-
-**Admin Roles Table (admin_roles)**
+\n**Admin Roles Table (admin_roles)**
 - id (Primary Key, UUID)
 - role_name (String)
 - role_description (Text)
@@ -561,8 +592,7 @@ For each balance top-up request, customers must:
 - user_agent (String)
 - expires_at (Timestamp)
 - created_at (Timestamp)
-- last_activity_at (Timestamp)\n
-**Admin Activity Logs Table (admin_activity_logs)**
+- last_activity_at (Timestamp)\n\n**Admin Activity Logs Table (admin_activity_logs)**
 - id (Primary Key, UUID)
 - admin_user_id (Foreign Key → admin_users.id)
 - action_type (String)
@@ -636,14 +666,26 @@ For each balance top-up request, customers must:
 - discount_amount (Decimal)
 - total_amount (Decimal)
 - currency (String)
-- player_id (String)\n- order_status (Enum: pending, processing, completed, failed, cancelled, refunded, partial)\n- provider_order_id (String)
-- provider_response (JSON)
+- player_id (String)\n- order_status (Enum: pending, processing, completed, failed, cancelled, refunded, partial)
+- provider_order_id (String)\n- provider_response (JSON)
+- **provider_response_text (Text)** - Human-readable provider message/response
+- **provider_response_timestamp (Timestamp)** - When provider response was received
 - external_id (String)\n- delivery_link (String)
 - fulfillment_type (Enum: api, stock, manual)
 - stock_item_id (Foreign Key → stock_items.id, Nullable)
 - created_at (Timestamp)
 - updated_at (Timestamp)
-- completed_at (Timestamp)\n\n**Stock Items Table (stock_items)**\n- id (Primary Key, UUID)
+- completed_at (Timestamp)\n\n**Provider Response Logs Table (provider_response_logs)**
+- id (Primary Key, UUID)
+- order_id (Foreign Key → orders.id)
+- provider_id (Foreign Key → providers.id)
+- response_type (Enum: status_update, completion, error, info)
+- response_message (Text)
+- response_data (JSON)
+- received_at (Timestamp)
+- created_at (Timestamp)
+
+**Stock Items Table (stock_items)**\n- id (Primary Key, UUID)
 - service_id (Foreign Key → services.id)
 - stock_code (Encrypted String)
 - stock_type (Enum: gift_card, netflix_code, shahid_code, pubg_code, other)
@@ -655,8 +697,7 @@ For each balance top-up request, customers must:
 - created_at (Timestamp)
 - updated_at (Timestamp)
 - sold_at (Timestamp)
-
-**Wallet Transactions Table (wallet_transactions)**
+\n**Wallet Transactions Table (wallet_transactions)**
 - id (Primary Key, UUID)\n- user_id (Foreign Key → users.id)
 - transaction_type (Enum: credit, debit, refund, bonus)
 - amount (Decimal)\n- currency (String)
@@ -758,8 +799,8 @@ For each balance top-up request, customers must:
 - created_at (Timestamp)
 - updated_at (Timestamp)
 
-**API Keys Table (api_keys)**\n- id (Primary Key, UUID)
-- user_id (Foreign Key → users.id, Nullable)
+**API Keys Table (api_keys)**
+- id (Primary Key, UUID)\n- user_id (Foreign Key → users.id, Nullable)
 - admin_user_id (Foreign Key → admin_users.id, Nullable)
 - key_name (String)
 - api_key (Unique, Encrypted String)
@@ -790,7 +831,8 @@ For each balance top-up request, customers must:
 - is_active (Boolean)
 - last_triggered_at (Timestamp)
 - created_at (Timestamp)
-- updated_at (Timestamp)\n
+- updated_at (Timestamp)
+
 **Subscriptions Table (subscriptions)**
 - id (Primary Key, UUID)\n- user_id (Foreign Key → users.id)
 - service_id (Foreign Key → services.id)
@@ -802,8 +844,7 @@ For each balance top-up request, customers must:
 
 **Drip Feed Orders Table (drip_feed_orders)**
 - id (Primary Key, UUID)
-- order_id (Foreign Key → orders.id)
-- total_quantity (Integer)
+- order_id (Foreign Key → orders.id)\n- total_quantity (Integer)
 - delivered_quantity (Integer)
 - delivery_interval_minutes (Integer)
 - next_delivery_at (Timestamp)
@@ -838,7 +879,8 @@ For each balance top-up request, customers must:
 - total_earnings (Decimal)
 - created_at (Timestamp)
 - updated_at (Timestamp)
-\n**Affiliate Transactions Table (affiliate_transactions)**
+
+**Affiliate Transactions Table (affiliate_transactions)**
 - id (Primary Key, UUID)\n- affiliate_id (Foreign Key → affiliates.id)
 - referred_user_id (Foreign Key → users.id)
 - order_id (Foreign Key → orders.id)
@@ -948,8 +990,9 @@ For each balance top-up request, customers must:
 - POST /admin/orders/:id/resend - Resend order\n- POST /admin/orders/:id/cancel - Cancel and refund order
 - PUT /admin/orders/:id/partial - Set partial fulfillment
 - POST /admin/orders/pull - Pull orders from providers
-- PUT /admin/orders/bulk-update - Bulk update orders\n
-**Admin Service Management Endpoints**
+- PUT /admin/orders/bulk-update - Bulk update orders\n- **GET /admin/orders/:id/provider-responses - Get all provider responses for order**
+- **GET /admin/provider-responses - List all provider responses with filters**
+\n**Admin Service Management Endpoints**
 - GET /admin/services - List all services\n- GET /admin/services/:id - Get service details
 - POST /admin/services - Create new service
 - PUT /admin/services/:id - Update service
@@ -958,8 +1001,7 @@ For each balance top-up request, customers must:
 - PUT /admin/services/bulk-update - Bulk update services
 - PUT /admin/services/:id/availability - Update service availability
 - PUT /admin/services/:id/price - Update service price
-
-**Admin Payment Management Endpoints**
+\n**Admin Payment Management Endpoints**
 - GET /admin/payments - List payment requests
 - GET /admin/payments/:id - Get payment details
 - PUT /admin/payments/:id/approve - Approve payment
@@ -994,8 +1036,7 @@ For each balance top-up request, customers must:
 - DELETE /admin/api-keys/:id - Delete API key
 - GET /admin/api-logs - View API logs
 - GET /admin/api-stats - Get API usage statistics
-
-**Admin Security Endpoints**
+\n**Admin Security Endpoints**
 - GET /admin/security/logs - View security logs
 - GET /admin/security/failed-logins - View failed login attempts
 - POST /admin/security/ip-whitelist - Add IP to whitelist
@@ -1009,7 +1050,8 @@ For each balance top-up request, customers must:
 **Admin Authentication Logic**
 - Validate admin credentials against admin_users table
 - Check account status and IP whitelist
-- Verify CAPTCHA token\n- Generate JWT token with admin permissions
+- Verify CAPTCHA token
+- Generate JWT token with admin permissions
 - Require 2FA verification\n- Create admin session record
 - Log login attempt in admin_activity_logs
 - Implement session timeout and auto-logout
@@ -1029,10 +1071,28 @@ For each balance top-up request, customers must:
 - For stock orders: Reserve and assign stock item
 - For API orders: Send request to provider
 - Update order status based on provider response
+- **Store provider response in provider_response_text field**
+- **Create provider_response_logs entry**
 - **Trigger order created notification**
 - **Trigger order status change notifications (processing, completed, failed)**
-- Send notification to user
-- Generate invoice\n- Log transaction in wallet_transactions\n
+- **Trigger provider response notification when provider sends update**
+- Send notification to user\n- Generate invoice\n- Log transaction in wallet_transactions\n\n**Provider Response Handling Logic**
+- Receive response from provider API
+- Parse provider response data
+- Extract human-readable message from response
+- Update order.provider_response_text with message
+- Update order.provider_response_timestamp\n- Create entry in provider_response_logs table
+- Determine response type (status_update, completion, error, info)
+- **Trigger provider response notification**:\n  - Create notification record
+  - Set notification_type = 'provider_response'
+  - Include order number and provider message
+  - Queue for delivery via user's enabled channels
+  - Send real-time notification via WebSocket
+  - Send push notification if enabled
+  - Send email if configured
+- Update order status if needed based on response
+- Log provider communication for troubleshooting
+
 **Stock Fulfillment Logic**
 - Check stock availability for service
 - Reserve stock item (status = reserved)
@@ -1161,6 +1221,7 @@ For each balance top-up request, customers must:
 - **Auto-logout**: Implement idle timeout with warning modal
 - **Error Handling**: Display user-friendly error messages from API responses
 - **Notification Management**: Connect to notification management endpoints for creating templates and sending broadcasts
+- **Provider Response Viewing**: Fetch and display provider responses from GET /admin/orders/:id/provider-responses
 \n#### 5.3.2 Customer Frontend Integration
 - **User Authentication**: Connect to public API auth endpoints
 - **Service Browsing**: Fetch categories and services from API
@@ -1172,6 +1233,8 @@ For each balance top-up request, customers must:
 - **Profile Management**: Update user settings via API
 - **2FA Setup**: QR code generation and verification flow
 - **Notification Preferences**: Update notification settings via API
+- **Order Details Page**: Fetch order details including provider responses from GET /api/v1/orders/{order_id}\n- **Provider Response Display**: Show provider response/replay section with copy functionality
+- **Real-time Provider Updates**: WebSocket listener for new provider responses
 
 ### 5.4 Deployment & Infrastructure
 - **Server Environment**: Linux (Ubuntu/CentOS) with Nginx reverse proxy
@@ -1220,6 +1283,8 @@ For each balance top-up request, customers must:
 - **Admin Login Page**: Clean, secure login interface with username/email and password fields, CAPTCHA, and 2FA verification
 - **Notification Center**: Slide-in panel with categorized notifications and quick action buttons
 - **Notification Management Interface**: Admin dashboard for creating templates and sending broadcasts with preview functionality
+- **Order Details Page**: Clean, card-based layout with clear information hierarchy and prominent provider response section
+- **Provider Response Section**: Distinct visual styling with REPLAY button, collapsible content area, and copy functionality
 \n### 6.2 Interactive Elements
 - **Advertisement Banner**: Auto-scrolling promotional photos with pause-on-hover functionality
 - **Search Field**: Instant search with autocomplete suggestions
@@ -1253,7 +1318,11 @@ For each balance top-up request, customers must:
 - **Admin Login Form**: Responsive login form with real-time validation and error messages
 - **Notification Template Editor**: WYSIWYG editor with variable insertion and preview
 - **Broadcast Notification Scheduler**: Calendar interface for scheduling notifications
-- **Notification Analytics Dashboard**: Charts and graphs showing delivery rates and engagement\n\n### 6.3 Theme Options
+- **Notification Analytics Dashboard**: Charts and graphs showing delivery rates and engagement\n- **REPLAY Button**: Interactive button that expands/collapses provider response content
+- **Provider Response Copy Button**: One-click copy functionality for provider messages
+- **Real-time Provider Response Updates**: Automatic refresh and notification when new provider responses arrive
+- **Provider Response Timestamp**: Display relative time (e.g., '2 minutes ago') with hover tooltip showing exact timestamp
+\n### 6.3 Theme Options
 - Light mode: White background with soft shadows and colorful category cards with main images
 - Dark mode: Deep dark background with neon highlights and glowing category borders
 - Admin panel: Clean, data-focused interface with customizable dashboard widgets and organized navigation structure
@@ -1261,6 +1330,7 @@ For each balance top-up request, customers must:
 - **RTL Layout**: Fully mirrored layout for right-to-left languages with proper text alignment
 - **Admin Login Page**: Professional, secure design with brand colors and trust indicators
 - **Notification Center**: Consistent theme with main application, supporting both light and dark modes
+- **Order Details Page**: Consistent with main application theme, with distinct styling for provider response section
 \n---
 
 ## 7. Reference Documentation
@@ -1269,25 +1339,29 @@ For each balance top-up request, customers must:
 ## 8. Reference Images
 - Screenshot 2025-12-26 133441.png: Admin dashboard top navigation menu showing Users, Orders, Subscriptions, Drip-feed, Refill, Cancel, Services, Payments, Tickets, Affiliates, Child panels, Updates, Reports, Appearance, and Settings modules
 - Screenshot 2025-12-26 133448.png: Admin settings sidebar showing General, Providers, Payments Modules, Integrations, Notifications, Bonuses, Signup form, and Ticket form configuration sections
+- image.png: Order details page showing Order ID, Product, Quantity, Total Price, Date, Player ID, and provider response section with REPLAY button and copy functionality
 \n---
 
 ## 9. Implementation Priority
 
 ### Phase 1: Core Backend & Admin System (Highest Priority)
-1. Database schema implementation with all tables including notification tables
+1. Database schema implementation with all tables including notification tables and provider_response_logs table
 2. Admin authentication system with login page\n3. Admin dashboard with basic statistics\n4. User management module\n5. Service management module
-6. Order management module
+6. Order management module with provider response handling
 7. Payment verification module
 8. **Notification system backend implementation**
-9. Admin API endpoints for all core functions
-\n### Phase 2: Customer Frontend & Integration\n1. Customer authentication and registration
+9. **Provider response notification system**
+10. Admin API endpoints for all core functions
+
+### Phase 2: Customer Frontend & Integration\n1. Customer authentication and registration
 2. Service browsing and ordering
 3. Wallet system and payment submission
 4. Order tracking and history
-5. Profile management with 2FA\n6. **Notification center and real-time notification delivery**
-7. Frontend-backend API integration
-
-### Phase 3: Advanced Features
+5. **Order details page with provider response display**
+6. Profile management with 2FA\n7. **Notification center and real-time notification delivery**
+8. **Real-time provider response updates**
+9. Frontend-backend API integration
+\n### Phase 3: Advanced Features
 1. Stock management system
 2. Multi-currency and multi-language\n3. Public API system
 4. **Complete notification system with all notification types**
@@ -1295,6 +1369,7 @@ For each balance top-up request, customers must:
 6. Ticket support system
 7. Analytics and reporting
 8. **Notification analytics and tracking**
+9. **Provider response logs and monitoring**
 \n### Phase 4: Additional Modules
 1. Affiliate system
 2. Subscription management
@@ -1303,3 +1378,4 @@ For each balance top-up request, customers must:
 6. Performance optimization
 7. **Broadcast notification system**
 8. **Notification template management**
+9. **Provider response analytics**
