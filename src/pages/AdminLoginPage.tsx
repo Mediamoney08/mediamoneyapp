@@ -5,10 +5,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Shield, Lock, Mail, Eye, EyeOff } from 'lucide-react';
+import { Shield, Lock, Mail, Eye, EyeOff, Zap, Copy, AlertTriangle, Check } from 'lucide-react';
 import { getProfile } from '@/db/api';
 import { supabase } from '@/db/supabase';
+
+// TEST CREDENTIALS - FOR PREVIEW/TESTING ONLY
+const TEST_ADMIN_EMAIL = 'admin@preview.test';
+const TEST_ADMIN_PASSWORD = 'Admin123!Preview';
 
 export default function AdminLoginPage() {
   const navigate = useNavigate();
@@ -19,11 +25,33 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Quick login with test credentials
+  const handleQuickLogin = async () => {
+    setEmail(TEST_ADMIN_EMAIL);
+    setPassword(TEST_ADMIN_PASSWORD);
     
-    if (!email || !password) {
+    // Wait a moment for state to update, then submit
+    setTimeout(() => {
+      handleLogin(TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD);
+    }, 100);
+  };
+
+  // Copy credentials to clipboard
+  const copyCredentials = () => {
+    const credentials = `Email: ${TEST_ADMIN_EMAIL}\nPassword: ${TEST_ADMIN_PASSWORD}`;
+    navigator.clipboard.writeText(credentials);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    toast({
+      title: 'Copied!',
+      description: 'Test credentials copied to clipboard',
+    });
+  };
+
+  const handleLogin = async (loginEmail: string, loginPassword: string) => {
+    if (!loginEmail || !loginPassword) {
       toast({
         title: 'Error',
         description: 'Please enter both email and password',
@@ -36,7 +64,7 @@ export default function AdminLoginPage() {
 
     try {
       // Sign in
-      const { error: signInError } = await signIn(email, password);
+      const { error: signInError } = await signIn(loginEmail, loginPassword);
       
       if (signInError) {
         throw signInError;
@@ -83,6 +111,11 @@ export default function AdminLoginPage() {
       });
       setLoading(false);
     }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await handleLogin(email, password);
   };
 
   return (
@@ -170,6 +203,68 @@ export default function AdminLoginPage() {
               )}
             </Button>
           </form>
+
+          {/* PREVIEW MODE - Test Credentials */}
+          <div className="mt-6">
+            <Alert className="border-2 border-primary/50 bg-primary/5">
+              <AlertTriangle className="h-5 w-5 text-primary" />
+              <AlertDescription className="ml-2">
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Badge variant="default" className="bg-primary">
+                        <Zap className="h-3 w-3 mr-1" />
+                        PREVIEW MODE
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">For Testing Only</span>
+                    </div>
+                    <p className="text-sm font-medium text-foreground mb-2">
+                      Test Admin Credentials:
+                    </p>
+                  </div>
+                  
+                  <div className="bg-background/50 rounded-md p-3 space-y-2 text-sm font-mono">
+                    <div>
+                      <span className="text-muted-foreground">Email:</span>
+                      <div className="text-foreground break-all">{TEST_ADMIN_EMAIL}</div>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Password:</span>
+                      <div className="text-foreground">{TEST_ADMIN_PASSWORD}</div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={handleQuickLogin}
+                      disabled={loading}
+                      className="flex-1"
+                      variant="default"
+                    >
+                      <Zap className="mr-2 h-4 w-4" />
+                      Quick Login
+                    </Button>
+                    <Button
+                      onClick={copyCredentials}
+                      disabled={loading}
+                      variant="outline"
+                      size="icon"
+                    >
+                      {copied ? (
+                        <Check className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+
+                  <p className="text-xs text-muted-foreground">
+                    ⚠️ This is a test account for preview purposes. Remove before production deployment.
+                  </p>
+                </div>
+              </AlertDescription>
+            </Alert>
+          </div>
 
           {/* Security Notice */}
           <div className="mt-6 p-4 bg-muted/50 rounded-lg border">

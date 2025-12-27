@@ -41,8 +41,7 @@ play4cards.com
   - Some categories include subcategories (e.g., denominations, regions)
 
 ### 2.2 User System
-- User registration and login
-- **Two-Step Verification (2FA)**: Mandatory two-factor authentication for all users to protect accounts using authenticator apps (Google Authenticator, Authy, etc.) or SMS verification, **fully integrated with backend API**
+- User registration and login\n- **Two-Step Verification (2FA)**: Mandatory two-factor authentication for all users to protect accounts using authenticator apps (Google Authenticator, Authy, etc.) or SMS verification, **fully integrated with backend API**
 - **Profile Management**: Users can view their profile information and **change password only through backend API integration**. The following fields are **read-only and cannot be modified by customers**:
   - Username (read-only)
   - Email address (read-only)
@@ -50,8 +49,7 @@ play4cards.com
   - Display name (read-only)
   - Profile picture (read-only)\n  - **Language preference selection from all supported languages**
   - **Currency preference selection from all supported currencies**
-  - Communication preferences\n- **Password Change**: Users can change their password through **backend-connected API endpoint**
-- Personal wallet system\n- Balance top-up functionality
+  - Communication preferences\n- **Password Change**: Users can change their password through **backend-connected API endpoint**\n- Personal wallet system\n- Balance top-up functionality
 - Order history tracking
 - **Invoice generation for orders**
 - Security settings with 2FA management **connected to backend**
@@ -384,7 +382,41 @@ play4cards.com
 - **Data Encryption**: End-to-end encryption for sensitive admin data and communications
 - **Backup Admin Access**: Emergency access recovery system for Super Admin
 
-#### 2.11.2 Comprehensive Dashboard Navigation
+#### 2.11.2 Admin Preview/Testing Mode
+- **Preview Mode Toggle**: Enable/disable preview mode for testing and demonstration purposes
+- **Preview Mode Features**:
+  - **Bypass Authentication**: Skip login authentication when preview mode is enabled
+  - **Auto-Login as Test Admin**: Automatically log in as a test administrator account
+  - **Mock Data Access**: Use seeded or mock admin data for testing
+  - **Test Credentials**: Provide test admin credentials for preview access
+    - Test Email: admin@preview.test
+    - Test Password: PreviewAdmin2025!\n  - **Magic Login Link**: Generate temporary magic login links for instant admin access
+  - **Preview Mode Indicator**: Clear visual banner indicating 'PREVIEW MODE' or 'TEST ENVIRONMENT' at top of admin dashboard
+  - **Session Duration**: Preview sessions expire after 2 hours of inactivity
+  - **Limited Permissions**: Preview mode has read-only access by default, with option to enable write operations
+  - **Data Isolation**: Preview mode uses separate test database or clearly marked test data
+- **Preview Mode Configuration**:
+  - Enable/disable preview mode via admin settings or environment variable
+  - Configure preview mode permissions (read-only, full access, custom)\n  - Set preview session timeout duration
+  - Generate and manage magic login tokens
+  - View preview mode access logs
+- **Preview Mode Security**:
+  - Preview mode disabled by default in production
+  - Require Super Admin approval to enable preview mode
+  - Log all preview mode access attempts
+  - Automatic notification to Super Admin when preview mode is activated
+  - Preview mode automatically disabled after specified time period
+  - Clear warning messages about preview mode limitations
+- **Preview Mode UI Elements**:
+  - Prominent banner at top of screen: 'PREVIEW MODE - Testing Environment'
+  - Different color scheme or visual indicator for preview mode
+  - Disable preview mode button accessible from admin dashboard
+  - Preview mode status indicator in admin profile menu
+- **Preview Mode API Endpoints**:
+  - POST /admin/preview/enable - Enable preview mode (Super Admin only)
+  - POST /admin/preview/disable - Disable preview mode\n  - POST /admin/preview/magic-login - Generate magic login link\n  - GET /admin/preview/status - Check preview mode status
+  - GET /admin/preview/test-credentials - Get test admin credentials
+\n#### 2.11.3 Comprehensive Dashboard Navigation
 Full navigation menu with the following modules:
 - **Dashboard Home**: Overview with key metrics, recent activities, and quick action buttons
 - **Users**: Manage user accounts, permissions, wallet balances, activity, user level assignments, profile information, 2FA status, and bulk user operations
@@ -394,8 +426,7 @@ Full navigation menu with the following modules:
 - **Cancel**: Manage cancellation requests, pull cancel tasks, reject cancellations, and cancellation analytics
 - **Services**: Add, edit, delete services and categories; update pricing and availability; import services via API with profit markup; bulk service management
 - **Payments**: Review and approve/reject balance top-up requests; add payments; view payment lists and user details; payment gateway configuration; transaction monitoring
-- **Tickets**: View and respond to customer support tickets; manage ticket workflow; ticket categorization; SLA tracking; canned responses
-- **Affiliates**: Manage affiliate program, track referrals, commission payouts, affiliate performance analytics, and commission rules
+- **Tickets**: View and respond to customer support tickets; manage ticket workflow; ticket categorization; SLA tracking; canned responses\n- **Affiliates**: Manage affiliate program, track referrals, commission payouts, affiliate performance analytics, and commission rules
 - **Child panels**: Manage sub-panel accounts and permissions for resellers; revenue sharing configuration; child panel analytics
 - **Updates**: View system updates, changelog, version information, and schedule maintenance windows
 - **Reports**: Access analytics dashboard with site statistics, revenue reports, popular services, user activity, financial reports, and custom report builder
@@ -408,7 +439,9 @@ Full navigation menu with the following modules:
 - **SMS Gateway**: Configure SMS notification settings and manage SMS templates
 - **Security Center**: Centralized security management, firewall rules, DDoS protection settings, 2FA enforcement, and security scan reports
 - **Notifications**: Manage notification system, create broadcast messages, view notification analytics, and configure notification templates
-\n#### 2.11.3 Settings Sidebar Modules
+- **Preview Mode**: Enable/disable preview mode, manage test credentials, generate magic login links, and view preview access logs
+
+#### 2.11.4 Settings Sidebar Modules
 - **General**: Basic site configuration, site name, URL, timezone, general preferences, maintenance mode, and site status
 - **Providers**: Configure service provider API connections, manage provider settings, provider priority, and failover rules
 - **Payments Modules**: Set up and manage payment gateway integrations for balance top-ups, payment method ordering, and fee configuration
@@ -426,7 +459,8 @@ Full navigation menu with the following modules:
 - **Rate Limiting**: Configure API rate limits, request throttling, and abuse prevention
 - **Cache Management**: Configure caching settings, clear cache, and optimize performance
 - **Security Settings**: Configure 2FA enforcement policies, password policies, session management, and security alerts
-\n#### 2.11.4 Additional Admin Features
+- **Preview Mode Settings**: Configure preview mode options, test credentials, session duration, and access permissions
+\n#### 2.11.5 Additional Admin Features
 - **User Level Management**: Create, edit, and delete user levels; assign custom discount rates to each level
 - **Custom Rate Configuration**: Set custom pricing rates for users based on their level and discount settings
 - **Service Import with Profit Markup**: Import services via API from providers with automatic profit percentage addition
@@ -439,8 +473,7 @@ Full navigation menu with the following modules:
 - **Bulk Operations**: Bulk user management, bulk order processing, bulk service updates, and bulk email sending
 - **Advanced Search & Filtering**: Powerful search across all modules with multiple filter criteria
 - **Data Export**: Export data to CSV, Excel, PDF formats for all major modules
-- **Scheduled Tasks**: Configure automated tasks (reports, backups, notifications, cleanups)
-- **Webhook Management**: Configure webhooks for external integrations and event notifications
+- **Scheduled Tasks**: Configure automated tasks (reports, backups, notifications, cleanups)\n- **Webhook Management**: Configure webhooks for external integrations and event notifications
 - **Custom Fields**: Add custom fields to users, orders, and services for extended data collection
 - **Fraud Detection**: Automated fraud detection rules, suspicious activity alerts, and blacklist management
 - **Performance Monitoring**: Real-time server performance metrics, database optimization tools, and bottleneck identification
@@ -449,13 +482,14 @@ Full navigation menu with the following modules:
 - **Language Management**: Add, edit, and manage all language translations; import/export language files; set language availability per region
 - **Currency Management**: Add, edit, and manage all supported currencies; configure exchange rate sources; set currency availability per region; manage currency conversion rules
 - **Notification Management**: Create and manage notification templates, send broadcast notifications, view notification analytics, configure delivery settings
-\n---
+- **Preview Mode Management**: Enable/disable preview mode, configure test environment, manage test credentials, generate magic login links, view preview access logs
+
+---
 
 ## 3. Website Pages
 
 ### 3.1 Customer-Facing Pages
-1. **Home** - Main landing page with reduced-height advertisement banner at top, search field below banner, and service categories
-2. **Wallet** - User wallet management and balance display with multi-currency support
+1. **Home** - Main landing page with reduced-height advertisement banner at top, search field below banner, and service categories\n2. **Wallet** - User wallet management and balance display with multi-currency support
 3. **Add Balance** - Wallet recharge page with multiple payment methods and currency selection
 4. **My Orders** - Order history and status tracking with invoice generation option
 5. **Order Details** - Detailed order information page with provider response/replay section, copy functionality, and real-time updates
@@ -467,37 +501,41 @@ Full navigation menu with the following modules:
 12. **Notifications** - Notification center displaying all user notifications with filtering and search capabilities
 \n### 3.2 Admin-Only Pages
 1. **Admin Login** - Secure authentication page with username/email and password fields, CAPTCHA protection, and 2FA verification for administrators only
-2. **Admin Dashboard** - Overview of site statistics and quick access to all management modules
-3. **Admin Profile Settings** - Admin profile management page for editing email, password, phone number, display name, profile picture, and 2FA settings\n4. **Users Management** - Interface for managing user accounts, permissions, levels, activity, profile information, and 2FA status
-5. **Orders Management** - Interface for managing all customer orders with full control options and provider response viewing
-6. **Subscriptions Management** - Interface for managing recurring subscription services\n7. **Drip-feed Management** - Interface for configuring drip-feed delivery settings\n8. **Refill Management** - Interface for handling refill requests and tasks
-9. **Cancel Management** - Interface for managing cancellation requests\n10. **Services Management** - Interface for managing services, categories, pricing, and imports
-11. **Payments Management** - Interface for reviewing balance top-up requests and payment verification
-12. **Tickets Management** - Interface for handling customer support tickets\n13. **Affiliates Management** - Interface for managing affiliate program and commissions
-14. **Child Panels Management** - Interface for managing reseller sub-panels\n15. **Updates** - Interface for viewing system updates and changelog
-16. **Reports & Analytics** - Interface for viewing site statistics and performance data
-17. **Appearance Settings** - Interface for customizing site visual design\n18. **General Settings** - Interface for basic site configuration\n19. **Providers Settings** - Interface for managing service provider API connections
-20. **Payments Modules Settings** - Interface for configuring payment gateway integrations
-21. **Integrations Settings** - Interface for connecting third-party services\n22. **Notifications Settings** - Interface for configuring notification system
-23. **Bonuses Settings** - Interface for setting up bonus programs
-24. **Signup Form Settings** - Interface for customizing registration form\n25. **Ticket Form Settings** - Interface for configuring support ticket form\n26. **API Settings** - Interface for configuring public API parameters and documentation\n27. **User Level Management** - Interface for creating and managing user levels with custom discount rates
-28. **Stock Management** - Interface for inventory control of digital products
-29. **Stock Manager Management** - Interface for assigning and managing stock manager roles\n30. **Category Management** - Interface for organizing services and uploading category main images
-31. **Advertisement Management** - Interface for uploading and managing top banner promotional content
-32. **Admin API v2 Management** - Interface for creating, editing, and managing API keys with granular permission settings
-33. **Public API Management** - Interface for managing public API settings, monitoring usage, and configuring rate limits
-34. **API Logs & Monitoring** - Interface for viewing API request logs, error tracking, and usage analytics
-35. **Admin Roles & Permissions** - Interface for creating custom admin roles and assigning granular permissions
-36. **Security Center** - Interface for managing security settings, viewing security logs, configuring 2FA policies, and configuring protection rules
-37. **Logs & Monitoring** - Interface for viewing system logs, admin activity logs, and real-time monitoring\n38. **Backup & Restore** - Interface for managing database backups and restoration
-39. **Email Templates** - Interface for managing email notification templates\n40. **SMS Gateway** - Interface for configuring SMS settings\n41. **Bulk Operations** - Interface for performing bulk actions across multiple records
-42. **Scheduled Tasks** - Interface for configuring automated tasks and cron jobs
-43. **Webhook Management** - Interface for managing webhook integrations\n44. **Fraud Detection** - Interface for configuring fraud rules and viewing suspicious activities
-45. **Performance Dashboard** - Interface for monitoring system performance and optimization
-46. **Language Management** - Interface for adding, editing, and managing all language translations; import/export language files; configure language availability\n47. **Currency Management** - Interface for adding, editing, and managing all supported currencies; configure exchange rates; set currency availability per region\n48. **Notification Management** - Interface for creating notification templates, sending broadcast notifications, viewing notification analytics, and managing notification delivery settings
-49. **Notification Analytics** - Interface for tracking notification performance metrics, delivery rates, and user engagement
-50. **Provider Response Logs** - Interface for viewing all provider responses/replays, monitoring provider communication, and troubleshooting order issues
-\n---
+2. **Admin Preview Login** - Simplified login page for preview/testing mode with test credentials display and magic login option
+3. **Admin Dashboard** - Overview of site statistics and quick access to all management modules with preview mode indicator banner
+4. **Admin Profile Settings** - Admin profile management page for editing email, password, phone number, display name, profile picture, and 2FA settings\n5. **Users Management** - Interface for managing user accounts, permissions, levels, activity, profile information, and 2FA status
+6. **Orders Management** - Interface for managing all customer orders with full control options and provider response viewing
+7. **Subscriptions Management** - Interface for managing recurring subscription services\n8. **Drip-feed Management** - Interface for configuring drip-feed delivery settings\n9. **Refill Management** - Interface for handling refill requests and tasks
+10. **Cancel Management** - Interface for managing cancellation requests\n11. **Services Management** - Interface for managing services, categories, pricing, and imports
+12. **Payments Management** - Interface for reviewing balance top-up requests and payment verification
+13. **Tickets Management** - Interface for handling customer support tickets
+14. **Affiliates Management** - Interface for managing affiliate program and commissions
+15. **Child Panels Management** - Interface for managing reseller sub-panels\n16. **Updates** - Interface for viewing system updates and changelog
+17. **Reports & Analytics** - Interface for viewing site statistics and performance data
+18. **Appearance Settings** - Interface for customizing site visual design\n19. **General Settings** - Interface for basic site configuration\n20. **Providers Settings** - Interface for managing service provider API connections
+21. **Payments Modules Settings** - Interface for configuring payment gateway integrations
+22. **Integrations Settings** - Interface for connecting third-party services\n23. **Notifications Settings** - Interface for configuring notification system
+24. **Bonuses Settings** - Interface for setting up bonus programs
+25. **Signup Form Settings** - Interface for customizing registration form\n26. **Ticket Form Settings** - Interface for configuring support ticket form\n27. **API Settings** - Interface for configuring public API parameters and documentation\n28. **User Level Management** - Interface for creating and managing user levels with custom discount rates
+29. **Stock Management** - Interface for inventory control of digital products
+30. **Stock Manager Management** - Interface for assigning and managing stock manager roles\n31. **Category Management** - Interface for organizing services and uploading category main images
+32. **Advertisement Management** - Interface for uploading and managing top banner promotional content
+33. **Admin API v2 Management** - Interface for creating, editing, and managing API keys with granular permission settings
+34. **Public API Management** - Interface for managing public API settings, monitoring usage, and configuring rate limits
+35. **API Logs & Monitoring** - Interface for viewing API request logs, error tracking, and usage analytics
+36. **Admin Roles & Permissions** - Interface for creating custom admin roles and assigning granular permissions
+37. **Security Center** - Interface for managing security settings, viewing security logs, configuring 2FA policies, and configuring protection rules
+38. **Logs & Monitoring** - Interface for viewing system logs, admin activity logs, and real-time monitoring\n39. **Backup & Restore** - Interface for managing database backups and restoration
+40. **Email Templates** - Interface for managing email notification templates\n41. **SMS Gateway** - Interface for configuring SMS settings\n42. **Bulk Operations** - Interface for performing bulk actions across multiple records
+43. **Scheduled Tasks** - Interface for configuring automated tasks and cron jobs
+44. **Webhook Management** - Interface for managing webhook integrations\n45. **Fraud Detection** - Interface for configuring fraud rules and viewing suspicious activities
+46. **Performance Dashboard** - Interface for monitoring system performance and optimization
+47. **Language Management** - Interface for adding, editing, and managing all language translations; import/export language files; configure language availability\n48. **Currency Management** - Interface for adding, editing, and managing all supported currencies; configure exchange rates; set currency availability per region\n49. **Notification Management** - Interface for creating notification templates, sending broadcast notifications, viewing notification analytics, and managing notification delivery settings
+50. **Notification Analytics** - Interface for tracking notification performance metrics, delivery rates, and user engagement
+51. **Provider Response Logs** - Interface for viewing all provider responses/replays, monitoring provider communication, and troubleshooting order issues
+52. **Preview Mode Management** - Interface for enabling/disabling preview mode, configuring test environment, managing test credentials, generating magic login links, and viewing preview access logs
+
+---
 
 ## 4. Add Balance Payment System
 
@@ -559,7 +597,8 @@ For each balance top-up request, customers must:
 - last_login_at (Timestamp)
 - last_login_ip (String)
 \n**Admin Users Table (admin_users)**
-- id (Primary Key, UUID)\n- username (Unique, String)\n- email (Unique, String)
+- id (Primary Key, UUID)
+- username (Unique, String)\n- email (Unique, String)
 - password_hash (String)
 - phone_number (String)
 - display_name (String)
@@ -572,10 +611,10 @@ For each balance top-up request, customers must:
 - session_timeout_minutes (Integer)
 - password_expires_at (Timestamp)
 - password_history (JSON Array)
-- account_status (Enum: active, suspended)\n- created_at (Timestamp)
+- account_status (Enum: active, suspended)\n- is_preview_account (Boolean)
+- created_at (Timestamp)
 - updated_at (Timestamp)
-- last_login_at (Timestamp)
-- last_login_ip (String)
+- last_login_at (Timestamp)\n- last_login_ip (String)
 - created_by_admin_id (Foreign Key → admin_users.id)
 \n**Admin Roles Table (admin_roles)**
 - id (Primary Key, UUID)
@@ -590,9 +629,11 @@ For each balance top-up request, customers must:
 - session_token (Unique, String)
 - ip_address (String)
 - user_agent (String)
+- is_preview_session (Boolean)
 - expires_at (Timestamp)
 - created_at (Timestamp)
-- last_activity_at (Timestamp)\n\n**Admin Activity Logs Table (admin_activity_logs)**
+- last_activity_at (Timestamp)\n
+**Admin Activity Logs Table (admin_activity_logs)**
 - id (Primary Key, UUID)
 - admin_user_id (Foreign Key → admin_users.id)
 - action_type (String)
@@ -601,7 +642,30 @@ For each balance top-up request, customers must:
 - affected_resource_id (String)
 - ip_address (String)
 - user_agent (String)
+- is_preview_mode (Boolean)
 - request_data (JSON)\n- response_data (JSON)\n- created_at (Timestamp)
+\n**Preview Mode Settings Table (preview_mode_settings)**
+- id (Primary Key, UUID)
+- is_enabled (Boolean)
+- enabled_by_admin_id (Foreign Key → admin_users.id)
+- enabled_at (Timestamp)
+- auto_disable_at (Timestamp)
+- permissions_level (Enum: read_only, full_access, custom)\n- custom_permissions (JSON Object)
+- session_timeout_minutes (Integer)
+- test_admin_email (String)
+- test_admin_password_hash (String)
+- magic_login_token (Encrypted String)
+- magic_login_expires_at (Timestamp)
+- created_at (Timestamp)
+- updated_at (Timestamp)\n
+**Preview Mode Access Logs Table (preview_mode_access_logs)**
+- id (Primary Key, UUID)
+- access_type (Enum: test_credentials, magic_login, auto_login)
+- ip_address (String)
+- user_agent (String)
+- session_id (Foreign Key → admin_sessions.id)
+- accessed_at (Timestamp)
+- session_ended_at (Timestamp)
 \n**User Levels Table (user_levels)**
 - id (Primary Key, UUID)
 - level_name (String)
@@ -666,7 +730,8 @@ For each balance top-up request, customers must:
 - discount_amount (Decimal)
 - total_amount (Decimal)
 - currency (String)
-- player_id (String)\n- order_status (Enum: pending, processing, completed, failed, cancelled, refunded, partial)\n- provider_order_id (String)\n- provider_response (JSON)
+- player_id (String)\n- order_status (Enum: pending, processing, completed, failed, cancelled, refunded, partial)\n- provider_order_id (String)
+- provider_response (JSON)
 - **provider_response_text (Text)** - Human-readable provider message/response
 - **provider_response_timestamp (Timestamp)** - When provider response was received
 - external_id (String)\n- delivery_link (String)
@@ -683,8 +748,7 @@ For each balance top-up request, customers must:
 - response_data (JSON)
 - received_at (Timestamp)
 - created_at (Timestamp)
-
-**Stock Items Table (stock_items)**\n- id (Primary Key, UUID)
+\n**Stock Items Table (stock_items)**\n- id (Primary Key, UUID)
 - service_id (Foreign Key → services.id)
 - stock_code (Encrypted String)
 - stock_type (Enum: gift_card, netflix_code, shahid_code, pubg_code, other)
@@ -783,7 +847,8 @@ For each balance top-up request, customers must:
 - created_at (Timestamp)
 - updated_at (Timestamp)
 \n**Broadcast Notifications Table (broadcast_notifications)**
-- id (Primary Key, UUID)\n- title (String)
+- id (Primary Key, UUID)
+- title (String)
 - message (Text)
 - target_audience (Enum: all, user_level, active_users, inactive_users, custom)
 - target_criteria (JSON Object)
@@ -843,7 +908,8 @@ For each balance top-up request, customers must:
 
 **Drip Feed Orders Table (drip_feed_orders)**
 - id (Primary Key, UUID)
-- order_id (Foreign Key → orders.id)\n- total_quantity (Integer)
+- order_id (Foreign Key → orders.id)
+- total_quantity (Integer)
 - delivered_quantity (Integer)
 - delivery_interval_minutes (Integer)
 - next_delivery_at (Timestamp)
@@ -878,8 +944,7 @@ For each balance top-up request, customers must:
 - total_earnings (Decimal)
 - created_at (Timestamp)
 - updated_at (Timestamp)
-
-**Affiliate Transactions Table (affiliate_transactions)**
+\n**Affiliate Transactions Table (affiliate_transactions)**
 - id (Primary Key, UUID)\n- affiliate_id (Foreign Key → affiliates.id)
 - referred_user_id (Foreign Key → users.id)
 - order_id (Foreign Key → orders.id)
@@ -930,7 +995,8 @@ For each balance top-up request, customers must:
 - id (Primary Key, UUID)
 - from_currency (String)
 - to_currency (String)
-- rate (Decimal)\n- source (String)
+- rate (Decimal)
+- source (String)
 - created_at (Timestamp)
 \n**Site Settings Table (site_settings)**
 - id (Primary Key, UUID)\n- setting_key (Unique, String)
@@ -968,6 +1034,13 @@ For each balance top-up request, customers must:
 - POST /admin/auth/logout - Admin logout
 - POST /admin/auth/refresh-token - Refresh session token
 - GET /admin/auth/session - Get current session info
+\n**Admin Preview Mode Endpoints**
+- POST /admin/preview/enable - Enable preview mode (Super Admin only)
+- POST /admin/preview/disable - Disable preview mode\n- POST /admin/preview/magic-login - Generate magic login link
+- GET /admin/preview/status - Check preview mode status
+- GET /admin/preview/test-credentials - Get test admin credentials
+- POST /admin/preview/auto-login - Auto-login as test admin
+- GET /admin/preview/access-logs - View preview mode access logs
 \n**Admin Dashboard Endpoints**
 - GET /admin/dashboard/stats - Get dashboard statistics
 - GET /admin/dashboard/recent-activity - Get recent activities
@@ -1056,6 +1129,62 @@ For each balance top-up request, customers must:
 - Implement session timeout and auto-logout
 - Track failed login attempts and implement lockout
 
+**Admin Preview Mode Logic**
+- **Enable Preview Mode**:
+  - Verify Super Admin permissions
+  - Create or update preview_mode_settings record
+  - Set is_enabled = true
+  - Generate test admin credentials if not exists
+  - Create magic login token with expiration
+  - Set auto-disable timestamp
+  - Send notification to Super Admin
+  - Log preview mode activation
+
+- **Disable Preview Mode**:
+  - Update preview_mode_settings.is_enabled = false
+  - Invalidate all preview sessions
+  - Clear magic login tokens
+  - Log preview mode deactivation
+  - Send notification to Super Admin
+
+- **Test Credentials Login**:
+  - Check if preview mode is enabled
+  - Validate test credentials against preview_mode_settings
+  - Skip 2FA verification for preview accounts
+  - Create preview session with is_preview_session = true
+  - Set session timeout based on preview_mode_settings
+  - Log access in preview_mode_access_logs
+  - Return JWT token with preview mode flag
+
+- **Magic Login**:
+  - Validate magic login token
+  - Check token expiration
+  - Create preview session automatically
+  - Log magic login access
+  - Redirect to admin dashboard with preview banner
+
+- **Auto-Login**:
+  - Check if preview mode is enabled
+  - Bypass authentication entirely
+  - Create temporary preview session
+  - Load mock admin data
+  - Display preview mode indicator
+  - Log auto-login access
+
+- **Preview Mode Session Management**:
+  - Track preview session activity
+  - Enforce shorter session timeout (default 2 hours)
+  - Auto-logout on inactivity
+  - Log all preview mode actions with is_preview_mode flag
+  - Restrict write operations based on permissions_level
+
+- **Preview Mode Auto-Disable**:
+  - Background job checks auto_disable_at timestamp
+  - Automatically disable preview mode when time expires
+  - Invalidate all preview sessions
+  - Send notification to Super Admin
+  - Log auto-disable event
+
 **Admin Authorization Middleware**
 - Verify JWT token on each request
 - Check admin role permissions for requested action
@@ -1063,7 +1192,10 @@ For each balance top-up request, customers must:
 - Log all admin actions in admin_activity_logs
 - Implement IP address validation
 - Check for concurrent session limits
-\n**User Profile View Logic**
+- **Check if session is preview mode and apply appropriate restrictions**
+- **Display preview mode banner if is_preview_session = true**
+
+**User Profile View Logic**
 - **Validate user authentication token**
 - **Fetch user profile data from database**
 - **Return read-only fields: username, email, phone_number, display_name, profile_picture_url**
@@ -1083,13 +1215,14 @@ For each balance top-up request, customers must:
 - **Return success response**
 
 **2FA Setup and Management Logic**
-- **2FA Setup Initialization**:\n  - Generate unique TOTP secret using speakeasy or similar library
+- **2FA Setup Initialization**:
+  - Generate unique TOTP secret using speakeasy or similar library
   - Create QR code containing secret and user identifier
   - Generate 10 backup codes (random alphanumeric strings)
   - Store encrypted secret and backup codes in database (two_factor_secret, backup_codes)
-  - Return QR code and backup codes to user
-  - Set two_factor_enabled = false until verification
-\n- **2FA Verification and Activation**:
+  - Return QR code and backup codes to user\n  - Set two_factor_enabled = false until verification
+
+- **2FA Verification and Activation**:
   - User scans QR code with authenticator app
   - User enters TOTP code from app
   - Verify TOTP code against stored secret
@@ -1108,7 +1241,8 @@ For each balance top-up request, customers must:
 - **2FA Disable**:
   - Require current password verification
   - Require valid TOTP code or backup code
-  - Set two_factor_enabled = false\n  - Clear two_factor_secret and backup_codes\n  - Create notification for 2FA status change
+  - Set two_factor_enabled = false\n  - Clear two_factor_secret and backup_codes
+  - Create notification for 2FA status change
   - Log 2FA deactivation with timestamp and IP address
 
 - **Backup Code Regeneration**:
@@ -1135,8 +1269,7 @@ For each balance top-up request, customers must:
 - **Trigger order created notification**
 - **Trigger order status change notifications (processing, completed, failed)**
 - **Trigger provider response notification when provider sends update**
-- Send notification to user\n- Generate invoice\n- Log transaction in wallet_transactions\n
-**Provider Response Handling Logic**
+- Send notification to user\n- Generate invoice\n- Log transaction in wallet_transactions\n\n**Provider Response Handling Logic**
 - Receive response from provider API
 - Parse provider response data
 - Extract human-readable message from response
@@ -1262,12 +1395,23 @@ For each balance top-up request, customers must:
   - Clock skew tolerance of ±1 time step for TOTP validation
   - Automatic account lockout after 5 consecutive failed 2FA attempts
   - Security notifications for 2FA setup, changes, and suspicious activities
+- **Preview Mode Security**:
+  - Preview mode disabled by default in production environment
+  - Require Super Admin approval to enable preview mode
+  - Encrypted storage of magic login tokens
+  - Time-limited preview sessions with automatic expiration
+  - Comprehensive logging of all preview mode access
+  - Automatic notifications to Super Admin when preview mode is activated
+  - Clear visual indicators to prevent confusion with production environment
+  - Separate test database or clearly marked test data for preview mode
+  - Restricted permissions in preview mode (configurable read-only or full access)
 \n### 5.3 Frontend-Backend Integration
 \n#### 5.3.1 Admin Panel Frontend Integration
 - **Admin Login Page**: Connect to POST /admin/auth/login endpoint
+- **Admin Preview Login Page**: Connect to preview mode endpoints for test credentials and magic login
+- **Preview Mode Banner**: Display prominent banner when in preview mode with disable option
 - **2FA Verification**: Connect to POST /admin/auth/verify-2fa endpoint
-- **Dashboard Data Loading**: Fetch from GET /admin/dashboard/stats\n- **Real-time Updates**: WebSocket connection for live data
-- **Form Submissions**: POST/PUT requests with CSRF tokens
+- **Dashboard Data Loading**: Fetch from GET /admin/dashboard/stats\n- **Real-time Updates**: WebSocket connection for live data\n- **Form Submissions**: POST/PUT requests with CSRF tokens
 - **File Uploads**: Multipart form data for images and documents
 - **Data Tables**: Pagination, sorting, filtering via API parameters
 - **Session Management**: Store JWT token in secure httpOnly cookie
@@ -1275,6 +1419,7 @@ For each balance top-up request, customers must:
 - **Error Handling**: Display user-friendly error messages from API responses
 - **Notification Management**: Connect to notification management endpoints for creating templates and sending broadcasts
 - **Provider Response Viewing**: Fetch and display provider responses from GET /admin/orders/:id/provider-responses
+- **Preview Mode Controls**: Enable/disable preview mode, generate magic links, view access logs
 
 #### 5.3.2 Customer Frontend Integration
 - **User Authentication**: Connect to public API auth endpoints
@@ -1341,19 +1486,20 @@ For each balance top-up request, customers must:
 - **Language Selector**: Prominent language dropdown in header with flag icons for easy identification
 - **Currency Selector**: Currency dropdown in header showing currency symbols and codes
 - **Notification Badge**: Unread notification counter badge on notification bell icon in header
-- Card-based layout for categories with unified main images representing each service group
-- Vibrant blue and purple gradient accents on clean backgrounds
-- Smooth animations for category navigation and transitions
+- **Preview Mode Banner**: Prominent banner at top of admin dashboard displaying 'PREVIEW MODE - Testing Environment' with distinct color scheme (e.g., orange or yellow background)\n- Card-based layout for categories with unified main images representing each service group
+- Vibrant blue and purple gradient accents on clean backgrounds\n- Smooth animations for category navigation and transitions
 - Professional admin panel interface with clear data visualization and comprehensive navigation menu
 - Organized settings sidebar with grouped configuration modules
 - **API Documentation Portal**: Clean, developer-friendly interface with syntax highlighting and interactive elements
 - **Profile Settings Page**: Clean, organized layout with **read-only profile information display and dedicated password change section**, **with real-time validation feedback and success indicators**
 - **2FA Setup Interface**: Step-by-step wizard with QR code display, backup codes presentation, **verification input field, and clear success/error messages**
 - **Admin Login Page**: Clean, secure login interface with username/email and password fields, CAPTCHA, and 2FA verification
+- **Admin Preview Login Page**: Simplified interface with test credentials display and magic login button
 - **Notification Center**: Slide-in panel with categorized notifications and quick action buttons
 - **Notification Management Interface**: Admin dashboard for creating templates and sending broadcasts with preview functionality
 - **Order Details Page**: Clean, card-based layout with clear information hierarchy and prominent provider response section
 - **Provider Response Section**: Distinct visual styling with REPLAY button, collapsible content area, and copy functionality
+- **Preview Mode Indicator**: Distinct visual banner or ribbon indicating preview/test environment
 \n### 6.2 Interactive Elements
 - **Advertisement Banner**: Auto-scrolling promotional photos with pause-on-hover functionality
 - **Search Field**: Instant search with autocomplete suggestions
@@ -1362,6 +1508,9 @@ For each balance top-up request, customers must:
 - **Notification Bell**: Animated bell icon with unread badge counter and dropdown preview
 - **Notification Center**: Slide-in panel with filtering, search, and mark-as-read functionality
 - **Real-time Notification Toast**: Pop-up notifications for instant alerts with auto-dismiss
+- **Preview Mode Banner**: Clickable banner with 'Disable Preview Mode' button and session timer
+- **Magic Login Button**: One-click login button for instant admin access in preview mode
+- **Test Credentials Display**: Copy-to-clipboard functionality for test email and password
 - Expandable category menus with service option selection
 - Hover effects on service cards\n- Animated payment method selection interface
 - Image upload preview for payment proofs
@@ -1388,14 +1537,15 @@ For each balance top-up request, customers must:
 - **Language Translation Editor**: In-context translation editing for admins
 - **Currency Converter Widget**: Real-time currency conversion display on pricing pages
 - **Admin Login Form**: Responsive login form with real-time validation and error messages
-- **Notification Template Editor**: WYSIWYG editor with variable insertion and preview
-- **Broadcast Notification Scheduler**: Calendar interface for scheduling notifications
+- **Notification Template Editor**: WYSIWYG editor with variable insertion and preview\n- **Broadcast Notification Scheduler**: Calendar interface for scheduling notifications
 - **Notification Analytics Dashboard**: Charts and graphs showing delivery rates and engagement\n- **REPLAY Button**: Interactive button that expands/collapses provider response content
 - **Provider Response Copy Button**: One-click copy functionality for provider messages
 - **Real-time Provider Response Updates**: Automatic refresh and notification when new provider responses arrive
 - **Provider Response Timestamp**: Display relative time (e.g., '2 minutes ago') with hover tooltip showing exact timestamp
 - **Save Changes Button**: Disabled state when no changes, enabled with loading state during save
 - **2FA Enable/Disable Toggle**: Clear visual state with confirmation modal before disabling
+- **Preview Mode Session Timer**: Display remaining session time in preview mode banner
+- **Preview Access Logs Viewer**: Table showing all preview mode access attempts with timestamps and IP addresses
 \n### 6.3 Theme Options
 - Light mode: White background with soft shadows and colorful category cards with main images
 - Dark mode: Deep dark background with neon highlights and glowing category borders
@@ -1403,6 +1553,8 @@ For each balance top-up request, customers must:
 - API Documentation: Developer-friendly theme with syntax highlighting and clear code examples
 - **RTL Layout**: Fully mirrored layout for right-to-left languages with proper text alignment
 - **Admin Login Page**: Professional, secure design with brand colors and trust indicators
+- **Admin Preview Login Page**: Simplified design with clear test environment indicators
+- **Preview Mode Theme**: Distinct color scheme (e.g., orange/yellow accents) to differentiate from production
 - **Notification Center**: Consistent theme with main application, supporting both light and dark modes
 - **Order Details Page**: Consistent with main application theme, with distinct styling for provider response section
 - **Profile Settings Page**: Consistent with main application theme, with clear visual hierarchy, **read-only field styling, and password change form styling**
@@ -1422,22 +1574,24 @@ For each balance top-up request, customers must:
 ## 9. Implementation Priority
 
 ### Phase 1: Core Backend & Admin System (Highest Priority)
-1. Database schema implementation with all tables including notification tables and provider_response_logs table
-2. Admin authentication system with login page\n3. Admin dashboard with basic statistics\n4. User management module\n5. Service management module
-6. Order management module with provider response handling
-7. Payment verification module
-8. **Notification system backend implementation**
-9. **Provider response notification system**
-10. Admin API endpoints for all core functions
-11. **User profile viewing API endpoint (GET /api/v1/account/profile) returning read-only fields**
-12. **Password change API endpoint (PUT /api/v1/account/password) with validation and security**
-13. **2FA backend implementation with all API endpoints (setup, verify, disable, backup codes)**
+1. Database schema implementation with all tables including notification tables, provider_response_logs table, and preview mode tables
+2. Admin authentication system with login page\n3. **Admin preview mode implementation with test credentials and magic login**
+4. Admin dashboard with basic statistics and preview mode indicator
+5. User management module\n6. Service management module
+7. Order management module with provider response handling
+8. Payment verification module
+9. **Notification system backend implementation**
+10. **Provider response notification system**
+11. Admin API endpoints for all core functions
+12. **Preview mode API endpoints**
+13. **User profile viewing API endpoint (GET /api/v1/account/profile) returning read-only fields**
+14. **Password change API endpoint (PUT /api/v1/account/password) with validation and security**
+15. **2FA backend implementation with all API endpoints (setup, verify, disable, backup codes)**
 \n### Phase 2: Customer Frontend & Integration\n1. Customer authentication and registration
 2. Service browsing and ordering
 3. Wallet system and payment submission
 4. Order tracking and history
-5. **Order details page with provider response display**
-6. **Profile viewing frontend displaying read-only profile information**
+5. **Order details page with provider response display**\n6. **Profile viewing frontend displaying read-only profile information**
 7. **Password change frontend with full backend integration**
 8. **2FA setup and management frontend with complete backend connection**
 9. **Notification center and real-time notification delivery**
@@ -1452,8 +1606,8 @@ For each balance top-up request, customers must:
 8. **Notification analytics and tracking**
 9. **Provider response logs and monitoring**
 10. **Security notifications for password changes and 2FA changes**
-
-### Phase 4: Additional Modules
+11. **Preview mode management interface**
+\n### Phase 4: Additional Modules
 1. Affiliate system
 2. Subscription management
 3. Drip-feed orders
@@ -1463,3 +1617,4 @@ For each balance top-up request, customers must:
 8. **Notification template management**
 9. **Provider response analytics**
 10. **Trusted device management for 2FA**
+11. **Preview mode access logs and monitoring**
