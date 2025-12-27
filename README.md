@@ -1,3 +1,7 @@
+# MediaMoney App
+
+Live preview version.
+
 # Welcome to Your Miaoda Project
 Miaoda Application Link URL
     URL:https://medo.dev/projects/app-8herke1wtngh
@@ -93,3 +97,6 @@ Configure environment variables and install relevant dependencies.If you need to
 ## Learn More
 
 You can also check the help documentation: Download and Building the app（ [https://intl.cloud.baidu.com/en/doc/MIAODA/s/download-and-building-the-app-en](https://intl.cloud.baidu.com/en/doc/MIAODA/s/download-and-building-the-app-en)）to learn more detailed content.
+=======
+# mediamoneyapp
+>>>>>>> a3d37446e0730cdbffffa8ce2d90742ec706a558
