@@ -43,15 +43,14 @@ play4cards.com
 ### 2.2 User System
 - User registration and login
 - **Two-Step Verification (2FA)**: Mandatory two-factor authentication for all users to protect accounts using authenticator apps (Google Authenticator, Authy, etc.) or SMS verification, **fully integrated with backend API**
-- **Profile Management**: Users can edit and update their profile information **through backend API integration** including:
-  - Email address
-  - Password
-  - Phone number
-  - Display name
-  - Profile picture
-  - Communication preferences
-  - **Language preference selection from all supported languages**
+- **Profile Management**: Users can view their profile information and **change password only through backend API integration**. The following fields are **read-only and cannot be modified by customers**:
+  - Username (read-only)
+  - Email address (read-only)
+  - Phone number (read-only)
+  - Display name (read-only)
+  - Profile picture (read-only)\n  - **Language preference selection from all supported languages**
   - **Currency preference selection from all supported currencies**
+  - Communication preferences\n- **Password Change**: Users can change their password through **backend-connected API endpoint**
 - Personal wallet system\n- Balance top-up functionality
 - Order history tracking
 - **Invoice generation for orders**
@@ -212,10 +211,8 @@ play4cards.com
 - POST /api/v1/auth/register - Register new API user
 - POST /api/v1/auth/login - Authenticate and get API token
 - GET /api/v1/account/balance - Check wallet balance
-- GET /api/v1/account/profile - Get user profile information
-- **PUT /api/v1/account/profile - Update user profile information (email, phone, display name, language, currency)**
-- **POST /api/v1/account/profile/picture - Upload profile picture**
-- **PUT /api/v1/account/password - Change password**
+- GET /api/v1/account/profile - Get user profile information (username, email, phone, display name, language, currency are read-only)
+- **PUT /api/v1/account/password - Change password (only password modification allowed for customers)**
 - **POST /api/v1/account/2fa/setup - Initialize 2FA setup and get QR code**
 - **POST /api/v1/account/2fa/verify - Verify and enable 2FA with TOTP code**
 - **POST /api/v1/account/2fa/disable - Disable 2FA with verification**
@@ -423,7 +420,8 @@ Full navigation menu with the following modules:
 - **API Settings**: Configure public API parameters, rate limits, authentication methods, and API documentation access
 - **Currency Settings**: Manage supported currencies, exchange rates, automatic rate updates, and default currency configuration
 - **Language Settings**: Add/edit language packs, set default language, manage translations, and configure language selector display
-- **Tax Configuration**: Set up tax rules, VAT settings, and regional tax compliance\n- **Terms & Policies**: Manage Terms of Service, Privacy Policy, Refund Policy, and legal documents
+- **Tax Configuration**: Set up tax rules, VAT settings, and regional tax compliance
+- **Terms & Policies**: Manage Terms of Service, Privacy Policy, Refund Policy, and legal documents
 - **GDPR Compliance**: Configure data retention policies, user data export, and right to be forgotten features
 - **Rate Limiting**: Configure API rate limits, request throttling, and abuse prevention
 - **Cache Management**: Configure caching settings, clear cache, and optimize performance
@@ -461,7 +459,7 @@ Full navigation menu with the following modules:
 3. **Add Balance** - Wallet recharge page with multiple payment methods and currency selection
 4. **My Orders** - Order history and status tracking with invoice generation option
 5. **Order Details** - Detailed order information page with provider response/replay section, copy functionality, and real-time updates
-6. **Profile Settings** - User profile management page **with full backend integration** for editing email, password, phone number, display name, profile picture, language preference, currency preference, and communication preferences
+6. **Profile Settings** - User profile viewing page **with backend-connected password change functionality only**. Username, email, phone number, display name, and profile picture are **read-only fields**. Users can view language preference and currency preference settings.
 7. **Security** - Account security settings including **backend-connected 2FA setup**, trusted devices management, login history, and password change\n8. **API** - Customer API documentation, key management, and testing console
 9. **API Documentation** - Interactive API documentation portal with code examples and testing tools
 10. **About Us** - Company information and contact details
@@ -470,8 +468,7 @@ Full navigation menu with the following modules:
 \n### 3.2 Admin-Only Pages
 1. **Admin Login** - Secure authentication page with username/email and password fields, CAPTCHA protection, and 2FA verification for administrators only
 2. **Admin Dashboard** - Overview of site statistics and quick access to all management modules
-3. **Admin Profile Settings** - Admin profile management page for editing email, password, phone number, display name, profile picture, and 2FA settings
-4. **Users Management** - Interface for managing user accounts, permissions, levels, activity, profile information, and 2FA status
+3. **Admin Profile Settings** - Admin profile management page for editing email, password, phone number, display name, profile picture, and 2FA settings\n4. **Users Management** - Interface for managing user accounts, permissions, levels, activity, profile information, and 2FA status
 5. **Orders Management** - Interface for managing all customer orders with full control options and provider response viewing
 6. **Subscriptions Management** - Interface for managing recurring subscription services\n7. **Drip-feed Management** - Interface for configuring drip-feed delivery settings\n8. **Refill Management** - Interface for handling refill requests and tasks
 9. **Cancel Management** - Interface for managing cancellation requests\n10. **Services Management** - Interface for managing services, categories, pricing, and imports
@@ -479,8 +476,7 @@ Full navigation menu with the following modules:
 12. **Tickets Management** - Interface for handling customer support tickets\n13. **Affiliates Management** - Interface for managing affiliate program and commissions
 14. **Child Panels Management** - Interface for managing reseller sub-panels\n15. **Updates** - Interface for viewing system updates and changelog
 16. **Reports & Analytics** - Interface for viewing site statistics and performance data
-17. **Appearance Settings** - Interface for customizing site visual design
-18. **General Settings** - Interface for basic site configuration\n19. **Providers Settings** - Interface for managing service provider API connections
+17. **Appearance Settings** - Interface for customizing site visual design\n18. **General Settings** - Interface for basic site configuration\n19. **Providers Settings** - Interface for managing service provider API connections
 20. **Payments Modules Settings** - Interface for configuring payment gateway integrations
 21. **Integrations Settings** - Interface for connecting third-party services\n22. **Notifications Settings** - Interface for configuring notification system
 23. **Bonuses Settings** - Interface for setting up bonus programs
@@ -542,12 +538,11 @@ For each balance top-up request, customers must:
 \n#### 5.1.2 Complete Database Schema
 \n**Users Table (users)**
 - id (Primary Key, UUID)
-- username (Unique, String)
-- email (Unique, String)
-- password_hash (String)
-- phone_number (String)
-- display_name (String)
-- profile_picture_url (String)
+- username (Unique, String) - **Read-only for customers**
+- email (Unique, String) - **Read-only for customers**
+- password_hash (String)\n- phone_number (String) - **Read-only for customers**
+- display_name (String) - **Read-only for customers**
+- profile_picture_url (String) - **Read-only for customers**
 - user_level_id (Foreign Key → user_levels.id)
 - wallet_balance (Decimal)
 - total_spent (Decimal)
@@ -563,9 +558,8 @@ For each balance top-up request, customers must:
 - updated_at (Timestamp)
 - last_login_at (Timestamp)
 - last_login_ip (String)
-\n**Admin Users Table (admin_users)**\n- id (Primary Key, UUID)
-- username (Unique, String)
-- email (Unique, String)
+\n**Admin Users Table (admin_users)**
+- id (Primary Key, UUID)\n- username (Unique, String)\n- email (Unique, String)
 - password_hash (String)
 - phone_number (String)
 - display_name (String)
@@ -598,8 +592,7 @@ For each balance top-up request, customers must:
 - user_agent (String)
 - expires_at (Timestamp)
 - created_at (Timestamp)
-- last_activity_at (Timestamp)\n
-**Admin Activity Logs Table (admin_activity_logs)**
+- last_activity_at (Timestamp)\n\n**Admin Activity Logs Table (admin_activity_logs)**
 - id (Primary Key, UUID)
 - admin_user_id (Foreign Key → admin_users.id)
 - action_type (String)
@@ -937,8 +930,7 @@ For each balance top-up request, customers must:
 - id (Primary Key, UUID)
 - from_currency (String)
 - to_currency (String)
-- rate (Decimal)
-- source (String)
+- rate (Decimal)\n- source (String)
 - created_at (Timestamp)
 \n**Site Settings Table (site_settings)**
 - id (Primary Key, UUID)\n- setting_key (Unique, String)
@@ -1071,20 +1063,24 @@ For each balance top-up request, customers must:
 - Log all admin actions in admin_activity_logs
 - Implement IP address validation
 - Check for concurrent session limits
-\n**User Profile Update Logic**
+\n**User Profile View Logic**
 - **Validate user authentication token**
-- **Verify user has permission to update profile**
-- **Validate input data (email format, phone number format, etc.)**
-- **Check if email is already in use by another user**
-- **For email changes: Send verification email to new address**
-- **For password changes: Verify current password before updating**
+- **Fetch user profile data from database**
+- **Return read-only fields: username, email, phone_number, display_name, profile_picture_url**
+- **Return editable preferences: preferred_language, preferred_currency, notification_preferences**
+- **All profile fields except password are read-only for customers**
+
+**Password Change Logic**
+- **Validate user authentication token**
+- **Verify current password matches stored password_hash**
+- **Validate new password meets security requirements (minimum length, complexity)**
+- **Check new password is not in password history (if applicable)**
 - **Hash new password using bcrypt or Argon2**
-- **Update user record in database**
-- **For profile picture: Validate file type and size, upload to S3, update URL**
-- **For language/currency changes: Update preferred_language and preferred_currency fields**
-- **Create notification for profile update confirmation**
-- **Log profile update action with timestamp and IP address**
-- **Return updated profile data to frontend**
+- **Update password_hash in users table**
+- **Create password change confirmation notification**
+- **Log password change action with timestamp and IP address**
+- **Send security notification email to user**
+- **Return success response**
 
 **2FA Setup and Management Logic**
 - **2FA Setup Initialization**:\n  - Generate unique TOTP secret using speakeasy or similar library
@@ -1288,13 +1284,14 @@ For each balance top-up request, customers must:
 - **Real-time Notifications**: WebSocket for instant notification delivery
 - **Notification Center**: Display in-app notifications with unread badge
 - **Invoice Download**: Generate and download PDF invoices
-- **Profile Management**: **Full backend integration for profile updates**
-  - **Connect to PUT /api/v1/account/profile for updating email, phone, display name, language, currency**
-  - **Connect to POST /api/v1/account/profile/picture for profile picture upload**
-  - **Connect to PUT /api/v1/account/password for password changes**
-  - **Real-time validation and error handling**
-  - **Success notifications after profile updates**
-  - **Automatic UI refresh after successful updates**
+- **Profile Viewing**: **Connect to GET /api/v1/account/profile to fetch and display read-only profile information (username, email, phone, display name, profile picture, language, currency)**
+- **Password Change**: **Connect to PUT /api/v1/account/password for password updates**
+  - **Display password change form with current password and new password fields**
+  - **Implement real-time password strength indicator**
+  - **Validate password requirements on frontend before submission**
+  - **Show loading state during password change request**
+  - **Display success message and security notification after successful change**
+  - **Handle and display error messages for failed attempts**
 - **2FA Setup and Management**: **Complete backend integration for 2FA functionality**
   - **Connect to POST /api/v1/account/2fa/setup to initialize 2FA and get QR code**
   - **Display QR code for scanning with authenticator app**
@@ -1316,8 +1313,7 @@ For each balance top-up request, customers must:
 - **Redis Hosting**: Managed Redis for caching and queues
 - **CDN Integration**: CloudFlare or AWS CloudFront for static assets
 - **Load Balancing**: Multiple application servers with load balancer
-- **Auto-scaling**: Automatic scaling based on traffic
-- **Monitoring**: Application performance monitoring (APM) tools
+- **Auto-scaling**: Automatic scaling based on traffic\n- **Monitoring**: Application performance monitoring (APM) tools
 - **Logging**: Centralized logging with ELK stack or similar
 - **CI/CD Pipeline**: Automated testing and deployment
 - **Environment Variables**: Secure configuration management
@@ -1351,7 +1347,7 @@ For each balance top-up request, customers must:
 - Professional admin panel interface with clear data visualization and comprehensive navigation menu
 - Organized settings sidebar with grouped configuration modules
 - **API Documentation Portal**: Clean, developer-friendly interface with syntax highlighting and interactive elements
-- **Profile Settings Page**: Clean, organized layout with tabbed sections for different profile settings including language and currency preferences, **with real-time validation feedback and success indicators**
+- **Profile Settings Page**: Clean, organized layout with **read-only profile information display and dedicated password change section**, **with real-time validation feedback and success indicators**
 - **2FA Setup Interface**: Step-by-step wizard with QR code display, backup codes presentation, **verification input field, and clear success/error messages**
 - **Admin Login Page**: Clean, secure login interface with username/email and password fields, CAPTCHA, and 2FA verification
 - **Notification Center**: Slide-in panel with categorized notifications and quick action buttons
@@ -1382,7 +1378,8 @@ For each balance top-up request, customers must:
 - **Keyboard shortcuts** for common admin actions
 - **API Testing Console**: Interactive API endpoint testing with real-time response display
 - **Code Snippet Copy Button**: One-click copy for code examples in API documentation
-- **Profile Edit Forms**: **Inline validation with real-time feedback, loading indicators during save, success animations, and error messages**
+- **Profile View Display**: **Clean, card-based layout showing read-only profile fields with clear labels and values**
+- **Password Change Form**: **Dedicated form with current password, new password, and confirm password fields, real-time validation, loading indicators during save, success animations, and error messages**
 - **2FA QR Code Scanner**: **Interactive QR code display with copy-to-clipboard functionality for manual entry code**
 - **2FA Verification Input**: **6-digit code input with auto-focus and real-time validation**
 - **Backup Codes Display**: **Formatted backup codes with individual copy buttons and download option**
@@ -1397,7 +1394,6 @@ For each balance top-up request, customers must:
 - **Provider Response Copy Button**: One-click copy functionality for provider messages
 - **Real-time Provider Response Updates**: Automatic refresh and notification when new provider responses arrive
 - **Provider Response Timestamp**: Display relative time (e.g., '2 minutes ago') with hover tooltip showing exact timestamp
-- **Profile Picture Upload**: Drag-and-drop or click-to-upload with image preview and crop functionality
 - **Save Changes Button**: Disabled state when no changes, enabled with loading state during save
 - **2FA Enable/Disable Toggle**: Clear visual state with confirmation modal before disabling
 \n### 6.3 Theme Options
@@ -1409,12 +1405,13 @@ For each balance top-up request, customers must:
 - **Admin Login Page**: Professional, secure design with brand colors and trust indicators
 - **Notification Center**: Consistent theme with main application, supporting both light and dark modes
 - **Order Details Page**: Consistent with main application theme, with distinct styling for provider response section
-- **Profile Settings Page**: Consistent with main application theme, with clear visual hierarchy and form styling
+- **Profile Settings Page**: Consistent with main application theme, with clear visual hierarchy, **read-only field styling, and password change form styling**
 - **2FA Setup Page**: Clean, security-focused design with step-by-step visual indicators and clear instructions
 \n---
 
 ## 7. Reference Documentation
-- API Documentation Reference: https://api.play4cards.com/api-docs\n\n---
+- API Documentation Reference: https://api.play4cards.com/api-docs
+\n---
 
 ## 8. Reference Images
 - Screenshot 2025-12-26 133441.png: Admin dashboard top navigation menu showing Users, Orders, Subscriptions, Drip-feed, Refill, Cancel, Services, Payments, Tickets, Affiliates, Child panels, Updates, Reports, Appearance, and Settings modules
@@ -1432,19 +1429,20 @@ For each balance top-up request, customers must:
 8. **Notification system backend implementation**
 9. **Provider response notification system**
 10. Admin API endpoints for all core functions
-11. **User profile management API endpoints (PUT /api/v1/account/profile, POST /api/v1/account/profile/picture, PUT /api/v1/account/password)**
-12. **2FA backend implementation with all API endpoints (setup, verify, disable, backup codes)**
+11. **User profile viewing API endpoint (GET /api/v1/account/profile) returning read-only fields**
+12. **Password change API endpoint (PUT /api/v1/account/password) with validation and security**
+13. **2FA backend implementation with all API endpoints (setup, verify, disable, backup codes)**
 \n### Phase 2: Customer Frontend & Integration\n1. Customer authentication and registration
 2. Service browsing and ordering
 3. Wallet system and payment submission
 4. Order tracking and history
 5. **Order details page with provider response display**
-6. **Profile management frontend with full backend integration**
-7. **2FA setup and management frontend with complete backend connection**
-8. **Notification center and real-time notification delivery**
-9. **Real-time provider response updates**
-10. Frontend-backend API integration\n
-### Phase 3: Advanced Features
+6. **Profile viewing frontend displaying read-only profile information**
+7. **Password change frontend with full backend integration**
+8. **2FA setup and management frontend with complete backend connection**
+9. **Notification center and real-time notification delivery**
+10. **Real-time provider response updates**
+11. Frontend-backend API integration\n\n### Phase 3: Advanced Features
 1. Stock management system
 2. Multi-currency and multi-language\n3. Public API system
 4. **Complete notification system with all notification types**
@@ -1453,8 +1451,9 @@ For each balance top-up request, customers must:
 7. Analytics and reporting
 8. **Notification analytics and tracking**
 9. **Provider response logs and monitoring**
-10. **Security notifications for profile and 2FA changes**
-\n### Phase 4: Additional Modules
+10. **Security notifications for password changes and 2FA changes**
+
+### Phase 4: Additional Modules
 1. Affiliate system
 2. Subscription management
 3. Drip-feed orders

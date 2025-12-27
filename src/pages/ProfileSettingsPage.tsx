@@ -138,21 +138,10 @@ export default function ProfileSettingsPage() {
   };
 
   const handleUpdateProfile = async () => {
-    if (!username.trim()) {
-      toast({
-        title: 'Error',
-        description: 'Username is required',
-        variant: 'destructive',
-      });
-      return;
-    }
-
     setSavingProfile(true);
     try {
       const updatedProfile = await updateUserProfile({
         full_name: fullName || undefined,
-        username: username || undefined,
-        phone: phone || undefined,
         country: country || undefined,
         city: city || undefined,
         date_of_birth: dateOfBirth || undefined,
@@ -445,15 +434,17 @@ export default function ProfileSettingsPage() {
                   <div className="space-y-2">
                     <Label htmlFor="username">
                       <User className="h-4 w-4 inline mr-2" />
-                      Username *
+                      Username
                     </Label>
                     <Input
                       id="username"
-                      placeholder="Enter your username"
                       value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      required
+                      disabled
+                      className="bg-muted"
                     />
+                    <p className="text-xs text-muted-foreground">
+                      Username cannot be changed
+                    </p>
                   </div>
 
                   <div className="space-y-2">
@@ -461,7 +452,15 @@ export default function ProfileSettingsPage() {
                       <Mail className="h-4 w-4 inline mr-2" />
                       Email
                     </Label>
-                    <Input id="email" value={profile?.email || ''} disabled />
+                    <Input 
+                      id="email" 
+                      value={profile?.email || ''} 
+                      disabled 
+                      className="bg-muted"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Email cannot be changed
+                    </p>
                   </div>
 
                   <div className="space-y-2">
@@ -471,10 +470,13 @@ export default function ProfileSettingsPage() {
                     </Label>
                     <Input
                       id="phone"
-                      placeholder="+1234567890"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      disabled
+                      className="bg-muted"
                     />
+                    <p className="text-xs text-muted-foreground">
+                      Phone number cannot be changed
+                    </p>
                   </div>
 
                   <div className="space-y-2">
